@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-public class Renderer {
-    private SpriteBatch batch;
-    private Texture image;
+public class Renderer implements IRenderer {
+    private final SpriteBatch batch;
+    private final Texture image;
 
     public Renderer() {
         batch = new SpriteBatch();

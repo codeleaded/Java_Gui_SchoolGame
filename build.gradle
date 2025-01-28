@@ -68,6 +68,14 @@ subprojects {
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://jitpack.io' }
   }
+
+  dependencies {
+    api "io.github.spair:imgui-java-binding:$imGuiVersion"
+    api "io.github.spair:imgui-java-lwjgl3:$imGuiVersion"
+    api "io.github.spair:imgui-java-natives-linux:$imGuiVersion"
+    api "io.github.spair:imgui-java-natives-macos:$imGuiVersion"
+    api "io.github.spair:imgui-java-natives-windows:$imGuiVersion"
+  }
 }
 
 eclipse.project.name = 'SchoolGame' + '-parent'
