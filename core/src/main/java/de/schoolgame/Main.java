@@ -6,28 +6,26 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import de.schoolgame.render.Renderer;
+import de.schoolgame.state.GameState;
 
 public class Main extends ApplicationAdapter {
-    private SpriteBatch batch;
-    private Texture image;
+    Renderer renderer;
+    GameState gameState;
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
-        image = new Texture("coin.png");
+        renderer = new Renderer();
+        gameState = new GameState();
     }
 
     @Override
     public void render() {
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        batch.begin();
-        batch.draw(image, 0, 0);
-        batch.end();
+        renderer.render();
     }
 
     @Override
     public void dispose() {
-        batch.dispose();
-        image.dispose();
+        renderer.dispose();
     }
 }
