@@ -3,6 +3,7 @@ package de.schoolgame.render;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import de.schoolgame.state.GameState;
 
 public class Renderer implements IRenderer {
     private final SpriteBatch batch;
@@ -14,7 +15,8 @@ public class Renderer implements IRenderer {
     }
 
     public void render() {
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+        var color = GameState.INSTANCE.bg_color;
+        ScreenUtils.clear(color[0], color[1], color[2], 1f);
         batch.begin();
         batch.draw(image, 0, 0);
         batch.end();

@@ -29,6 +29,7 @@ public class ImGuiRenderer implements IRenderer {
 
     public void render() {
         start();
+        ImGui.colorPicker3("Background Color", GameState.INSTANCE.bg_color);
         if (ImGui.button("Disable Debug Mode")) {
             GameState.INSTANCE.debug = false;
         }
