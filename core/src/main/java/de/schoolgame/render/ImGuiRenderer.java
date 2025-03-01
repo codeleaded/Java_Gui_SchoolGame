@@ -6,6 +6,9 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics;
 import de.schoolgame.state.GameState;
 import imgui.ImGui;
 import imgui.ImGuiIO;
+import imgui.ImVec2;
+import imgui.flag.ImGuiCond;
+import imgui.flag.ImGuiWindowFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 
@@ -29,10 +32,25 @@ public class ImGuiRenderer implements IRenderer {
 
     public void render() {
         start();
-        ImGui.colorPicker3("Background Color", GameState.INSTANCE.bg_color);
-        if (ImGui.button("Disable Debug Mode")) {
-            GameState.INSTANCE.debug = false;
+        var viewport = ImGui.getMainViewport();
+
+        ImGui.setNextWindowPos(new ImVec2(viewport.getPosX(), viewport.getCenterY()), ImGuiCond.Once);
+        ImGui.showMetricsWindow();
+
+        ImGui.setNextWindowPos(viewport.getPos(), ImGuiCond.Once);
+        if (ImGui.begin("Guide", null, ImGuiWindowFlags.AlwaysAutoResize)) {
+            ImGui.showUserGuide();
         }
+        ImGui.end();
+
+        ImGui.setNextWindowPos(viewport.getCenter(), ImGuiCond.Once);
+        if (ImGui.begin("Debug", null, ImGuiWindowFlags.AlwaysAutoResize)) {
+            ImGui.colorPicker3("Background Color", GameState.INSTANCE.bg_color);
+            ImGui.separator();
+            ImGui.sliderFloat("coin animation delay", GameState.INSTANCE.animation_delay, 0.001f, 0.1f);
+        }
+        ImGui.end();
+
         end();
     }
 

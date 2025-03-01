@@ -14,7 +14,7 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void create() {
-        Gdx.app.log("DEBUG", "Hello World!");
+        Gdx.app.log("INFO", "Press \"L\" to open/close ImGui!");
         renderer = new Renderer();
         gameState = new GameState();
         imGuiRenderer = new ImGuiRenderer();
@@ -26,7 +26,7 @@ public class Main extends ApplicationAdapter {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
             GameState.INSTANCE.debug = !GameState.INSTANCE.debug;
-            Gdx.app.log("DEBUG", GameState.INSTANCE.debug ? "DEBUG" : "DEBUG OFF");
+            Gdx.app.log("DEBUG", GameState.INSTANCE.debug ? "ImGui enabled" : "ImGui disabled");
         }
         if (GameState.INSTANCE.debug) {
             imGuiRenderer.render();
