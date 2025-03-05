@@ -3,21 +3,21 @@ package de.schoolgame;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import de.schoolgame.render.ImGuiRenderer;
 import de.schoolgame.render.Renderer;
+import de.schoolgame.state.GameInputProcessor;
 import de.schoolgame.state.GameState;
 
 public class Main extends ApplicationAdapter {
     Renderer renderer;
-    ImGuiRenderer imGuiRenderer;
     GameState gameState;
+    GameInputProcessor inputProcessor;
 
     @Override
     public void create() {
         Gdx.app.log("INFO", "Press \"L\" to open/close ImGui!");
         renderer = new Renderer();
         gameState = new GameState();
-        imGuiRenderer = new ImGuiRenderer();
+        Gdx.input.setInputProcessor(inputProcessor = new GameInputProcessor());
     }
 
     @Override
@@ -28,14 +28,10 @@ public class Main extends ApplicationAdapter {
             GameState.INSTANCE.debug = !GameState.INSTANCE.debug;
             Gdx.app.log("DEBUG", GameState.INSTANCE.debug ? "ImGui enabled" : "ImGui disabled");
         }
-        if (GameState.INSTANCE.debug) {
-            imGuiRenderer.render();
-        }
     }
 
     @Override
     public void dispose() {
         renderer.dispose();
-        imGuiRenderer.dispose();
     }
 }

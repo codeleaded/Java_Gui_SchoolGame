@@ -12,6 +12,10 @@ import imgui.flag.ImGuiWindowFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 public class ImGuiRenderer implements IRenderer {
     private static ImGuiImplGlfw imGuiGlfw;
     private static ImGuiImplGl3 imGuiGl3;
@@ -48,6 +52,21 @@ public class ImGuiRenderer implements IRenderer {
             ImGui.colorPicker3("Background Color", GameState.INSTANCE.bg_color);
             ImGui.separator();
             ImGui.sliderFloat("coin animation delay", GameState.INSTANCE.animation_delay, 0.001f, 0.1f);
+            ImGui.separator();
+            if (ImGui.button("Save World")) {
+                byte [] world = GameState.INSTANCE.world.serialize();
+                try {
+                    File dir = new File(Gdx.files.getLocalStoragePath() + "/worlds");
+                    dir.mkdirs();
+                    File f = new File(dir + "/save.dat");
+                    f.createNewFile();
+                    FileOutputStream fos = new FileOutputStream(f);
+                    fos.write(world);
+                    fos.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
         ImGui.end();
 
