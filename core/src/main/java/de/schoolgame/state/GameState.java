@@ -1,16 +1,16 @@
 package de.schoolgame.state;
 
+import de.schoolgame.render.Camera;
 import de.schoolgame.world.World;
+import de.schoolgame.world.entities.Player;
 
 public class GameState {
     public static GameState INSTANCE = new GameState();
 
-    public boolean debug = false;
-    public float[] bg_color = {0.15f, 0.15f, 0.2f};
-    public float[] animation_delay = {0.025f};
+    public DebugState debug = new DebugState();
 
     public World world = new World("worlds/test.dat");
+    public Camera camera = new Camera();
+    public Player player = new Player();
 
-    public boolean leftMove = false;
-    public boolean rightMove = false;
 }

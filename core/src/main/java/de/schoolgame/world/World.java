@@ -8,23 +8,34 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class World {
-    private Tile[][] tiles;
+    private final Tile[][] tiles;
     //TODO entities
 
-    private int width, height, tileSize;
+    private final int width, height, tileSize;
 
     public World(String fileName) {
         FileHandle file = Gdx.files.internal(fileName);
         try(InputStream stream = file.read()) {
             byte[] bytes = new byte[4];
-            stream.read(bytes);
+
+            if (stream.read(bytes) != 4) {
+                throw new RuntimeException("Could not read world File! 1");
+            }
             width = FileUtils.intFromBytes(bytes);
 
-            stream.read(bytes);
+            if (stream.read(bytes) != 4) {
+                throw new RuntimeException("Could not read world File! 2");
+            }
             height = FileUtils.intFromBytes(bytes);
 
-            stream.read(bytes);
+            if (stream.read(bytes) != 4) {
+                throw new RuntimeException("Could not read world File! 3");
+            }
             tileSize = FileUtils.intFromBytes(bytes);
+
+            if (stream.available() != width * height) {
+                throw new RuntimeException("Could not read world File! 4");
+            }
 
             tiles = new Tile[width][height];
 
@@ -34,7 +45,7 @@ public class World {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -62,6 +73,10 @@ public class World {
 
     public Tile at(int x, int y) {
         return tiles[x][y];
+    }
+
+    public void setAt(int x, int y, Tile tile) {
+        tiles[x][y] = tile;
     }
 
     public int getWidth() {

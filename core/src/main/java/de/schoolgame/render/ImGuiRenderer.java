@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics;
 import de.schoolgame.state.GameState;
+import de.schoolgame.utils.FileUtils;
+import de.schoolgame.world.Tile;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.ImVec2;
@@ -12,7 +14,6 @@ import imgui.flag.ImGuiWindowFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -35,44 +36,78 @@ public class ImGuiRenderer implements IRenderer {
     }
 
     public void render() {
+        var state = GameState.INSTANCE;
+
         start();
         var viewport = ImGui.getMainViewport();
 
-        ImGui.setNextWindowPos(new ImVec2(viewport.getPosX(), viewport.getCenterY()), ImGuiCond.Once);
-        ImGui.showMetricsWindow();
-
         ImGui.setNextWindowPos(viewport.getPos(), ImGuiCond.Once);
-        if (ImGui.begin("Guide", null, ImGuiWindowFlags.AlwaysAutoResize)) {
-            ImGui.showUserGuide();
+        if (ImGui.begin("Debug", null, ImGuiWindowFlags.AlwaysAutoResize)) {
+            ImGui.checkbox("Show Metrics", state.debug.showMetrics);
+
+            ImGui.checkbox("Show Worldedit", state.debug.showWorldedit);
+            ImGui.checkbox("Show Guide", state.debug.showGuide);
+            ImGui.checkbox("Show Demo", state.debug.showDemo);
         }
         ImGui.end();
 
-        ImGui.setNextWindowPos(viewport.getCenter(), ImGuiCond.Once);
-        if (ImGui.begin("Debug", null, ImGuiWindowFlags.AlwaysAutoResize)) {
-            ImGui.colorPicker3("Background Color", GameState.INSTANCE.bg_color);
-            ImGui.separator();
-            ImGui.sliderFloat("coin animation delay", GameState.INSTANCE.animation_delay, 0.001f, 0.1f);
-            ImGui.separator();
-            if (ImGui.button("Save World")) {
-                byte [] world = GameState.INSTANCE.world.serialize();
-                try {
-                    File dir = new File(Gdx.files.getLocalStoragePath() + "/worlds");
-                    dir.mkdirs();
-                    File f = new File(dir + "/save.dat");
-                    f.createNewFile();
-                    FileOutputStream fos = new FileOutputStream(f);
-                    fos.write(world);
-                    fos.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+        if (state.debug.showMetrics.get()) {
+            ImGui.setNextWindowPos(viewport.getPos(), ImGuiCond.Once);
+            ImGui.showMetricsWindow();
+        }
+
+        if (state.debug.showGuide.get()) {
+            ImGui.setNextWindowPos(viewport.getPos(), ImGuiCond.Once);
+            if (ImGui.begin("Guide", null, ImGuiWindowFlags.AlwaysAutoResize)) {
+                ImGui.showUserGuide();
+            }
+            ImGui.end();
+        }
+
+        if (state.debug.showDemo.get()) {
+            ImGui.showDemoWindow();
+        }
+
+        if (state.debug.showWorldedit.get()) {
+            ImGui.setNextWindowPos(new ImVec2(viewport.getPosX() + viewport.getWorkSizeX() - 230, viewport.getPosY()), ImGuiCond.Once);
+            if (ImGui.begin("World Editor", null, ImGuiWindowFlags.AlwaysAutoResize)) {
+                var selected = state.debug.selectedTile;
+
+                int i = 0;
+                for (Tile t : Tile.values()) {
+                    if (i % 2 == 1) {
+                        ImGui.sameLine();
+                    }
+
+                    ImGui.pushID(i);
+
+                    if (ImGui.selectable(t.toString(), t == selected, 0, new ImVec2(100, 12))) {
+                        state.debug.selectedTile = t;
+                    }
+
+                    ImGui.popID();
+                    i++;
+                }
+
+                ImGui.separator();
+
+                if (ImGui.button("Save World")) {
+                    byte [] world = state.world.serialize();
+                    try {
+                        FileOutputStream fos = new FileOutputStream(FileUtils.getSaveFile());
+                        fos.write(world);
+                        fos.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
+            ImGui.end();
         }
-        ImGui.end();
+
 
         end();
     }
-
 
     private void start() {
         if (tmpProcessor != null) { // Restore the input processor after ImGui caught all inputs, see #end()

@@ -2,39 +2,47 @@ package de.schoolgame.state;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import de.schoolgame.utils.DebugUtils;
+import de.schoolgame.world.entities.Player;
 
 public class GameInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        switch (keycode) {
-            case Input.Keys.A:
-            case Input.Keys.LEFT:
-                GameState.INSTANCE.leftMove = true;
-                GameState.INSTANCE.rightMove = false;
-                break;
-            case Input.Keys.D:
-            case Input.Keys.RIGHT:
-                GameState.INSTANCE.rightMove = true;
-                GameState.INSTANCE.leftMove = false;
-                break;
-        }
-        return true;
+        var state = GameState.INSTANCE;
+
+        return switch (keycode) {
+            case Input.Keys.A, Input.Keys.LEFT -> {
+                state.player.setPlayerState(Player.PlayerState.MOVING_LEFT);
+                yield true;
+            }
+            case Input.Keys.D, Input.Keys.RIGHT -> {
+                state.player.setPlayerState(Player.PlayerState.MOVING_RIGHT);
+                yield true;
+            }
+            default -> false;
+        };
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        switch (keycode) {
-            case Input.Keys.A:
-            case Input.Keys.LEFT:
-                GameState.INSTANCE.leftMove = false;
-                break;
-            case Input.Keys.D:
-            case Input.Keys.RIGHT:
-                GameState.INSTANCE.rightMove = false;
-                break;
-        }
-        return true;
+        var state = GameState.INSTANCE;
+
+        return switch (keycode) {
+            case Input.Keys.A, Input.Keys.LEFT -> {
+                if (state.player.getPlayerState() == Player.PlayerState.MOVING_LEFT) {
+                    state.player.setPlayerState(Player.PlayerState.IDLE);
+                }
+                yield true;
+            }
+            case Input.Keys.D, Input.Keys.RIGHT -> {
+                if (state.player.getPlayerState() == Player.PlayerState.MOVING_RIGHT) {
+                    state.player.setPlayerState(Player.PlayerState.IDLE);
+                }
+                yield true;
+            }
+            default -> false;
+        };
     }
 
     @Override
@@ -44,6 +52,13 @@ public class GameInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        var state = GameState.INSTANCE;
+
+        if (button == Input.Buttons.LEFT && state.debug.enabled && state.debug.showWorldedit.get()) {
+            int[] pos = DebugUtils.getTilePosFromScreenPos(screenX, screenY);
+            GameState.INSTANCE.world.setAt(pos[0], pos[1], state.debug.selectedTile);
+            return true;
+        }
         return false;
     }
 
@@ -59,6 +74,13 @@ public class GameInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+        var state = GameState.INSTANCE;
+
+        if (state.debug.enabled && state.debug.showWorldedit.get()) {
+            int[] pos = DebugUtils.getTilePosFromScreenPos(screenX, screenY);
+            GameState.INSTANCE.world.setAt(pos[0], pos[1], state.debug.selectedTile);
+            return true;
+        }
         return false;
     }
 

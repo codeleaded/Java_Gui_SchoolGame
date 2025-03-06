@@ -1,6 +1,5 @@
 package de.schoolgame.render;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import de.schoolgame.state.GameState;
@@ -15,26 +14,17 @@ public class Camera {
     public Matrix4 viewProjectionMatrix = new Matrix4();
 
     public Camera() {
-        position = new Vector3(320, 180, 0);
-        zoom = 1;
         viewWidth = 640;
         viewHeight = 360;
-    }
-
-    public Camera(float x, float y, float z) {
-        position = new Vector3(x, y, z);
+        position = new Vector3((float) viewWidth /2, (float) viewHeight /2, 0);
         zoom = 1;
-        this.viewWidth = 640;
-        this.viewHeight = 360;
     }
 
     public void update() {
-        if (GameState.INSTANCE.rightMove) {
-            position.x += 500 * Gdx.graphics.getDeltaTime();
-        } else if (GameState.INSTANCE.leftMove) {
-            position.x -= 500 * Gdx.graphics.getDeltaTime();
-        }
+        var state = GameState.INSTANCE;
+        position.set(state.player.getPosition(), 0);
         position.x = Math.max(position.x, 320);
+        position.x = Math.min(position.x, state.world.getWidth() * state.world.getTileSize() - 320);
 
         int hx = viewWidth / 2;
         int hy = viewHeight / 2;

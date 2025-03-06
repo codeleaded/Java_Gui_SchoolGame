@@ -6,23 +6,22 @@ import de.schoolgame.state.GameState;
 public class Renderer implements IRenderer {
     WorldRenderer worldRenderer;
     ImGuiRenderer imGuiRenderer;
-    Camera camera;
 
     public Renderer() {
         imGuiRenderer = new ImGuiRenderer();
         worldRenderer = new WorldRenderer();
-        camera = new Camera();
     }
 
     public void render() {
-        var color = GameState.INSTANCE.bg_color;
-        ScreenUtils.clear(color[0], color[1], color[2], 1f);
+        var camera = GameState.INSTANCE.camera;
+
+        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 
         camera.update();
         worldRenderer.setView(camera);
         worldRenderer.render();
 
-        if (GameState.INSTANCE.debug) {
+        if (GameState.INSTANCE.debug.enabled) {
             imGuiRenderer.render();
         }
     }

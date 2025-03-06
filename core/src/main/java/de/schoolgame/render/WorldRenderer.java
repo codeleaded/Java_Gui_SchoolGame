@@ -58,7 +58,7 @@ public class WorldRenderer implements IRenderer {
             }
             y += tileSize;
         }
-
+        GameState.INSTANCE.player.render(batch);
         batch.end();
     }
 

@@ -22,11 +22,14 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
+        var state = GameState.INSTANCE;
+        state.player.update();
+
         renderer.render();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
-            GameState.INSTANCE.debug = !GameState.INSTANCE.debug;
-            Gdx.app.log("DEBUG", GameState.INSTANCE.debug ? "ImGui enabled" : "ImGui disabled");
+            state.debug.enabled = !state.debug.enabled;
+            Gdx.app.log("DEBUG", state.debug.enabled ? "ImGui enabled" : "ImGui disabled");
         }
     }
 
