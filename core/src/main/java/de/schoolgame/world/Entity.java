@@ -8,10 +8,7 @@ public abstract class Entity {
 
     public abstract void update();
     public abstract void render(Batch batch);
-
-    public Entity() {
-        position = new Vector2();
-    }
+    public abstract void dispose();
 
     public Entity(Vector2 position) {
         this.position = position;
@@ -19,9 +16,5 @@ public abstract class Entity {
 
     public Vector2 getPosition() {
         return position;
-    }
-
-    public void setPosition(Vector2 position) {
-        this.position = position;
     }
 }

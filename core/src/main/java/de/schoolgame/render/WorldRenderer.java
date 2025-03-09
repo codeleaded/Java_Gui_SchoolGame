@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import de.schoolgame.state.GameState;
-import de.schoolgame.world.Tile;
+import de.schoolgame.world.Entity;
 import de.schoolgame.world.World;
 
 public class WorldRenderer implements IRenderer {
@@ -46,18 +46,24 @@ public class WorldRenderer implements IRenderer {
             float x = start_col * tileSize;
             for (int col = start_col; col < end_col; col++) {
                 var tile = world.at(col, row);
+                var texture = tile.getTexture();
 
-                if (tile == Tile.NONE) {
+                if (texture == null) {
                     x += tileSize;
                     continue;
                 }
 
-                batch.draw(tile.texture, x, y);
+                batch.draw(texture, x, y);
 
                 x += tileSize;
             }
             y += tileSize;
         }
+
+        for (Entity e : GameState.INSTANCE.world.getEntities()) {
+            e.render(batch);
+        }
+
         GameState.INSTANCE.player.render(batch);
         batch.end();
     }

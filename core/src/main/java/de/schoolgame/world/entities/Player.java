@@ -34,6 +34,11 @@ public class Player extends Entity {
         batch.draw(playerTexture, position.x, position.y);
     }
 
+    @Override
+    public void dispose() {
+        playerTexture.dispose();
+    }
+
     public void setPlayerState(PlayerState playerState) {
         this.playerState = playerState;
     }

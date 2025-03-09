@@ -2,14 +2,16 @@ package de.schoolgame.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.math.Vector2;
 import de.schoolgame.utils.FileUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.*;
 
 public class World {
     private final Tile[][] tiles;
-    //TODO entities
+    private final List<Entity> entities;
 
     private final int width, height, tileSize;
 
@@ -38,10 +40,16 @@ public class World {
             }
 
             tiles = new Tile[width][height];
+            entities = new ArrayList<>();
 
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    tiles[x][y] = Tile.values()[stream.read()];
+                    var tile = Tile.values()[stream.read()];
+                    tiles[x][y] = tile;
+                    var e = tile.createEntity(new Vector2(x * tileSize, y * tileSize));
+                    if (e != null) {
+                        entities.add(e);
+                    }
                 }
             }
         } catch (IOException e) {
@@ -71,12 +79,31 @@ public class World {
         return result;
     }
 
+    public void dispose() {
+        for (Entity e : entities) {
+            e.dispose();
+        }
+    }
+
     public Tile at(int x, int y) {
         return tiles[x][y];
     }
 
-    public void setAt(int x, int y, Tile tile) {
+    public void addAt(int x, int y, Tile tile) {
         tiles[x][y] = tile;
+        var e = tile.createEntity(new Vector2(x * tileSize, y * tileSize));
+        if (e != null) {
+            entities.add(e);
+        }
+    }
+
+    public void removeAt(int x, int y) {
+        tiles[x][y] = Tile.NONE;
+        entities.removeIf(e -> Objects.equals(e.position, new Vector2(x * tileSize, y * tileSize)));
+    }
+
+    public Collection<Entity> getEntities() {
+        return entities;
     }
 
     public int getWidth() {

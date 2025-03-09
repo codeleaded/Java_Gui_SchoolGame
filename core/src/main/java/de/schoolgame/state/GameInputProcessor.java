@@ -6,6 +6,7 @@ import de.schoolgame.utils.DebugUtils;
 import de.schoolgame.world.entities.Player;
 
 public class GameInputProcessor implements InputProcessor {
+    private int lastMouseButton = Input.Buttons.LEFT;
 
     @Override
     public boolean keyDown(int keycode) {
@@ -52,14 +53,8 @@ public class GameInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        var state = GameState.INSTANCE;
-
-        if (button == Input.Buttons.LEFT && state.debug.enabled && state.debug.showWorldedit.get()) {
-            int[] pos = DebugUtils.getTilePosFromScreenPos(screenX, screenY);
-            GameState.INSTANCE.world.setAt(pos[0], pos[1], state.debug.selectedTile);
-            return true;
-        }
-        return false;
+        lastMouseButton = button;
+        return worldEdit(screenX, screenY);
     }
 
     @Override
@@ -74,14 +69,7 @@ public class GameInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        var state = GameState.INSTANCE;
-
-        if (state.debug.enabled && state.debug.showWorldedit.get()) {
-            int[] pos = DebugUtils.getTilePosFromScreenPos(screenX, screenY);
-            GameState.INSTANCE.world.setAt(pos[0], pos[1], state.debug.selectedTile);
-            return true;
-        }
-        return false;
+        return worldEdit(screenX, screenY);
     }
 
     @Override
@@ -91,6 +79,24 @@ public class GameInputProcessor implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
+        return false;
+    }
+
+    private boolean worldEdit(int screenX, int screenY) {
+        var state = GameState.INSTANCE;
+        if (state.debug.enabled && state.debug.showWorldedit.get()) {
+            int[] pos = DebugUtils.getTilePosFromScreenPos(screenX, screenY);
+            if (lastMouseButton == Input.Buttons.LEFT) {
+                state.world.removeAt(pos[0], pos[1]);
+                state.world.addAt(pos[0], pos[1], state.debug.selectedTile);
+                return true;
+            } else if (lastMouseButton == Input.Buttons.RIGHT) {
+                state.world.removeAt(pos[0], pos[1]);
+                return true;
+            } else if (lastMouseButton == Input.Buttons.MIDDLE) {
+                state.debug.selectedTile = state.world.at(pos[0], pos[1]);
+            }
+        }
         return false;
     }
 }

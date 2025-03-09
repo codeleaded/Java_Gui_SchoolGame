@@ -1,16 +1,19 @@
 package de.schoolgame.world;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
+import de.schoolgame.world.entities.Coin;
 
 public enum Tile {
     NONE(null),
     TEST_TILE(new Texture("tiles/test.png")),
+    COIN(Coin.class),
     ;
 
-    public final Texture texture;
+    private final Object textureOrEntity;
 
-    Tile(Texture texture) {
-        this.texture = texture;
+    Tile(Object textureOrEntity) {
+        this.textureOrEntity = textureOrEntity;
     }
 
     public byte index() {
@@ -22,5 +25,45 @@ public enum Tile {
             i++;
         }
         throw new RuntimeException("No matching tile found!");
+    }
+
+    public boolean isDrawable() {
+        return textureOrEntity instanceof Texture;
+    }
+
+    public Texture getTexture() {
+        if (this.isDrawable()) {
+            return (Texture) textureOrEntity;
+        } else {
+            return null;
+        }
+    }
+
+    private Class<? extends Entity> getEntityClass() {
+        if (!(textureOrEntity instanceof Class<?> cls)) {
+            return null;
+        }
+
+        if (!Entity.class.isAssignableFrom(cls)) {
+            return null;
+        }
+
+        @SuppressWarnings("unchecked")
+        Class<? extends Entity> entityClass = (Class<? extends Entity>) cls;
+
+        return entityClass;
+    }
+
+    public Entity createEntity(Vector2 pos) {
+        var entity_class = getEntityClass();
+        if (entity_class == null) {
+            return null;
+        }
+        try {
+            var constructor = entity_class.getConstructor(Vector2.class);
+            return constructor.newInstance(pos);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

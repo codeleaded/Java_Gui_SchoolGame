@@ -71,23 +71,36 @@ public class ImGuiRenderer implements IRenderer {
         if (state.debug.showWorldedit.get()) {
             ImGui.setNextWindowPos(new ImVec2(viewport.getPosX() + viewport.getWorkSizeX() - 230, viewport.getPosY()), ImGuiCond.Once);
             if (ImGui.begin("World Editor", null, ImGuiWindowFlags.AlwaysAutoResize)) {
+                ImGui.text("TILES");
+
                 var selected = state.debug.selectedTile;
 
                 int i = 0;
                 for (Tile t : Tile.values()) {
-                    if (i % 2 == 1) {
+                    if (i == 0) {
+                        i++;
+                        continue;
+                    }
+                    if (i % 2 == 0) {
                         ImGui.sameLine();
                     }
 
                     ImGui.pushID(i);
 
-                    if (ImGui.selectable(t.toString(), t == selected, 0, new ImVec2(100, 12))) {
+                    if (ImGui.selectable(t.toString().toLowerCase(), t == selected, 0, new ImVec2(100, 12))) {
                         state.debug.selectedTile = t;
                     }
 
                     ImGui.popID();
                     i++;
                 }
+
+                ImGui.separator();
+
+                ImGui.text("KEYBINDS");
+                ImGui.text("Left MB: insert Tile");
+                ImGui.text("Middle MB: copy Tile");
+                ImGui.text("Right MB: remove Tile");
 
                 ImGui.separator();
 
