@@ -3,7 +3,6 @@ package de.schoolgame.state;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import de.schoolgame.utils.DebugUtils;
-import de.schoolgame.world.entities.Player;
 
 public class GameInputProcessor implements InputProcessor {
     private int lastMouseButton = Input.Buttons.LEFT;
@@ -14,11 +13,18 @@ public class GameInputProcessor implements InputProcessor {
 
         return switch (keycode) {
             case Input.Keys.A, Input.Keys.LEFT -> {
-                state.player.setPlayerState(Player.PlayerState.MOVING_LEFT);
+                state.player.velocity.x = -100;
                 yield true;
             }
             case Input.Keys.D, Input.Keys.RIGHT -> {
-                state.player.setPlayerState(Player.PlayerState.MOVING_RIGHT);
+                state.player.velocity.x = 100;
+                yield true;
+            }
+            case Input.Keys.W, Input.Keys.UP -> {
+                if (!state.player.jumping) {
+                    state.player.jumping = true;
+                    state.player.velocity.y += 200;
+                }
                 yield true;
             }
             default -> false;
@@ -31,14 +37,14 @@ public class GameInputProcessor implements InputProcessor {
 
         return switch (keycode) {
             case Input.Keys.A, Input.Keys.LEFT -> {
-                if (state.player.getPlayerState() == Player.PlayerState.MOVING_LEFT) {
-                    state.player.setPlayerState(Player.PlayerState.IDLE);
+                if (state.player.velocity.x < 0) {
+                    state.player.velocity.x = 0;
                 }
                 yield true;
             }
             case Input.Keys.D, Input.Keys.RIGHT -> {
-                if (state.player.getPlayerState() == Player.PlayerState.MOVING_RIGHT) {
-                    state.player.setPlayerState(Player.PlayerState.IDLE);
+                if (state.player.velocity.x > 0) {
+                    state.player.velocity.x = 0;
                 }
                 yield true;
             }
@@ -86,15 +92,21 @@ public class GameInputProcessor implements InputProcessor {
         var state = GameState.INSTANCE;
         if (state.debug.enabled && state.debug.showWorldedit.get()) {
             int[] pos = DebugUtils.getTilePosFromScreenPos(screenX, screenY);
-            if (lastMouseButton == Input.Buttons.LEFT) {
-                state.world.removeAt(pos[0], pos[1]);
-                state.world.addAt(pos[0], pos[1], state.debug.selectedTile);
-                return true;
-            } else if (lastMouseButton == Input.Buttons.RIGHT) {
-                state.world.removeAt(pos[0], pos[1]);
-                return true;
-            } else if (lastMouseButton == Input.Buttons.MIDDLE) {
-                state.debug.selectedTile = state.world.at(pos[0], pos[1]);
+            int x = pos[0];
+            int y = pos[1];
+            try {
+                if (lastMouseButton == Input.Buttons.LEFT) {
+                    state.world.removeAt(x, y);
+                    state.world.addAt(x, y, state.debug.selectedTile);
+                    return true;
+                } else if (lastMouseButton == Input.Buttons.RIGHT) {
+                    state.world.removeAt(x, y);
+                    return true;
+                } else if (lastMouseButton == Input.Buttons.MIDDLE) {
+                    state.debug.selectedTile = state.world.at(x, y);
+                }
+            } catch (ArrayIndexOutOfBoundsException ignored) {
+
             }
         }
         return false;

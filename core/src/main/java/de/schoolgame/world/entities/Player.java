@@ -7,25 +7,25 @@ import com.badlogic.gdx.math.Vector2;
 import de.schoolgame.world.Entity;
 
 public class Player extends Entity {
-    private PlayerState playerState;
     private static final Texture playerTexture = new Texture(Gdx.files.internal("entities/player/player.png"));
+    public Vector2 velocity;
+    public boolean jumping;
 
     public Player() {
         super(new Vector2(320, 180));
-        playerState = PlayerState.IDLE;
+        velocity = new Vector2(0, 0);
     }
 
     @Override
     public void update() {
-        switch (playerState) {
-            case IDLE:
-                break;
-            case MOVING_LEFT:
-                position.x -= 500 * Gdx.graphics.getDeltaTime();
-                break;
-            case MOVING_RIGHT:
-                position.x += 500 * Gdx.graphics.getDeltaTime();
-                break;
+        position.x += velocity.x * Gdx.graphics.getDeltaTime();
+        position.y += velocity.y * Gdx.graphics.getDeltaTime();
+        if (position.y <= 0) {
+            velocity.y = 0;
+            jumping = false;
+            position.y = 0;
+        } else {
+            velocity.y -= 100 * Gdx.graphics.getDeltaTime();
         }
     }
 
@@ -39,17 +39,4 @@ public class Player extends Entity {
         playerTexture.dispose();
     }
 
-    public void setPlayerState(PlayerState playerState) {
-        this.playerState = playerState;
-    }
-
-    public PlayerState getPlayerState() {
-        return playerState;
-    }
-
-    public enum PlayerState {
-        IDLE,
-        MOVING_LEFT,
-        MOVING_RIGHT,
-    }
 }
