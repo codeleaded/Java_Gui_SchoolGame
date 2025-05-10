@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import de.schoolgame.state.GameState;
-import de.schoolgame.world.Entity;
 import de.schoolgame.world.World;
 
 public class WorldRenderer implements IRenderer {
@@ -35,10 +34,10 @@ public class WorldRenderer implements IRenderer {
         final int tileSize = world.getTileSize();
 
         final int start_col = Math.max(0, (int) bounds.x / tileSize);
-        final int end_col = Math.min(width, (int) (bounds.x + bounds.width) / tileSize);
+        final int end_col = Math.min(width, (int) ((bounds.x + bounds.width) / tileSize) + 1);
 
         final int start_row =  Math.max(0, (int) bounds.y / tileSize);
-        final int end_row = Math.min(height, (int) (bounds.y + bounds.height) / tileSize);
+        final int end_row = Math.min(height, (int) ((bounds.y + bounds.height) / tileSize) + 1);
 
         batch.begin();
         float y = start_row * tileSize;
@@ -60,9 +59,13 @@ public class WorldRenderer implements IRenderer {
             y += tileSize;
         }
 
-        for (Entity e : GameState.INSTANCE.world.getEntities()) {
-            e.render(batch);
-        }
+        world.getEntities()
+            .stream()
+            .filter(e ->
+                e.getPosition().x >= bounds.x - tileSize && e.getPosition().x <= bounds.x + bounds.width
+                && e.getPosition().y >= bounds.y - tileSize && e.getPosition().y <= bounds.y + bounds.height
+            )
+            .forEach(e -> e.render(batch));
 
         GameState.INSTANCE.player.render(batch);
         batch.end();
