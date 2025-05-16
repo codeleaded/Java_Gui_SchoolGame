@@ -21,9 +21,8 @@ public class GameInputProcessor implements InputProcessor {
                 yield true;
             }
             case Input.Keys.W, Input.Keys.UP -> {
-                if (!state.player.jumping) {
-                    state.player.jumping = true;
-                    state.player.velocity.y += 200;
+                if (state.player.jumpable) {
+                    state.player.velocity.y = 5;
                 }
                 yield true;
             }

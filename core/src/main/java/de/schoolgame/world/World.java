@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import de.schoolgame.utils.FileUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -86,6 +85,8 @@ public class World {
     }
 
     public Tile at(int x, int y) {
+        if(x < 0.0f || x >= tiles.length)       return Tile.NONE;
+        if(y < 0.0f || y >= tiles[x].length)    return Tile.NONE;
         return tiles[x][y];
     }
 
