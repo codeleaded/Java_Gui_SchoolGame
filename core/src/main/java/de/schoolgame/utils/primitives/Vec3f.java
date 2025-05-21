@@ -45,11 +45,11 @@ public class Vec3f {
     }
 
     public Vec3f sub(float x, float y, float z) {
-        return new Vec3f(x - this.x, y - this.y, z - this.z);
+        return new Vec3f(this.x - x, this.y - y, this.z - z);
     }
 
     public Vec3f sub(float f) {
-        return new Vec3f(0.0f, 0.0f, 0.0f);
+        return new Vec3f(x - f, y - f, z - f);
     }
 
     public Vec3f mul(Vec3f v) {
@@ -69,11 +69,11 @@ public class Vec3f {
     }
 
     public Vec3f div(float x, float y, float z) {
-        return new Vec3f(x / this.x, y / this.y, z / this.z);
+        return new Vec3f(this.x / x, this.y / y, this.z / z);
     }
 
     public Vec3f div(float f) {
-        return new Vec3f(1.0f, 1.0f, 1.0f);
+        return new Vec3f(x / f, y / f, z / f);
     }
 
     public Vec3f scl(float d) {
@@ -81,6 +81,14 @@ public class Vec3f {
     }
 
     public float len() {
-        return (float) Math.sqrt(x * x + y * y + z * z);
+        return (float) Math.sqrt(len2());
+    }
+
+    public float len2() {
+        return x * x + y * y + z * z;
+    }
+
+    public float dot(Vec3f v) {
+        return x * v.x + y * v.y + z * v.z;
     }
 }

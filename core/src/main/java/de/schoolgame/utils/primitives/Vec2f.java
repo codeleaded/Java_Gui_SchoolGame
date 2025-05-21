@@ -31,11 +31,11 @@ public class Vec2f {
     }
 
     public Vec2f sub(float x, float y) {
-        return new Vec2f(x - this.x, y - this.y);
+        return new Vec2f(this.x - x, this.y - y);
     }
 
     public Vec2f sub(float f) {
-        return new Vec2f(0.0f, 0.0f);
+        return new Vec2f(x - f, y - f);
     }
 
     public Vec2f mul(Vec2f vec) {
@@ -55,11 +55,11 @@ public class Vec2f {
     }
 
     public Vec2f div(float x, float y) {
-        return new Vec2f(x / this.x, y / this.y);
+        return new Vec2f(this.x / x, this.y / y);
     }
 
     public Vec2f div(float f) {
-        return new Vec2f(1.0f, 1.0f);
+        return new Vec2f(x / f, y / f);
     }
 
     public Vec2f scl(float d) {

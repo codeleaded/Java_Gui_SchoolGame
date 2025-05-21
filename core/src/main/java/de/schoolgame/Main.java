@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import de.schoolgame.render.Renderer;
 import de.schoolgame.state.GameInputProcessor;
 import de.schoolgame.state.GameState;
+import de.schoolgame.world.World;
 
 public class Main extends ApplicationAdapter {
     Renderer renderer;
@@ -16,11 +17,13 @@ public class Main extends ApplicationAdapter {
         Gdx.app.log("INFO", "Press \"L\" to open/close ImGui!");
         renderer = new Renderer();
         Gdx.input.setInputProcessor(inputProcessor = new GameInputProcessor());
+        GameState.INSTANCE.world = new World("worlds/test.dat");
     }
 
     @Override
     public void render() {
         var state = GameState.INSTANCE;
+
         state.player.update();
 
         renderer.render();

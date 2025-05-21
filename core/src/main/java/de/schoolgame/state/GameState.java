@@ -9,7 +9,7 @@ public class GameState {
 
     public DebugState debug = new DebugState();
 
-    public World world = new World("worlds/test.dat");
+    public World world = null;
     public Camera camera = new Camera();
     public Player player = new Player();
 

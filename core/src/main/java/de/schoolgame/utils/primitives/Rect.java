@@ -37,10 +37,10 @@ public class Rect {
 	}
 
     public boolean Overlap(Rect r){
-		if(this.p.x<=r.p.x - this.l.x)  return false;
-		if(this.p.x>=r.p.x + r.l.x)     return false;
-		if(this.p.y<=r.p.y - this.l.y)  return false;
-        return !(this.p.y >= r.p.y + r.l.y);
+        if (this.p.x < r.p.x - this.l.x) return false;
+        if (this.p.x > r.p.x + r.l.x) return false;
+        if (this.p.y < r.p.y - this.l.y) return false;
+        return !(this.p.y > r.p.y + r.l.y);
     }
 
 	public int StaticCollisionSolver(Rect r){

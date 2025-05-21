@@ -18,12 +18,16 @@ public class Player extends Entity {
     public Vec2f acceleration;
     public boolean jumpable;
 
-    public Player() {
-        super(new Vec2f(4, 4)); //TODO start pos
+    public Player(Vec2f pos) {
+        super(pos);
 
-        length = new Vec2f(1.0f, 1.0f);
+        length = new Vec2f(0.95f, 0.95f);
         velocity = new Vec2f(0.0f, 0.0f);
         acceleration = new Vec2f(0.0f, -10.0f);
+    }
+
+    public Player() {
+        this(new Vec2f(4, 4));
     }
 
     Rect getRect(){
@@ -44,12 +48,10 @@ public class Player extends Entity {
         var state = GameState.INSTANCE;
         Rect myrect = getRect();
 
-        state.world.getEntities().removeIf(e -> e instanceof Coin && myrect.Overlap(new Rect(e.getPosition(), new Vec2f(1.0f, 1.0f))));
-
         ArrayList<Rect> rects = new ArrayList<>();
 
         var searchX = Math.max(1, length.x);
-        var searchY = Math.max(1, velocity.y);
+        var searchY = Math.max(1, length.y);
 
         for (float x = -2.0f * searchX; x < 2 * searchX; x += 1.0f) {
             for (float y = -2 * searchY; y < 2 * searchY; y += 1.0f) {
@@ -83,6 +85,8 @@ public class Player extends Entity {
 		}
 
         position = myrect.p;
+
+        state.world.getEntities().removeIf(e -> e instanceof Coin && myrect.Overlap(new Rect(e.getPosition(), new Vec2f(0.9f, 0.9f))));
     }
 
     @Override

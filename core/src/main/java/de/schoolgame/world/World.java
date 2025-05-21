@@ -2,8 +2,10 @@ package de.schoolgame.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import de.schoolgame.state.GameState;
 import de.schoolgame.utils.FileUtils;
 import de.schoolgame.utils.primitives.Vec2f;
+import de.schoolgame.world.entities.Player;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,7 +52,11 @@ public class World {
                     tiles[x][y] = tile;
                     var e = tile.createEntity(new Vec2f(x, y));
                     if (e != null) {
-                        entities.add(e);
+                        if (e instanceof Player) {
+                            GameState.INSTANCE.player = (Player) e;
+                        } else {
+                            entities.add(e);
+                        }
                     }
                 }
             }
@@ -97,7 +103,11 @@ public class World {
         tiles[x][y] = tile;
         var e = tile.createEntity(new Vec2f(x, y));
         if (e != null) {
-            entities.add(e);
+            if (e instanceof Player) {
+                GameState.INSTANCE.player = (Player) e;
+            } else {
+                entities.add(e);
+            }
         }
     }
 

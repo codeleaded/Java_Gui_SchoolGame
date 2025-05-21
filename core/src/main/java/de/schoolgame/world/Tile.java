@@ -3,11 +3,13 @@ package de.schoolgame.world;
 import com.badlogic.gdx.graphics.Texture;
 import de.schoolgame.utils.primitives.Vec2f;
 import de.schoolgame.world.entities.Coin;
+import de.schoolgame.world.entities.Player;
 
 public enum Tile {
     NONE(null),
     TEST_TILE(new Texture("tiles/test.png")),
     COIN(Coin.class),
+    PLAYER(Player.class),
     ;
 
     private final Object textureOrEntity;
