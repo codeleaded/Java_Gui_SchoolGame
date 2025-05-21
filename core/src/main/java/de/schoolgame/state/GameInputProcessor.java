@@ -13,16 +13,16 @@ public class GameInputProcessor implements InputProcessor {
 
         return switch (keycode) {
             case Input.Keys.A, Input.Keys.LEFT -> {
-                state.player.velocity.x = -100;
+                state.player.velocity.x = -5;
                 yield true;
             }
             case Input.Keys.D, Input.Keys.RIGHT -> {
-                state.player.velocity.x = 100;
+                state.player.velocity.x = 5;
                 yield true;
             }
             case Input.Keys.W, Input.Keys.UP, Input.Keys.SPACE -> {
                 if (state.player.jumpable) {
-                    state.player.velocity.y = 5;
+                    state.player.velocity.y = 10;
                 }
                 yield true;
             }

@@ -23,7 +23,7 @@ public class Camera {
 
     public void update() {
         var state = GameState.INSTANCE;
-        position = new Vec3f(state.player.getPosition(), 0);
+        position = new Vec3f(state.player.getPosition().mul(state.world.getTileSize()), 0);
         position.x = Math.max(position.x, 320);
         position.x = Math.min(position.x, state.world.getWidth() * state.world.getTileSize() - 320);
 

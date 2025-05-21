@@ -69,4 +69,9 @@ public class Vec2f {
     public float len() {
         return (float) Math.sqrt(x * x + y * y);
     }
+
+    @Override
+    public String toString() {
+        return "Vec2f [x=" + x + ", y=" + y + "]";
+    }
 }

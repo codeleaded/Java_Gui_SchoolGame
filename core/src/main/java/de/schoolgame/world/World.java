@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 public class World {
     private final Tile[][] tiles;
@@ -104,7 +103,7 @@ public class World {
 
     public void removeAt(int x, int y) {
         tiles[x][y] = Tile.NONE;
-        entities.removeIf(e -> Objects.equals(e.position, new Vec2f(x, y)));
+        entities.removeIf(e -> (int) e.position.x == x && (int) e.position.y == y);
     }
 
     public Collection<Entity> getEntities() {

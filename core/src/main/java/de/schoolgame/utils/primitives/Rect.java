@@ -60,13 +60,12 @@ public class Rect {
                     return RIGHT;
 				}
 			}else {
-				this.v.y = 0.0f;
 				if(d.y > 0) {
 					this.p.y = ex.p.y - this.l.y/2;
-                    return TOP;
+                    return BOTTOM;
 				}else {
 					this.p.y = ex.p.y + ex.l.y - this.l.y/2;
-                    return BOTTOM;
+                    return TOP;
 				}
 			}
 		}

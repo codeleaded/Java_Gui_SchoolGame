@@ -3,7 +3,6 @@ package de.schoolgame.render;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
-
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.World;
 
@@ -63,8 +62,8 @@ public class WorldRenderer implements IRenderer {
         world.getEntities()
             .stream()
             .filter(e ->
-                e.getPosition().x >= bounds.x - tileSize && e.getPosition().x <= bounds.x + bounds.width &&
-                e.getPosition().y >= bounds.y - tileSize && e.getPosition().y <= bounds.y + bounds.height
+                    e.getPixelPosition().x >= bounds.x - tileSize && e.getPixelPosition().x <= bounds.x + bounds.width &&
+                            e.getPixelPosition().y >= bounds.y - tileSize && e.getPixelPosition().y <= bounds.y + bounds.height
             )
             .forEach(e -> e.render(batch));
 
