@@ -1,15 +1,16 @@
 package de.schoolgame.world.entities;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+
 import de.schoolgame.state.GameState;
 import de.schoolgame.utils.primitives.Rect;
 import de.schoolgame.utils.primitives.Vec2f;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.Tile;
-
-import java.util.ArrayList;
 
 public class Player extends Entity {
     private static final Texture playerTexture = new Texture(Gdx.files.internal("entities/player/player.png"));
@@ -70,8 +71,8 @@ public class Player extends Entity {
 
         for (Rect rect : rects) {
             int type = myrect.StaticCollisionSolver(rect);
-			if(type>0) {
-				if(type==4) jumpable = true;
+			if(type!=Rect.NONE) {
+				if(type==Rect.TOP) jumpable = true;
 			}
 		}
 

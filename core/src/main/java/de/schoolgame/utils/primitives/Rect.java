@@ -4,6 +4,12 @@ import static java.lang.Math.abs;
 
 @SuppressWarnings("unused")
 public class Rect {
+    public static final int NONE    = 0;
+    public static final int TOP     = 1;
+    public static final int BOTTOM  = 2;
+    public static final int LEFT    = 3;
+    public static final int RIGHT   = 4;
+
     public Vec2f p;
     public Vec2f l;
     public Vec2f v;
@@ -48,22 +54,22 @@ public class Rect {
 			if(abs(d.x) > abs(d.y)) {
 				if(d.x > 0) {
 					this.p.x = ex.p.x - this.l.x/2;
-                    return 1;
+                    return LEFT;
 				}else {
 					this.p.x = ex.p.x + ex.l.x - this.l.x/2;
-                    return 2;
+                    return RIGHT;
 				}
 			}else {
 				this.v.y = 0.0f;
 				if(d.y > 0) {
 					this.p.y = ex.p.y - this.l.y/2;
-                    return 3;
+                    return TOP;
 				}else {
 					this.p.y = ex.p.y + ex.l.y - this.l.y/2;
-                    return 4;
+                    return BOTTOM;
 				}
 			}
 		}
-		return 0;
+		return NONE;
 	}
 }
