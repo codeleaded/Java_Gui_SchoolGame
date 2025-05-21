@@ -1,45 +1,46 @@
-package de.schoolgame.world;
+package de.schoolgame.utils.primitives;
 
-import com.badlogic.gdx.math.Vector2;
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
 
+@SuppressWarnings("unused")
 public class Rect {
-    public Vector2 p;
-    public Vector2 l;
-    public Vector2 v;
+    public Vec2f p;
+    public Vec2f l;
+    public Vec2f v;
 
     public Rect(){
-        this.p = new Vector2(0.0f,0.0f);
-        this.l = new Vector2(0.0f,0.0f);
-        this.v = new Vector2(0.0f,0.0f);
+        this.p = new Vec2f(0.0f, 0.0f);
+        this.l = new Vec2f(0.0f, 0.0f);
+        this.v = new Vec2f(0.0f, 0.0f);
     }
-    public Rect(Vector2 p,Vector2 l){
+
+    public Rect(Vec2f p, Vec2f l) {
         this.p = p;
         this.l = l;
-        this.v = new Vector2(0.0f,0.0f);
+        this.v = new Vec2f(0.0f, 0.0f);
     }
-    public Rect(Vector2 p,Vector2 l,Vector2 v){
+
+    public Rect(Vec2f p, Vec2f l, Vec2f v) {
         this.p = p;
         this.l = l;
         this.v = v;
     }
 
-    public Vector2 Mid() {
-		return p.add(new Vector2(this.l.x * 0.5f,this.l.y * 0.5f));
+    public Vec2f Mid() {
+        return p.add(new Vec2f(this.l.x * 0.5f, this.l.y * 0.5f));
 	}
 
     public boolean Overlap(Rect r){
 		if(this.p.x<=r.p.x - this.l.x)  return false;
 		if(this.p.x>=r.p.x + r.l.x)     return false;
 		if(this.p.y<=r.p.y - this.l.y)  return false;
-		if(this.p.y>=r.p.y + r.l.y)     return false;
-		return true;
-	}
-	
+        return !(this.p.y >= r.p.y + r.l.y);
+    }
+
 	public int StaticCollisionSolver(Rect r){
 		if(Overlap(r)) {
-            Rect ex = new Rect(r.p.sub(new Vector2(this.l.x * 0.5f,this.l.y * 0.5f)),r.l.add(this.l));
-			Vector2 d = r.Mid().sub(this.Mid());
+            Rect ex = new Rect(r.p.sub(new Vec2f(this.l.x * 0.5f, this.l.y * 0.5f)), r.l.add(this.l));
+            Vec2f d = r.Mid().sub(this.Mid());
 
             d.x /= ex.l.x;
             d.y /= ex.l.y;

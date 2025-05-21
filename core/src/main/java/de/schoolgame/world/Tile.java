@@ -1,7 +1,7 @@
 package de.schoolgame.world;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector2;
+import de.schoolgame.utils.primitives.Vec2f;
 import de.schoolgame.world.entities.Coin;
 
 public enum Tile {
@@ -54,13 +54,13 @@ public enum Tile {
         return entityClass;
     }
 
-    public Entity createEntity(Vector2 pos) {
+    public Entity createEntity(Vec2f pos) {
         var entity_class = getEntityClass();
         if (entity_class == null) {
             return null;
         }
         try {
-            var constructor = entity_class.getConstructor(Vector2.class);
+            var constructor = entity_class.getConstructor(Vec2f.class);
             return constructor.newInstance(pos);
         } catch (Exception e) {
             throw new RuntimeException(e);

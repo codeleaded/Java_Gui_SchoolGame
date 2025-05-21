@@ -2,11 +2,15 @@ package de.schoolgame.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.math.Vector2;
 import de.schoolgame.utils.FileUtils;
+import de.schoolgame.utils.primitives.Vec2f;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 public class World {
     private final Tile[][] tiles;
@@ -45,7 +49,7 @@ public class World {
                 for (int y = 0; y < height; y++) {
                     var tile = Tile.values()[stream.read()];
                     tiles[x][y] = tile;
-                    var e = tile.createEntity(new Vector2(x * tileSize, y * tileSize));
+                    var e = tile.createEntity(new Vec2f(x, y));
                     if (e != null) {
                         entities.add(e);
                     }
@@ -92,7 +96,7 @@ public class World {
 
     public void addAt(int x, int y, Tile tile) {
         tiles[x][y] = tile;
-        var e = tile.createEntity(new Vector2(x * tileSize, y * tileSize));
+        var e = tile.createEntity(new Vec2f(x, y));
         if (e != null) {
             entities.add(e);
         }
@@ -100,7 +104,7 @@ public class World {
 
     public void removeAt(int x, int y) {
         tiles[x][y] = Tile.NONE;
-        entities.removeIf(e -> Objects.equals(e.position, new Vector2(x * tileSize, y * tileSize)));
+        entities.removeIf(e -> Objects.equals(e.position, new Vec2f(x, y)));
     }
 
     public Collection<Entity> getEntities() {

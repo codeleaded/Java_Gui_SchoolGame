@@ -62,8 +62,8 @@ public class WorldRenderer implements IRenderer {
         world.getEntities()
             .stream()
             .filter(e ->
-                e.getPosition().x >= bounds.x - tileSize && e.getPosition().x <= bounds.x + bounds.width
-                && e.getPosition().y >= bounds.y - tileSize && e.getPosition().y <= bounds.y + bounds.height
+                e.getPixelPosition().x >= bounds.x - tileSize && e.getPixelPosition().x <= bounds.x + bounds.width
+                    && e.getPixelPosition().y >= bounds.y - tileSize && e.getPixelPosition().y <= bounds.y + bounds.height
             )
             .forEach(e -> e.render(batch));
 
