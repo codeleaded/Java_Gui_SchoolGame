@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics;
 import de.schoolgame.state.GameState;
-import de.schoolgame.utils.FileUtils;
 import de.schoolgame.world.Tile;
 import imgui.ImGui;
 import imgui.ImGuiIO;
@@ -13,9 +12,6 @@ import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class ImGuiRenderer implements IRenderer {
     private static ImGuiImplGlfw imGuiGlfw;
@@ -105,14 +101,7 @@ public class ImGuiRenderer implements IRenderer {
                 ImGui.separator();
 
                 if (ImGui.button("Save World")) {
-                    byte [] world = state.world.serialize();
-                    try {
-                        FileOutputStream fos = new FileOutputStream(FileUtils.getSaveFile());
-                        fos.write(world);
-                        fos.close();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    state.writeSave();
                 }
             }
             ImGui.end();
