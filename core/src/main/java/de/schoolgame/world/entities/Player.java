@@ -54,7 +54,7 @@ public class Player extends Entity {
 
                 if(sy>=0 && sy<state.world.getHeight() && sx>=0 && sx<state.world.getWidth()) {
 					Tile b = state.world.at(sx,sy);
-					if(b!=Tile.NONE) {
+					if(b!=Tile.NONE){
                         rects.add(new Rect(new Vec2f(sx, sy), new Vec2f(1.0f, 1.0f)));
 					}
 				}
