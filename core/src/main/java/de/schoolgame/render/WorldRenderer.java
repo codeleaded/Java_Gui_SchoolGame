@@ -2,26 +2,24 @@ package de.schoolgame.render;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
 import de.schoolgame.state.GameState;
+import de.schoolgame.utils.primitives.Rect;
+import de.schoolgame.utils.primitives.Vec2i;
 import de.schoolgame.world.World;
 
 public class WorldRenderer implements IRenderer {
     private final Batch batch;
-    private final Rectangle bounds;
+    private Rect bounds;
 
     public WorldRenderer() {
         this.batch = new SpriteBatch();
-        this.bounds = new Rectangle();
+        this.bounds = new Rect();
     }
 
     public void setView(Camera camera) {
-        float width = camera.viewWidth * camera.zoom;
-        float height = camera.viewHeight * camera.zoom;
+        var pos = camera.position.toVec2f().sub(camera.viewSize.toVec2f().mul(camera.zoom).div(2));
 
-        this.bounds.set(camera.position.x - (width / 2),
-            camera.position.y - (height / 2),
-            camera.viewWidth, camera.viewHeight);
+        this.bounds = new Rect(pos, camera.viewSize.toVec2f());
 
         batch.setProjectionMatrix(camera.viewProjectionMatrix);
     }
@@ -29,22 +27,21 @@ public class WorldRenderer implements IRenderer {
     @Override
     public void render() {
         final World world = GameState.INSTANCE.world;
-        final int width = world.getWidth();
-        final int height = world.getHeight();
         final int tileSize = world.getTileSize();
 
-        final int start_col = Math.max(0, (int) bounds.x / tileSize);
-        final int end_col = Math.min(width, (int) ((bounds.x + bounds.width) / tileSize) + 1);
-
-        final int start_row =  Math.max(0, (int) bounds.y / tileSize);
-        final int end_row = Math.min(height, (int) ((bounds.y + bounds.height) / tileSize) + 1);
+        Vec2i start = bounds.pos.toVec2i()
+            .div(tileSize)
+            .max(Vec2i.ZERO);
+        Vec2i end = bounds.end().toVec2i()
+            .div(tileSize).add(Vec2i.ONE)
+            .min(world.getSize());
 
         batch.begin();
-        float y = start_row * tileSize;
-        for (int row = start_row; row < end_row; row++) {
-            float x = start_col * tileSize;
-            for (int col = start_col; col < end_col; col++) {
-                var tile = world.at(col, row);
+        float y = start.y * tileSize;
+        for (int row = start.y; row < end.y; row++) {
+            float x = start.x * tileSize;
+            for (int col = start.x; col < end.x; col++) {
+                var tile = world.at(new Vec2i(col, row));
                 var texture = tile.getTexture();
 
                 if (texture == null) {
@@ -62,8 +59,10 @@ public class WorldRenderer implements IRenderer {
         world.getEntities()
             .stream()
             .filter(e ->
-                    e.getPixelPosition().x >= bounds.x - tileSize && e.getPixelPosition().x <= bounds.x + bounds.width &&
-                            e.getPixelPosition().y >= bounds.y - tileSize && e.getPixelPosition().y <= bounds.y + bounds.height
+                e.getPixelPosition().x >= bounds.pos.x - tileSize &&
+                e.getPixelPosition().y >= bounds.pos.y - tileSize &&
+                e.getPixelPosition().x <= bounds.pos.x + bounds.size.x &&
+                e.getPixelPosition().y <= bounds.pos.y + bounds.size.y
             )
             .forEach(e -> e.render(batch));
 

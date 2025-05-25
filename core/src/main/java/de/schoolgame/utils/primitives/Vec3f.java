@@ -1,7 +1,13 @@
 package de.schoolgame.utils.primitives;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 @SuppressWarnings("unused")
-public class Vec3f {
+public class Vec3f implements Serializable {
+    public static final Vec3f ZERO = new Vec3f(0, 0, 0);
+    public static final Vec3f ONE = new Vec3f(1, 1, 1);
+
     public float x;
     public float y;
     public float z;
@@ -90,5 +96,42 @@ public class Vec3f {
 
     public float dot(Vec3f v) {
         return x * v.x + y * v.y + z * v.z;
+    }
+
+    public Vec3f max(Vec3f v) {
+        return new Vec3f(Math.max(x, v.x), Math.max(y, v.y), Math.max(z, v.z));
+    }
+
+    public Vec3f min(Vec3f v) {
+        return new Vec3f(Math.min(x, v.x), Math.min(y, v.y), Math.min(z, v.z));
+    }
+
+    public Vec3f clamp(Vec3f min, Vec3f max) {
+        return new Vec3f(Math.clamp(x, min.x, max.x), Math.clamp(y, min.y, max.y), Math.clamp(z, min.z, max.z));
+    }
+
+    @Override
+    public String toString() {
+        return "Vec3f{" +
+            "x=" + x +
+            ", y=" + y +
+            ", z=" + z +
+            '}';
+    }
+
+    public Vec2f toVec2f() {
+        return new Vec2f(x, y);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Vec3f vec3f = (Vec3f) o;
+        return Float.compare(x, vec3f.x) == 0 && Float.compare(y, vec3f.y) == 0 && Float.compare(z, vec3f.z) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, z);
     }
 }

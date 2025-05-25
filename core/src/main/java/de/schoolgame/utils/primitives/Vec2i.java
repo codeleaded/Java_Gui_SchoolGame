@@ -1,7 +1,13 @@
 package de.schoolgame.utils.primitives;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 @SuppressWarnings("unused")
-public class Vec2i {
+public class Vec2i implements Serializable {
+    public static final Vec2i ZERO = new Vec2i(0, 0);
+    public static final Vec2i ONE = new Vec2i(1, 1);
+
     public int x, y;
 
     public Vec2i(int x, int y) {
@@ -66,12 +72,44 @@ public class Vec2i {
         return mul(d);
     }
 
+    public int len2() {
+        return x * x + y * y;
+    }
+
     public int len() {
-        return (int) Math.sqrt(x * x + y * y);
+        return (int) Math.sqrt(len2());
+    }
+
+    public Vec2i max(Vec2i vec) {
+        return new Vec2i(Math.max(x, vec.x), Math.max(y, vec.y));
+    }
+
+    public Vec2i min(Vec2i vec) {
+        return new Vec2i(Math.min(x, vec.x), Math.min(y, vec.y));
+    }
+
+    public Vec2i clamp(Vec2i min, Vec2i max) {
+        return new Vec2i(Math.clamp(x, min.x, max.x), Math.clamp(y, min.y, max.y));
     }
 
     @Override
     public String toString() {
         return "Vec2i [x=" + x + ", y=" + y + "]";
+    }
+
+    public Vec2f toVec2f() {
+        return new Vec2f(x, y);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Vec2i vec2i = (Vec2i) o;
+        return x == vec2i.x && y == vec2i.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 }

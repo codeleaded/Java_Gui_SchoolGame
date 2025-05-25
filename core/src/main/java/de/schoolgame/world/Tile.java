@@ -3,30 +3,19 @@ package de.schoolgame.world;
 import com.badlogic.gdx.graphics.Texture;
 import de.schoolgame.utils.primitives.Vec2f;
 import de.schoolgame.world.entities.Coin;
-import de.schoolgame.world.entities.Player;
+import de.schoolgame.world.entities.Roamer;
 
 public enum Tile {
     NONE(null),
     TEST_TILE(new Texture("tiles/test.png")),
     COIN(Coin.class),
-    PLAYER(Player.class),
+    ROAMER(Roamer.class),
     ;
 
     private final Object textureOrEntity;
 
     Tile(Object textureOrEntity) {
         this.textureOrEntity = textureOrEntity;
-    }
-
-    public byte index() {
-        byte i = 0;
-        for (Tile t : Tile.values()) {
-            if (t == this) {
-                return i;
-            }
-            i++;
-        }
-        throw new RuntimeException("No matching tile found!");
     }
 
     public boolean isDrawable() {

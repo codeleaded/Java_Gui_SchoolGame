@@ -3,26 +3,23 @@ package de.schoolgame.utils;
 import com.badlogic.gdx.Gdx;
 import de.schoolgame.render.Camera;
 import de.schoolgame.state.GameState;
+import de.schoolgame.utils.primitives.Vec2f;
+import de.schoolgame.utils.primitives.Vec2i;
 
 public class DebugUtils {
-    public static int[] getTilePosFromScreenPos(int screenX, int screenY) {
+    public static Vec2i getTilePosFromScreenPos(Vec2i screen) {
+        screen.y = (-screen.y) + Gdx.graphics.getHeight();
+
         Camera camera = GameState.INSTANCE.camera;
         final int tileSize = GameState.INSTANCE.world.getTileSize();
 
-        final int x_div = Gdx.graphics.getWidth() / camera.viewWidth;
-        final int y_div = Gdx.graphics.getHeight() / camera.viewHeight;
+        Vec2i div = new Vec2i(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())
+            .div(camera.viewSize);
 
-        screenY = (-screenY) + Gdx.graphics.getHeight();
+        Vec2f origin = camera.position.toVec2f().sub(camera.viewSize.div(2).toVec2f());
 
-        float originX = camera.position.x - ((float) camera.viewWidth / 2);
-        float originY = camera.position.y - ((float) camera.viewHeight / 2);
+        Vec2f world = origin.add(screen.div(div).toVec2f());
 
-        float worldX = ((float) screenX / x_div) + originX;
-        float worldY = ((float) screenY / y_div) + originY;
-
-        int tileX = (int) worldX / tileSize;
-        int tileY = (int) worldY / tileSize;
-
-        return new int[]{tileX, tileY};
+        return world.div(tileSize).toVec2i();
     }
 }

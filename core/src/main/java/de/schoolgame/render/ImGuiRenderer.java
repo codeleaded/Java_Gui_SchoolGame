@@ -100,6 +100,9 @@ public class ImGuiRenderer implements IRenderer {
 
                 ImGui.separator();
 
+                if (ImGui.button("Set Spawn")) {
+                    state.world.setSpawn(state.player.getPosition().toVec2i());
+                }
                 if (ImGui.button("Save World")) {
                     state.writeSave();
                 }

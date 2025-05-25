@@ -2,11 +2,11 @@ package de.schoolgame;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import de.schoolgame.render.Renderer;
 import de.schoolgame.state.GameInputProcessor;
 import de.schoolgame.state.GameState;
 import de.schoolgame.utils.Save;
+import de.schoolgame.world.Entity;
 
 public class Main extends ApplicationAdapter {
     Renderer renderer;
@@ -24,14 +24,11 @@ public class Main extends ApplicationAdapter {
     public void render() {
         var state = GameState.INSTANCE;
 
+        inputProcessor.update();
         state.player.update();
+        state.world.getEntities().forEach(Entity::update);
 
         renderer.render();
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
-            state.debug.enabled = !state.debug.enabled;
-            Gdx.app.log("DEBUG", state.debug.enabled ? "ImGui enabled" : "ImGui disabled");
-        }
     }
 
     @Override

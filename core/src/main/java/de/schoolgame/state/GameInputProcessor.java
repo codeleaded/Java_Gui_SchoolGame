@@ -1,54 +1,58 @@
 package de.schoolgame.state;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import de.schoolgame.utils.DebugUtils;
+import de.schoolgame.utils.primitives.Direction;
+import de.schoolgame.utils.primitives.Vec2i;
+
+import static com.badlogic.gdx.Input.Keys.*;
 
 public class GameInputProcessor implements InputProcessor {
     private int lastMouseButton = Input.Buttons.LEFT;
 
+    public void update() {
+        var state = GameState.INSTANCE;
+
+        var leftPressed = isKeyPressed(A) || isKeyPressed(LEFT);
+        var rightPressed = isKeyPressed(D) || isKeyPressed(RIGHT);
+        if (leftPressed != rightPressed) {
+            if (leftPressed) {
+                state.player.move(Direction.LEFT);
+            } else {
+                state.player.move(Direction.RIGHT);
+            }
+        } else {
+            state.player.move(Direction.NONE);
+        }
+    }
+
+    private boolean isKeyPressed(int keycode) {
+        return Gdx.input.isKeyPressed(keycode);
+    }
+
     @Override
     public boolean keyDown(int keycode) {
         var state = GameState.INSTANCE;
-
         return switch (keycode) {
-            case Input.Keys.A, Input.Keys.LEFT -> {
-                state.player.velocity.x = -5;
+            case L: {
+                state.debug.enabled = !state.debug.enabled;
+                Gdx.app.log("DEBUG", state.debug.enabled ? "ImGui enabled" : "ImGui disabled");
                 yield true;
             }
-            case Input.Keys.D, Input.Keys.RIGHT -> {
-                state.player.velocity.x = 5;
-                yield true;
+            case SPACE:
+            case UP:
+            case W: {
+                yield state.player.move(Direction.UP);
             }
-            case Input.Keys.W, Input.Keys.UP, Input.Keys.SPACE -> {
-                if (state.player.jumpable) {
-                    state.player.velocity.y = 10;
-                }
-                yield true;
-            }
-            default -> false;
+            default: yield false;
         };
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        var state = GameState.INSTANCE;
-
-        return switch (keycode) {
-            case Input.Keys.A, Input.Keys.LEFT -> {
-                if (state.player.velocity.x < 0) {
-                    state.player.velocity.x = 0;
-                }
-                yield true;
-            }
-            case Input.Keys.D, Input.Keys.RIGHT -> {
-                if (state.player.velocity.x > 0) {
-                    state.player.velocity.x = 0;
-                }
-                yield true;
-            }
-            default -> false;
-        };
+        return false;
     }
 
     @Override
@@ -90,19 +94,17 @@ public class GameInputProcessor implements InputProcessor {
     private boolean worldEdit(int screenX, int screenY) {
         var state = GameState.INSTANCE;
         if (state.debug.enabled && state.debug.showWorldedit.get()) {
-            int[] pos = DebugUtils.getTilePosFromScreenPos(screenX, screenY);
-            int x = pos[0];
-            int y = pos[1];
+            Vec2i pos = DebugUtils.getTilePosFromScreenPos(new Vec2i(screenX, screenY));
             try {
                 if (lastMouseButton == Input.Buttons.LEFT) {
-                    state.world.removeAt(x, y);
-                    state.world.addAt(x, y, state.debug.selectedTile);
+                    state.world.removeAt(pos);
+                    state.world.addAt(pos, state.debug.selectedTile);
                     return true;
                 } else if (lastMouseButton == Input.Buttons.RIGHT) {
-                    state.world.removeAt(x, y);
+                    state.world.removeAt(pos);
                     return true;
                 } else if (lastMouseButton == Input.Buttons.MIDDLE) {
-                    state.debug.selectedTile = state.world.at(x, y);
+                    state.debug.selectedTile = state.world.at(pos);
                 }
             } catch (ArrayIndexOutOfBoundsException ignored) {
 
