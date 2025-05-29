@@ -1,8 +1,8 @@
 package de.schoolgame.world;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.state.GameState;
-import de.schoolgame.utils.primitives.Vec2f;
 
 public abstract class Entity {
     protected Vec2f position;

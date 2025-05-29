@@ -3,9 +3,9 @@ package de.schoolgame.state;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import de.schoolgame.primitives.Direction;
+import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.utils.DebugUtils;
-import de.schoolgame.utils.primitives.Direction;
-import de.schoolgame.utils.primitives.Vec2i;
 
 import static com.badlogic.gdx.Input.Keys.*;
 

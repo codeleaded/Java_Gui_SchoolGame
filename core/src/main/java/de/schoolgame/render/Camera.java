@@ -2,9 +2,9 @@ package de.schoolgame.render;
 
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import de.schoolgame.primitives.Vec2i;
+import de.schoolgame.primitives.Vec3f;
 import de.schoolgame.state.GameState;
-import de.schoolgame.utils.primitives.Vec2i;
-import de.schoolgame.utils.primitives.Vec3f;
 
 public class Camera {
     public Vec3f position;

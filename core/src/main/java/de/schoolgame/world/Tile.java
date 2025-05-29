@@ -1,7 +1,7 @@
 package de.schoolgame.world;
 
 import com.badlogic.gdx.graphics.Texture;
-import de.schoolgame.utils.primitives.Vec2f;
+import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.world.entities.Coin;
 import de.schoolgame.world.entities.Roamer;
 

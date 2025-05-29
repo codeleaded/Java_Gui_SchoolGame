@@ -1,14 +1,20 @@
-package de.schoolgame.utils.primitives;
+package de.schoolgame.primitives;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-public class Vec2i implements Serializable {
-    public static final Vec2i ZERO = new Vec2i(0, 0);
+public class Vec2i implements Externalizable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+    public static final Vec2i ZERO = new Vec2i();
     public static final Vec2i ONE = new Vec2i(1, 1);
 
     public int x, y;
+
+    public Vec2i() {
+        x = y = 0;
+    }
 
     public Vec2i(int x, int y) {
         this.x = x;
@@ -111,5 +117,17 @@ public class Vec2i implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(x, y);
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(x);
+        out.writeInt(y);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException {
+        x = in.readInt();
+        y = in.readInt();
     }
 }

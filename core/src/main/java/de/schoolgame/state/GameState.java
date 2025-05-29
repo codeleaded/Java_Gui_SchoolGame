@@ -1,8 +1,8 @@
 package de.schoolgame.state;
 
+import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.Camera;
 import de.schoolgame.utils.Save;
-import de.schoolgame.utils.primitives.Vec2i;
 import de.schoolgame.world.World;
 import de.schoolgame.world.entities.Player;
 

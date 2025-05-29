@@ -1,7 +1,7 @@
 package de.schoolgame.world;
 
-import de.schoolgame.utils.primitives.Vec2f;
-import de.schoolgame.utils.primitives.Vec2i;
+import de.schoolgame.primitives.Vec2f;
+import de.schoolgame.primitives.Vec2i;
 
 import java.util.ArrayList;
 import java.util.Collection;

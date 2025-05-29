@@ -2,9 +2,9 @@ package de.schoolgame.render;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import de.schoolgame.primitives.Rect;
+import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
-import de.schoolgame.utils.primitives.Rect;
-import de.schoolgame.utils.primitives.Vec2i;
 import de.schoolgame.world.World;
 
 public class WorldRenderer implements IRenderer {

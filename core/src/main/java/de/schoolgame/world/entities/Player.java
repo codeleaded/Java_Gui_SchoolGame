@@ -3,13 +3,13 @@ package de.schoolgame.world.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import de.schoolgame.primitives.Direction;
+import de.schoolgame.primitives.Rect;
+import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.state.GameState;
-import de.schoolgame.utils.primitives.Direction;
-import de.schoolgame.utils.primitives.Rect;
-import de.schoolgame.utils.primitives.Vec2f;
 
-import static de.schoolgame.utils.primitives.Direction.DOWN;
-import static de.schoolgame.utils.primitives.Direction.UP;
+import static de.schoolgame.primitives.Direction.DOWN;
+import static de.schoolgame.primitives.Direction.UP;
 
 public class Player extends MovingEntity {
     private static final Texture playerTexture = new Texture(Gdx.files.internal("entities/player/player.png"));

@@ -3,11 +3,11 @@ package de.schoolgame.world.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import de.schoolgame.primitives.Direction;
+import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.state.GameState;
-import de.schoolgame.utils.primitives.Direction;
-import de.schoolgame.utils.primitives.Vec2f;
 
-import static de.schoolgame.utils.primitives.Direction.*;
+import static de.schoolgame.primitives.Direction.*;
 
 public class Roamer extends MovingEntity {
     private static final Texture roamerTexture = new Texture(Gdx.files.internal("entities/roamer/roamer.png"));

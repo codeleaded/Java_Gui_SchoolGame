@@ -1,6 +1,6 @@
 package de.schoolgame.render;
 
-import de.schoolgame.utils.primitives.Vec2f;
+import de.schoolgame.primitives.Vec2f;
 
 public class TransformedView {
     Vec2f Output;
@@ -23,7 +23,7 @@ public class TransformedView {
     public void Zoom(Vec2f m){
     	this.Scale = this.Scale.mul(m);
     }
-    
+
     public Vec2f ScreenWorldPos(Vec2f p){
     	p = p.div(this.Scale);
     	p = p.add(this.Offset);
@@ -77,7 +77,7 @@ public class TransformedView {
     	return xl;
     }
 
-    /* 
+    /*
      * State 0: Panning     [PRESSED]
      * State 1: Panning     [DOWN]
      * State 2: Zoom IN     [DOWN]
@@ -99,7 +99,7 @@ public class TransformedView {
 	    this.Offset = this.Offset.add(MouseWorld_BeforeZoom.sub(MouseWorld_AfterZoom));
     }
 
-    /* 
+    /*
      * State 0: Zoom IN     [DOWN]
      * State 1: Zoom OUT    [DOWN]
      */
@@ -107,7 +107,7 @@ public class TransformedView {
 	    if(States[2]) this.Scale = this.Scale.mul(1.01f);
 	    if(States[3]) this.Scale = this.Scale.mul(0.99f);
 
-	    Vec2f Out = ScreenWorldLength(this.Output);	
+	    Vec2f Out = ScreenWorldLength(this.Output);
 	    this.Offset = Focused.sub(Out.mul(0.5f));
     }
 }

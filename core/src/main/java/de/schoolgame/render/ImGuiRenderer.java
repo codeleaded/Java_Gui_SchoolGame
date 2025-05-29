@@ -101,7 +101,9 @@ public class ImGuiRenderer implements IRenderer {
                 ImGui.separator();
 
                 if (ImGui.button("Set Spawn")) {
-                    state.world.setSpawn(state.player.getPosition().toVec2i());
+                    var pos = state.player.getPosition().round();
+                    Gdx.app.log("ImGui", "Set Spawn to " + pos);
+                    state.world.setSpawn(pos);
                 }
                 if (ImGui.button("Save World")) {
                     state.writeSave();

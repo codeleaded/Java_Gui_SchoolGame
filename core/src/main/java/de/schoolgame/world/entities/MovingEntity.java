@@ -1,17 +1,17 @@
 package de.schoolgame.world.entities;
 
 import com.badlogic.gdx.Gdx;
+import de.schoolgame.primitives.Direction;
+import de.schoolgame.primitives.Rect;
+import de.schoolgame.primitives.Vec2f;
+import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
-import de.schoolgame.utils.primitives.Direction;
-import de.schoolgame.utils.primitives.Rect;
-import de.schoolgame.utils.primitives.Vec2f;
-import de.schoolgame.utils.primitives.Vec2i;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.Tile;
 
 import java.util.ArrayList;
 
-import static de.schoolgame.utils.primitives.Direction.NONE;
+import static de.schoolgame.primitives.Direction.NONE;
 
 public abstract class MovingEntity extends Entity {
     protected Vec2f size;

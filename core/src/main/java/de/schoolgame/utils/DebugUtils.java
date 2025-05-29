@@ -1,10 +1,10 @@
 package de.schoolgame.utils;
 
 import com.badlogic.gdx.Gdx;
+import de.schoolgame.primitives.Vec2f;
+import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.Camera;
 import de.schoolgame.state.GameState;
-import de.schoolgame.utils.primitives.Vec2f;
-import de.schoolgame.utils.primitives.Vec2i;
 
 public class DebugUtils {
     public static Vec2i getTilePosFromScreenPos(Vec2i screen) {

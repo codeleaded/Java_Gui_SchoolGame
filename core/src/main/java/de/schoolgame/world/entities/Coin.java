@@ -3,8 +3,8 @@ package de.schoolgame.world.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.render.Animation;
-import de.schoolgame.utils.primitives.Vec2f;
 import de.schoolgame.world.Entity;
 
 public class Coin extends Entity {

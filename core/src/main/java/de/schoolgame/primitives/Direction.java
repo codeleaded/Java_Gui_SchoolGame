@@ -1,4 +1,4 @@
-package de.schoolgame.utils.primitives;
+package de.schoolgame.primitives;
 
 import java.io.Serializable;
 

@@ -1,16 +1,16 @@
-package de.schoolgame.utils.primitives;
+package de.schoolgame.primitives;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-public class Vec3f implements Serializable {
-    public static final Vec3f ZERO = new Vec3f(0, 0, 0);
+public class Vec3f implements Externalizable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+    public static final Vec3f ZERO = new Vec3f();
     public static final Vec3f ONE = new Vec3f(1, 1, 1);
 
-    public float x;
-    public float y;
-    public float z;
+    public float x, y, z;
 
     public Vec3f() {
         x = y = z = 0;
@@ -133,5 +133,19 @@ public class Vec3f implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(x, y, z);
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeFloat(x);
+        out.writeFloat(y);
+        out.writeFloat(z);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException {
+        x = in.readFloat();
+        y = in.readFloat();
+        z = in.readFloat();
     }
 }

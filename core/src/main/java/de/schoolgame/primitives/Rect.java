@@ -1,13 +1,15 @@
-package de.schoolgame.utils.primitives;
+package de.schoolgame.primitives;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.Objects;
 
-import static de.schoolgame.utils.primitives.Direction.*;
+import static de.schoolgame.primitives.Direction.*;
 import static java.lang.Math.abs;
 
 @SuppressWarnings("unused")
-public class Rect implements Serializable {
+public class Rect implements Externalizable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     public Vec2f pos;
     public Vec2f size;
 
@@ -75,5 +77,17 @@ public class Rect implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(pos, size);
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeObject(pos);
+        out.writeObject(size);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        pos = (Vec2f) in.readObject();
+        size = (Vec2f) in.readObject();
     }
 }
