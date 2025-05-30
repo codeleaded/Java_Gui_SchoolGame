@@ -4,11 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.net.SocketHints;
+import de.schoolgame.network.packet.EchoPacket;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 
 public class NetworkTest {
     public NetworkTest() {
@@ -25,17 +25,16 @@ public class NetworkTest {
         Gdx.app.log("NetworkTest", "Connected to server");
 
         try (
-            OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream());
-            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            DataInputStream in = new DataInputStream(socket.getInputStream())
         ) {
-            String line = "Hello, server!";
-            writer.write(line + "\n");
-            writer.flush();
-            Gdx.app.log("NetworkTest", "Wrote to server: \"" + line + "\"");
+            PacketIO.writePacket(out, new EchoPacket("Hello World!"));
 
-            String response = reader.readLine();
-            Gdx.app.log("NetworkTest", "Received response: \"" + response + "\"");
-        } catch (IOException e) {
+            Packet p = PacketIO.readPacket(in);
+            if (p instanceof EchoPacket echoPacket) {
+                Gdx.app.log("NetworkTest", "Echo packet received: " + echoPacket.getMessage());
+            }
+        } catch (IOException | ReflectiveOperationException e) {
             Gdx.app.error("NetworkTest", "Error communicating to server", e);
         }
 

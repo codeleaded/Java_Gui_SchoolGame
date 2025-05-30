@@ -2,11 +2,13 @@ package de.schoolgame.server.thread;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.net.Socket;
+import de.schoolgame.network.Packet;
+import de.schoolgame.network.PacketIO;
+import de.schoolgame.network.packet.EchoPacket;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 
 public class ClientThread extends Thread {
     private final Socket client;
@@ -22,20 +24,15 @@ public class ClientThread extends Thread {
         Gdx.app.debug("ClientThread " + name, "Connected");
 
         try (
-            BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            OutputStreamWriter out = new OutputStreamWriter(client.getOutputStream())
+            DataInputStream in = new DataInputStream(client.getInputStream());
+            DataOutputStream out = new DataOutputStream(client.getOutputStream())
         ) {
-            String input;
-            while ((input = in.readLine()) != null) {
-                Gdx.app.debug("ClientThread " + name, "Got input: \"" + input + "\"");
-
-                String response = "Echo: " + input;
-                out.write(response + "\n");
-                Gdx.app.debug("ClientThread " + name, "Wrote: \"" + response + "\"");
-
-                out.flush();
+            Packet p = PacketIO.readPacket(in);
+            if (p instanceof EchoPacket echoPacket) {
+                echoPacket.setMessage("Echo: " + echoPacket.getMessage());
+                PacketIO.writePacket(out, echoPacket);
             }
-        } catch (IOException e) {
+        } catch (IOException | ReflectiveOperationException e) {
             Gdx.app.error("ClientThread " + name, "Error: " + e);
         } finally {
             client.dispose();
