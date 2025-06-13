@@ -98,6 +98,10 @@ public class Vec2f implements Externalizable {
         return new Vec2f(Math.clamp(x, min.x, max.x), Math.clamp(y, min.y, max.y));
     }
 
+    public Vec2f neg() {
+        return new Vec2f(-x, -y);
+    }
+
     @Override
     public String toString() {
         return "Vec2f [x=" + x + ", y=" + y + "]";

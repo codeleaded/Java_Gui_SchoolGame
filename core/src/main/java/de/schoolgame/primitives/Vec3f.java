@@ -110,6 +110,10 @@ public class Vec3f implements Externalizable {
         return new Vec3f(Math.clamp(x, min.x, max.x), Math.clamp(y, min.y, max.y), Math.clamp(z, min.z, max.z));
     }
 
+    public Vec3f neg() {
+        return new Vec3f(-x, -y, -z);
+    }
+
     @Override
     public String toString() {
         return "Vec3f{" +

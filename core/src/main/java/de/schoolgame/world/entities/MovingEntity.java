@@ -1,11 +1,7 @@
 package de.schoolgame.world.entities;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
-
 import de.schoolgame.primitives.Direction;
-import static de.schoolgame.primitives.Direction.NONE;
 import de.schoolgame.primitives.Rect;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
@@ -13,8 +9,17 @@ import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.Tile;
 
+import java.util.ArrayList;
+
+import static de.schoolgame.primitives.Direction.NONE;
+
 public abstract class MovingEntity extends Entity {
     public static final float GRAVITY = -25.0f;
+    public static final float GROUND_FRICTION = 20f;
+    public static final float AIR_FRICTION = 2f;
+
+    public static final Vec2f MAX_GROUND_VELOCITY = new Vec2f(6f, 20f);
+    public static final Vec2f MAX_AIR_VELOCITY = new Vec2f(10f, 20f);
 
     protected Vec2f size;
     protected Vec2f velocity;
