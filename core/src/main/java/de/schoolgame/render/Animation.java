@@ -1,27 +1,27 @@
 package de.schoolgame.render;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Animation {
     public enum Mode {
         Single, Loop
     }
 
-    private final Texture[] frames;
+    private final TextureRegion[] frames;
     private final Mode mode;
-    private float delay;
+    private final float delay;
 
-    public Animation(float delay, Texture[] frames) {
+    public Animation(float delay, TextureRegion[] frames) {
         this(delay, frames, Mode.Loop);
     }
 
-    public Animation(float delay, Texture[] frames, Mode mode) {
+    public Animation(float delay, TextureRegion[] frames, Mode mode) {
         this.mode = mode;
         this.frames = frames;
         this.delay = delay;
     }
 
-    public Texture currentFrame(float stateTime) {
+    public TextureRegion currentFrame(float stateTime) {
         int frameIndex = (int) (stateTime / delay);
 
         frameIndex = switch (mode) {
@@ -30,15 +30,5 @@ public class Animation {
         };
 
         return frames[frameIndex];
-    }
-
-    public void dispose() {
-        for (Texture frame : frames) {
-            frame.dispose();
-        }
-    }
-
-    public void setDelay(float delay) {
-        this.delay = delay;
     }
 }

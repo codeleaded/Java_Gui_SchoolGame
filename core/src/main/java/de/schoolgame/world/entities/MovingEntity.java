@@ -15,7 +15,7 @@ import static de.schoolgame.primitives.Direction.NONE;
 
 public abstract class MovingEntity extends Entity {
     public static final float GRAVITY = -25.0f;
-    public static final float GROUND_FRICTION = 20f;
+    public static final float GROUND_FRICTION = 2f;
     public static final float AIR_FRICTION = 2f;
 
     public static final Vec2f MAX_GROUND_VELOCITY = new Vec2f(6f, 20f);
@@ -24,10 +24,6 @@ public abstract class MovingEntity extends Entity {
     protected Vec2f size;
     protected Vec2f velocity;
     protected Vec2f acceleration;
-
-    public MovingEntity(Vec2f position) {
-        this(position, new Vec2f(1f, 1f));
-    }
 
     public MovingEntity(Vec2f position, Vec2f size) {
         super(position);

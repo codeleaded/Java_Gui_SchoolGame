@@ -33,10 +33,10 @@ public class Player extends MovingEntity {
                     yield true;
                 }
             case LEFT:
-                acceleration.x = -5;
+                acceleration.x = -10;
                 yield true;
             case RIGHT:
-                acceleration.x = 5;
+                acceleration.x = 10;
                 yield true;
             case NONE:
                 acceleration.x = 0;
@@ -46,6 +46,9 @@ public class Player extends MovingEntity {
 
     @Override
     public void update() {
+        onGround = false;
+        super.update();
+
         float friction = AIR_FRICTION;
         if (onGround) friction += GROUND_FRICTION;
 
@@ -58,8 +61,6 @@ public class Player extends MovingEntity {
 
         if(onJump) this.acceleration.y = GRAVITY * 0.33f;
         else       this.acceleration.y = GRAVITY;
-
-        super.update();
 
         if (onGround) {
             velocity = velocity.clamp(MAX_GROUND_VELOCITY.neg(), MAX_GROUND_VELOCITY);
@@ -74,7 +75,6 @@ public class Player extends MovingEntity {
 
     @Override
     void onCollision(Direction type) {
-        onGround = false;
         if (type == UP && velocity.y < 0.0f) velocity.y = 0.0f;
         if (type == DOWN && velocity.y > 0.0f) velocity.y = 0.0f;
         if (type == LEFT || type == RIGHT) velocity.x = 0.0f;
