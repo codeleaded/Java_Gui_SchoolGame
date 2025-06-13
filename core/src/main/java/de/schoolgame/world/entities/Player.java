@@ -3,20 +3,30 @@ package de.schoolgame.world.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+
 import de.schoolgame.primitives.Direction;
+import static de.schoolgame.primitives.Direction.DOWN;
+import static de.schoolgame.primitives.Direction.UP;
 import de.schoolgame.primitives.Rect;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.state.GameState;
 
-import static de.schoolgame.primitives.Direction.DOWN;
-import static de.schoolgame.primitives.Direction.UP;
-
 public class Player extends MovingEntity {
     private static final Texture playerTexture = new Texture(Gdx.files.internal("entities/player/player.png"));
     private boolean onGround;
+    private boolean onJump;
 
     public Player(Vec2f pos) {
         super(pos, new Vec2f(0.95f, 0.95f));
+        this.onGround = false;
+        this.onJump = false;
+    }
+
+    public boolean GetJump() {
+        return this.onJump;
+    }
+    public void SetJump(boolean jump) {
+        this.onJump = jump;
     }
 
     public boolean move(Direction direction) {
@@ -41,6 +51,9 @@ public class Player extends MovingEntity {
     @Override
     public void update() {
         onGround = false;
+
+        if(onJump) this.acceleration.y = GRAVITY * 0.33f;
+        else       this.acceleration.y = GRAVITY;
 
         super.update();
 
