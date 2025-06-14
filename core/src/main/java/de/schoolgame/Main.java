@@ -2,8 +2,7 @@ package de.schoolgame;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import de.schoolgame.network.NetworkTest;
-import de.schoolgame.render.Renderer;
+import de.schoolgame.render.renderer.Renderer;
 import de.schoolgame.state.GameInputProcessor;
 import de.schoolgame.state.GameState;
 import de.schoolgame.utils.Save;
@@ -19,7 +18,8 @@ public class Main extends ApplicationAdapter {
         renderer = new Renderer();
         Gdx.input.setInputProcessor(inputProcessor = new GameInputProcessor());
         GameState.INSTANCE.loadSave(Save.loadSave("worlds/save.dat"));
-        new NetworkTest();
+        //TODO networking
+        //new NetworkTest();
     }
 
     @Override

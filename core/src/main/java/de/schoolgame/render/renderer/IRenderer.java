@@ -1,4 +1,4 @@
-package de.schoolgame.render;
+package de.schoolgame.render.renderer;
 
 public interface IRenderer {
     void render();

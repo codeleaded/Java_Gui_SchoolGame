@@ -11,14 +11,15 @@ public class DebugUtils {
         screen.y = (-screen.y) + Gdx.graphics.getHeight();
 
         Camera camera = GameState.INSTANCE.camera;
+        Vec2f viewSize = camera.viewSize.toVec2f().mul(camera.zoom);
+
         final int tileSize = GameState.INSTANCE.world.getTileSize();
 
-        Vec2i div = new Vec2i(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())
-            .div(camera.viewSize);
+        Vec2f div = new Vec2i(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()).toVec2f().div(viewSize);
 
-        Vec2f origin = camera.position.toVec2f().sub(camera.viewSize.div(2).toVec2f());
+        Vec2f origin = camera.position.toVec2f().sub(viewSize.div(2));
 
-        Vec2f world = origin.add(screen.div(div).toVec2f());
+        Vec2f world = origin.add(screen.toVec2f().div(div));
 
         return world.div(tileSize).toVec2i();
     }

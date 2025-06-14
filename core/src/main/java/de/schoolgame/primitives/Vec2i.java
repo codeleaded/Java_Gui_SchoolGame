@@ -102,6 +102,19 @@ public class Vec2i implements Externalizable {
         return new Vec2i(-x, -y);
     }
 
+    public Vec2i[] around() {
+        return new Vec2i[] {
+            new Vec2i(x, y + 1),
+            new Vec2i(x + 1, y + 1),
+            new Vec2i(x + 1, y),
+            new Vec2i(x + 1, y - 1),
+            new Vec2i(x, y - 1),
+            new Vec2i(x - 1, y - 1),
+            new Vec2i(x - 1, y),
+            new Vec2i(x - 1, y + 1)
+        };
+    }
+
     @Override
     public String toString() {
         return "Vec2i [x=" + x + ", y=" + y + "]";

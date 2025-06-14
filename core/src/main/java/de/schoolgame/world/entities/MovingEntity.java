@@ -7,7 +7,7 @@ import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
-import de.schoolgame.world.Tile;
+import de.schoolgame.world.WorldObject;
 
 import java.util.ArrayList;
 
@@ -59,8 +59,8 @@ public abstract class MovingEntity extends Entity {
                 if (y < 0 || x < 0) continue;
                 if (y > worldSize.y || x > worldSize.x) continue;
 
-                Tile b = state.world.at(new Vec2i(x, y));
-                if (b != Tile.NONE && b.isDrawable()) {
+                WorldObject o = state.world.at(new Vec2i(x, y));
+                if (o != WorldObject.NONE && o.isTile()) {
                     rects.add(new Rect(new Vec2f(x, y), new Vec2f(1.0f, 1.0f)));
                 }
             }
@@ -84,7 +84,7 @@ public abstract class MovingEntity extends Entity {
 
     abstract void onCollision(Direction type);
 
-    protected Rect getRect(){
+    public Rect getRect(){
         return new Rect(position, size);
     }
 }

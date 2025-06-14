@@ -1,10 +1,10 @@
-package de.schoolgame.render;
+package de.schoolgame.render.renderer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics;
 import de.schoolgame.state.GameState;
-import de.schoolgame.world.Tile;
+import de.schoolgame.world.WorldObject;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.ImVec2;
@@ -69,10 +69,10 @@ public class ImGuiRenderer implements IRenderer {
             if (ImGui.begin("World Editor", null, ImGuiWindowFlags.AlwaysAutoResize)) {
                 ImGui.text("TILES");
 
-                var selected = state.debug.selectedTile;
+                var selected = state.debug.selectedWorldObject;
 
                 int i = 0;
-                for (Tile t : Tile.values()) {
+                for (WorldObject o : WorldObject.values()) {
                     if (i == 0) {
                         i++;
                         continue;
@@ -83,8 +83,8 @@ public class ImGuiRenderer implements IRenderer {
 
                     ImGui.pushID(i);
 
-                    if (ImGui.selectable(t.toString().toLowerCase(), t == selected, 0, new ImVec2(100, 12))) {
-                        state.debug.selectedTile = t;
+                    if (ImGui.selectable(o.toString().toLowerCase(), o == selected, 0, new ImVec2(100, 12))) {
+                        state.debug.selectedWorldObject = o;
                     }
 
                     ImGui.popID();
@@ -97,6 +97,7 @@ public class ImGuiRenderer implements IRenderer {
                 ImGui.text("Left MB: insert Tile");
                 ImGui.text("Middle MB: copy Tile");
                 ImGui.text("Right MB: remove Tile");
+                ImGui.text("Scroll: zoom in/out");
 
                 ImGui.separator();
 

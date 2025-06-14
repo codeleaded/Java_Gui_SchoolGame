@@ -2,31 +2,40 @@ package de.schoolgame.world;
 
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
+import de.schoolgame.render.texture.TileSet;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class World {
-    private final Tile[][] tiles;
+    private final WorldObject[][] worldObjects;
     private final List<Entity> entities;
 
     private Vec2i spawn;
     private final Vec2i size;
     private final int tileSize;
 
-    public World() {
-        this(new Tile[100][32], new Vec2i(100, 32), 32, new Vec2i(1, 1));
+    private final byte[][] connectionsCache;
 
-        for (int x = 0; x < 100; x++) {
-            for (int y = 0; y < 32; y++) {
-                tiles[x][y] = Tile.NONE;
+    public World() {
+        size = new Vec2i(100, 32);
+        spawn = new Vec2i(1, 1);
+        tileSize = 32;
+        entities = new ArrayList<>();
+        worldObjects = new WorldObject[size.x][size.y];
+        for (int x = 0; x < size.x; x++) {
+            for (int y = 0; y < size.y; y++) {
+                worldObjects[x][y] = WorldObject.NONE;
             }
         }
+
+        connectionsCache = new byte[size.x][size.y];
+        updateConnections();
     }
 
-    public World(Tile[][] tiles, Vec2i size, int tileSize, Vec2i spawn) {
-        this.tiles = tiles;
+    public World(WorldObject[][] worldObjects, Vec2i size, int tileSize, Vec2i spawn) {
+        this.worldObjects = worldObjects;
         this.size = size;
         this.tileSize = tileSize;
         this.entities = new ArrayList<>();
@@ -34,7 +43,7 @@ public class World {
 
         for (int x = 0; x < size.x; x++) {
             for (int y = 0; y < size.y; y++) {
-                var tile = tiles[x][y];
+                var tile = worldObjects[x][y];
                 if (tile == null) {
                     continue;
                 }
@@ -44,6 +53,9 @@ public class World {
                 }
             }
         }
+
+        connectionsCache = new byte[size.x][size.y];
+        updateConnections();
     }
 
     public void dispose() {
@@ -52,23 +64,65 @@ public class World {
         }
     }
 
-    public Tile at(Vec2i pos) {
-        if(pos.x < 0.0f || pos.x >= tiles.length)       return Tile.NONE;
-        if(pos.y < 0.0f || pos.y >= tiles[pos.x].length)    return Tile.NONE;
-        return tiles[pos.x][pos.y];
+    private boolean invalidPos(Vec2i pos) {
+        return pos.x < 0 || pos.x >= size.x || pos.y < 0 || pos.y >= size.y;
     }
 
-    public void addAt(Vec2i pos, Tile tile) {
-        tiles[pos.x][pos.y] = tile;
-        var e = tile.createEntity(pos.toVec2f());
-        if (e != null) {
-            entities.add(e);
+    public WorldObject at(Vec2i pos) {
+        if(invalidPos(pos)) return WorldObject.NONE;
+        return worldObjects[pos.x][pos.y];
+    }
+
+    public void updateConnectionsAt(Vec2i pos) {
+        connectionsCache[pos.x][pos.y] = connections(pos);
+        for (Vec2i p : pos.around()) {
+            if(invalidPos(p)) continue;
+            connectionsCache[p.x][p.y] = connections(p);
         }
     }
 
+    public byte connectionsAt(Vec2i pos) {
+        if(invalidPos(pos)) return TileSet.INVALID;
+        return connectionsCache[pos.x][pos.y];
+    }
+
+    public void addAt(Vec2i pos, WorldObject worldObject) {
+        if(invalidPos(pos)) return;
+        this.worldObjects[pos.x][pos.y] = worldObject;
+        var e = worldObject.createEntity(pos.toVec2f());
+        if (e != null) {
+            entities.add(e);
+        }
+        updateConnectionsAt(pos);
+    }
+
     public void removeAt(Vec2i pos) {
-        tiles[pos.x][pos.y] = Tile.NONE;
+        if(invalidPos(pos)) return;
+        worldObjects[pos.x][pos.y] = WorldObject.NONE;
         entities.removeIf(e -> e.position.toVec2i().equals(pos));
+        updateConnectionsAt(pos);
+    }
+
+    public void updateConnections() {
+        for (int x = 0; x < size.x; x++) {
+            for (int y = 0; y < size.y; y++) {
+                if (worldObjects[x][y].isTile()) {
+                    connectionsCache[x][y] = connections(new Vec2i(x, y));
+                } else {
+                    connectionsCache[x][y] = TileSet.INVALID;
+                }
+            }
+        }
+    }
+
+    private byte connections(Vec2i pos) {
+        if(invalidPos(pos)) return TileSet.INVALID;
+        byte result = 0;
+        Vec2i[] around = pos.around();
+        for (int i = 0; i < 8; i++) {
+            result |= at(around[i]).isTile() ? (byte) (1 << i) : 0;
+        }
+        return result;
     }
 
     public Collection<Entity> getEntities() {
@@ -83,8 +137,8 @@ public class World {
         return tileSize;
     }
 
-    public Tile[][] getTiles() {
-        return tiles;
+    public WorldObject[][] getTiles() {
+        return worldObjects;
     }
 
     public Vec2i getSpawn() {

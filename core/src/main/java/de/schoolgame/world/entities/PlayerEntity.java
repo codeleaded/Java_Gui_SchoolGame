@@ -10,12 +10,12 @@ import de.schoolgame.state.GameState;
 
 import static de.schoolgame.primitives.Direction.*;
 
-public class Player extends MovingEntity {
+public class PlayerEntity extends MovingEntity {
     private static final Texture playerTexture = new Texture(Gdx.files.internal("entities/player/player.png"));
     private boolean onGround;
     private boolean onJump;
 
-    public Player(Vec2f pos) {
+    public PlayerEntity(Vec2f pos) {
         super(pos, new Vec2f(0.95f, 0.95f));
         this.onGround = false;
         this.onJump = false;
@@ -70,7 +70,7 @@ public class Player extends MovingEntity {
 
         var state = GameState.INSTANCE;
         // Delete Coin
-        state.world.getEntities().removeIf(e -> e instanceof Coin && getRect().overlap(new Rect(e.getPosition(), new Vec2f(0.9f, 0.9f))));
+        state.world.getEntities().removeIf(e -> e instanceof CoinEntity && getRect().overlap(new Rect(e.getPosition(), new Vec2f(0.9f, 0.9f))));
     }
 
     @Override

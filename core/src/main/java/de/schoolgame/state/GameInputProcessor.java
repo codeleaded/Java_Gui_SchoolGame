@@ -59,7 +59,7 @@ public class GameInputProcessor implements InputProcessor {
             case UP:
             case W: {
                 state.player.setJump(false);
-                yield false;
+                yield true;
             }
             default: yield false;
         };
@@ -98,6 +98,11 @@ public class GameInputProcessor implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
+        var state = GameState.INSTANCE;
+        if (state.debug.enabled && amountY != 0) {
+            state.camera.zoom += amountY * 0.1f;
+            return true;
+        }
         return false;
     }
 
@@ -108,13 +113,13 @@ public class GameInputProcessor implements InputProcessor {
             try {
                 if (lastMouseButton == Input.Buttons.LEFT) {
                     state.world.removeAt(pos);
-                    state.world.addAt(pos, state.debug.selectedTile);
+                    state.world.addAt(pos, state.debug.selectedWorldObject);
                     return true;
                 } else if (lastMouseButton == Input.Buttons.RIGHT) {
                     state.world.removeAt(pos);
                     return true;
                 } else if (lastMouseButton == Input.Buttons.MIDDLE) {
-                    state.debug.selectedTile = state.world.at(pos);
+                    state.debug.selectedWorldObject = state.world.at(pos);
                 }
             } catch (ArrayIndexOutOfBoundsException ignored) {
 

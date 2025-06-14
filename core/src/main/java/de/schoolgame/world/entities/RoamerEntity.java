@@ -9,10 +9,10 @@ import de.schoolgame.state.GameState;
 
 import static de.schoolgame.primitives.Direction.*;
 
-public class Roamer extends MovingEntity {
+public class RoamerEntity extends MovingEntity {
     private static final Texture roamerTexture = new Texture(Gdx.files.internal("entities/roamer/roamer.png"));
 
-    public Roamer(Vec2f position) {
+    public RoamerEntity(Vec2f position) {
         super(position, new Vec2f(0.95f, 0.95f));
         velocity.x = 3f;
     }

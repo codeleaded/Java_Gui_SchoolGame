@@ -18,20 +18,27 @@ public class Camera {
     public Camera() {
         viewSize = new Vec2i(640, 360);
         position = new Vec3f(viewSize.toVec2f().div(2), 0);
-        zoom = 1;
+        zoom = 1f;
     }
 
     public void update() {
         var state = GameState.INSTANCE;
 
-        var halfView = viewSize.div(2).toVec2f();
         var tileSize = state.world.getTileSize();
+        var worldSize = state.world.getSize().mul(tileSize).toVec2f();
 
-        position = new Vec3f(state.player.getPosition().mul(tileSize), 0).clamp(new Vec3f(halfView, 0),
-                new Vec3f(state.world.getSize().mul(tileSize).toVec2f().sub(halfView), 0));
+        var maxZoom = worldSize.div(viewSize.toVec2f());
+        zoom = Math.clamp(zoom, 0.1f, Math.min(maxZoom.x, maxZoom.y));
 
-        var h = viewSize.div(2);
-        projectionMatrix.setToOrtho(zoom * -h.x, zoom * h.x, zoom * -h.y, zoom * h.y, 0, 100);
+        var halfView = this.viewSize.toVec2f().div(2).mul(zoom);
+
+        position = new Vec3f(state.player.getRect().mid().mul(tileSize), 0)
+            .clamp(
+                new Vec3f(halfView, 0),
+                new Vec3f(worldSize.sub(halfView), 0)
+            );
+
+        projectionMatrix.setToOrtho(-halfView.x, halfView.x, -halfView.y, halfView.y, 0, 100);
         viewMatrix.setToLookAt(new Vector3(0, 0, -1), new Vector3(0, 1, 0));
         viewMatrix.translate(-position.x, -position.y, -position.z);
 

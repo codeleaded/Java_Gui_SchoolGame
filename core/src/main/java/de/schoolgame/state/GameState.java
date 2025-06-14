@@ -4,7 +4,8 @@ import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.Camera;
 import de.schoolgame.utils.Save;
 import de.schoolgame.world.World;
-import de.schoolgame.world.entities.Player;
+import de.schoolgame.world.WorldObject;
+import de.schoolgame.world.entities.PlayerEntity;
 
 public class GameState {
     public static GameState INSTANCE = new GameState();
@@ -13,12 +14,12 @@ public class GameState {
 
     public World world = null;
     public Camera camera = null;
-    public Player player = null;
+    public PlayerEntity player = null;
 
     public void loadSave(Save s) {
-        var tiles = s.tiles();
-        world = new World(tiles, new Vec2i(tiles.length, tiles[0].length), s.tileSize(), s.spawn());
-        player = new Player(world.getSpawn().toVec2f());
+        WorldObject[][] worldObjects = s.worldObjects();
+        world = new World(worldObjects, new Vec2i(worldObjects.length, worldObjects[0].length), s.tileSize(), s.spawn());
+        player = new PlayerEntity(world.getSpawn().toVec2f());
         camera  = new Camera();
     }
 

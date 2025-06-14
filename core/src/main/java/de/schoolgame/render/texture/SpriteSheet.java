@@ -1,14 +1,13 @@
-package de.schoolgame.render;
+package de.schoolgame.render.texture;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import de.schoolgame.primitives.Vec2i;
 
 public class SpriteSheet {
-    private final TextureRegion[] regions;
+    protected final TextureRegion[] regions;
 
     public SpriteSheet(Texture texture, Vec2i spriteSize, int spriteCount) {
-
         regions = new TextureRegion[spriteCount];
         int x = 0, y = 0;
         for (int i = 0; i < spriteCount; i++) {

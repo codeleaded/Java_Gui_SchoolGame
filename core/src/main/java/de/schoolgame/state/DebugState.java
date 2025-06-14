@@ -1,6 +1,6 @@
 package de.schoolgame.state;
 
-import de.schoolgame.world.Tile;
+import de.schoolgame.world.WorldObject;
 import imgui.type.ImBoolean;
 
 public class DebugState {
@@ -11,6 +11,6 @@ public class DebugState {
     public ImBoolean showWorldedit = new ImBoolean(true);
     public ImBoolean showDemo = new ImBoolean(false);
 
-    public Tile selectedTile = Tile.NONE;
+    public WorldObject selectedWorldObject = WorldObject.GRASS;
 
 }

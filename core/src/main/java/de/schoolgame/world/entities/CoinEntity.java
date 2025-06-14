@@ -5,16 +5,16 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
-import de.schoolgame.render.Animation;
-import de.schoolgame.render.SpriteSheet;
+import de.schoolgame.render.texture.Animation;
+import de.schoolgame.render.texture.SpriteSheet;
 import de.schoolgame.world.Entity;
 
-public class Coin extends Entity {
+public class CoinEntity extends Entity {
     private final Texture texture;
     private final Animation coin;
     private float stateTime;
 
-    public Coin(Vec2f position) {
+    public CoinEntity(Vec2f position) {
         super(position);
 
         texture = new Texture("entities/coin/coin.png");

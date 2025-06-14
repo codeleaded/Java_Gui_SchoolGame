@@ -1,4 +1,4 @@
-package de.schoolgame.render;
+package de.schoolgame.render.texture;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 

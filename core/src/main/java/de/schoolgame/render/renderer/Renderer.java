@@ -1,4 +1,4 @@
-package de.schoolgame.render;
+package de.schoolgame.render.renderer;
 
 import com.badlogic.gdx.utils.ScreenUtils;
 import de.schoolgame.state.GameState;

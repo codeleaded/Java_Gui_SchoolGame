@@ -1,9 +1,11 @@
-package de.schoolgame.render;
+package de.schoolgame.render.renderer;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import de.schoolgame.primitives.Rect;
+import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
+import de.schoolgame.render.Camera;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.World;
 
@@ -17,9 +19,9 @@ public class WorldRenderer implements IRenderer {
     }
 
     public void setView(Camera camera) {
-        var pos = camera.position.toVec2f().sub(camera.viewSize.toVec2f().mul(camera.zoom).div(2));
-
-        this.bounds = new Rect(pos, camera.viewSize.toVec2f());
+        var viewSize = camera.viewSize.toVec2f().mul(camera.zoom);
+        var pos = camera.position.toVec2f().sub(viewSize.div(2));
+        this.bounds = new Rect(pos, viewSize);
 
         batch.setProjectionMatrix(camera.viewProjectionMatrix);
     }
@@ -41,15 +43,16 @@ public class WorldRenderer implements IRenderer {
         for (int row = start.y; row < end.y; row++) {
             float x = start.x * tileSize;
             for (int col = start.x; col < end.x; col++) {
-                var tile = world.at(new Vec2i(col, row));
-                var texture = tile.getTexture();
+                var pos = new Vec2i(col, row);
+                var worldObject = world.at(pos);
+                var tile = worldObject.getTile();
 
-                if (texture == null) {
+                if (tile == null) {
                     x += tileSize;
                     continue;
                 }
 
-                batch.draw(texture, x, y);
+                tile.render(batch, new Vec2f(x, y), pos);
 
                 x += tileSize;
             }
