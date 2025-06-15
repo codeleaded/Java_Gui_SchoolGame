@@ -20,7 +20,6 @@ public class ClientThread extends Thread {
     @Override
     public void run() {
         String name = client.getRemoteAddress();
-
         Gdx.app.debug("ClientThread " + name, "Connected");
 
         try (
@@ -36,8 +35,7 @@ public class ClientThread extends Thread {
             Gdx.app.error("ClientThread " + name, "Error: " + e);
         } finally {
             client.dispose();
+            Gdx.app.debug("ClientThread " + name, "Disconnected");
         }
-
-        Gdx.app.debug("ClientThread " + name, "Disconnected");
     }
 }

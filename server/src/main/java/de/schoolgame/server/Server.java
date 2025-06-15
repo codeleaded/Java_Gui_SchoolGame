@@ -6,10 +6,13 @@ import com.badlogic.gdx.Gdx;
 import de.schoolgame.server.thread.ServerThread;
 
 public class Server extends ApplicationAdapter {
+    ServerThread serverThread;
+
     @Override
     public void create() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
-        new ServerThread().start();
+        serverThread = new ServerThread();
+        serverThread.start();
     }
 
     @Override
@@ -19,6 +22,6 @@ public class Server extends ApplicationAdapter {
 
     @Override
     public void dispose() {
-
+        serverThread.interrupt();
     }
 }
