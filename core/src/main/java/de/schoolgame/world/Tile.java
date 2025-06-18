@@ -6,5 +6,5 @@ import de.schoolgame.primitives.Vec2i;
 
 public abstract class Tile {
     public abstract void render(Batch batch, Vec2f drawPosition, Vec2i worldPosition);
-    public abstract void dispose();
+    public void dispose() {}
 }

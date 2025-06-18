@@ -9,7 +9,7 @@ public abstract class Entity {
 
     public abstract void update();
     public abstract void render(Batch batch);
-    public abstract void dispose();
+    public void dispose() {}
 
     public Entity(Vec2f position) {
         this.position = position;

@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import de.schoolgame.render.renderer.Renderer;
 import de.schoolgame.state.GameInputProcessor;
 import de.schoolgame.state.GameState;
-import de.schoolgame.utils.Save;
 import de.schoolgame.world.Entity;
 
 public class Main extends ApplicationAdapter {
@@ -17,9 +16,6 @@ public class Main extends ApplicationAdapter {
         Gdx.app.log("INFO", "Press \"L\" to open/close ImGui!");
         renderer = new Renderer();
         Gdx.input.setInputProcessor(inputProcessor = new GameInputProcessor());
-        GameState.INSTANCE.loadSave(Save.loadSave("worlds/save.dat"));
-        //TODO networking
-        //new NetworkTest();
     }
 
     @Override

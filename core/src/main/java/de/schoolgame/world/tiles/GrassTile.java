@@ -9,12 +9,12 @@ import de.schoolgame.state.GameState;
 import de.schoolgame.world.Tile;
 
 public class GrassTile extends Tile {
-    private final Texture texture;
     private final TileSet tileSet;
 
     public GrassTile() {
         super();
-        texture = new Texture("tiles/patrikarts/tileset-grass.png");
+        var assetManager = GameState.INSTANCE.assetManager;
+        Texture texture = assetManager.get("tiles/patrikarts/tileset-grass.png", Texture.class);
         tileSet = new TileSet(texture, new Vec2i(32, 32));
     }
 
@@ -24,10 +24,5 @@ public class GrassTile extends Tile {
         var connections = GameState.INSTANCE.world.connectionsAt(worldPosition);
         var textureRegion = tileSet.getTextureRegion(connections);
         batch.draw(textureRegion, drawPosition.x, drawPosition.y, tileSize, tileSize);
-    }
-
-    @Override
-    public void dispose() {
-        texture.dispose();
     }
 }

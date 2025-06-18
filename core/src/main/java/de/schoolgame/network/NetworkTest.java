@@ -10,8 +10,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+@SuppressWarnings("unused")
 public class NetworkTest {
-    public NetworkTest() {
+    private boolean success = false;
+
+    public void test() {
+        success = false;
         SocketHints hints = new SocketHints();
 
         Socket socket;
@@ -41,5 +45,10 @@ public class NetworkTest {
         socket.dispose();
 
         Gdx.app.log("NetworkTest", "Disconnected from server");
+        success = true;
+    }
+
+    public boolean hasSucceeded() {
+        return success;
     }
 }

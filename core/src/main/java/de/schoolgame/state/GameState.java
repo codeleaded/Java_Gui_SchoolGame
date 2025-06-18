@@ -1,6 +1,7 @@
 package de.schoolgame.state;
 
 import de.schoolgame.primitives.Vec2i;
+import de.schoolgame.render.AssetManager;
 import de.schoolgame.render.Camera;
 import de.schoolgame.utils.Save;
 import de.schoolgame.world.World;
@@ -10,11 +11,13 @@ import de.schoolgame.world.entities.PlayerEntity;
 public class GameState {
     public static GameState INSTANCE = new GameState();
 
-    public DebugState debug = new DebugState();
+    public DebugState debug;
 
-    public World world = null;
-    public Camera camera = null;
-    public PlayerEntity player = null;
+    public World world;
+    public Camera camera;
+    public PlayerEntity player;
+
+    public AssetManager assetManager;
 
     public void loadSave(Save s) {
         WorldObject[][] worldObjects = s.worldObjects();

@@ -11,7 +11,6 @@ import de.schoolgame.state.GameState;
 import static de.schoolgame.primitives.Direction.*;
 
 public class PlayerEntity extends MovingEntity {
-    private static final Texture playerTexture = new Texture(Gdx.files.internal("entities/player/player.png"));
     private boolean onGround;
     private boolean onJump;
 
@@ -70,7 +69,10 @@ public class PlayerEntity extends MovingEntity {
 
         var state = GameState.INSTANCE;
         // Delete Coin
-        state.world.getEntities().removeIf(e -> e instanceof CoinEntity && getRect().overlap(new Rect(e.getPosition(), new Vec2f(0.9f, 0.9f))));
+        state.world.getEntities().removeIf(e ->
+            e instanceof CoinEntity &&
+                getRect().overlap(new Rect(e.getPosition(), new Vec2f(0.9f, 0.9f)))
+        );
     }
 
     @Override
@@ -83,12 +85,11 @@ public class PlayerEntity extends MovingEntity {
 
     @Override
     public void render(Batch batch) {
-        var tileSize = GameState.INSTANCE.world.getTileSize();
-        batch.draw(playerTexture, position.x * tileSize, position.y * tileSize, size.x * tileSize, size.y * tileSize);
-    }
-
-    @Override
-    public void dispose() {
-        playerTexture.dispose();
+        var state = GameState.INSTANCE;
+        var tileSize = state.world.getTileSize();
+        Texture texture = state.assetManager.get("entities/player/player.png", Texture.class);
+        batch.draw(texture,
+            position.x * tileSize, position.y * tileSize,
+            size.x * tileSize, size.y * tileSize);
     }
 }

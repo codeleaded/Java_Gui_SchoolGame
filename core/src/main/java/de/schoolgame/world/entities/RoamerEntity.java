@@ -1,6 +1,5 @@
 package de.schoolgame.world.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import de.schoolgame.primitives.Direction;
@@ -10,8 +9,6 @@ import de.schoolgame.state.GameState;
 import static de.schoolgame.primitives.Direction.*;
 
 public class RoamerEntity extends MovingEntity {
-    private static final Texture roamerTexture = new Texture(Gdx.files.internal("entities/roamer/roamer.png"));
-
     public RoamerEntity(Vec2f position) {
         super(position, new Vec2f(0.95f, 0.95f));
         velocity.x = 3f;
@@ -30,14 +27,11 @@ public class RoamerEntity extends MovingEntity {
 
     @Override
     public void render(Batch batch) {
-        var tileSize = GameState.INSTANCE.world.getTileSize();
-        batch.draw(roamerTexture, position.x * tileSize, position.y * tileSize,
+        var state = GameState.INSTANCE;
+        var tileSize = state.world.getTileSize();
+        Texture texture = state.assetManager.get("entities/roamer/roamer.png", Texture.class);
+        batch.draw(texture, position.x * tileSize, position.y * tileSize,
             size.x * tileSize, size.y * tileSize,
             0, 0, tileSize, tileSize, velocity.x < 0.0f, false);
-    }
-
-    @Override
-    public void dispose() {
-        roamerTexture.dispose();
     }
 }
