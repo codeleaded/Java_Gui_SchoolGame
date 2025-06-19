@@ -1,13 +1,13 @@
 package de.schoolgame.server.thread;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-
-import java.util.ArrayList;
 
 public class ServerThread extends Thread {
     private final ArrayList<ClientThread> clientThreads;
@@ -44,13 +44,13 @@ public class ServerThread extends Thread {
 
     private void handleConnection(Socket s) {
         ClientThread clientThread = new ClientThread(s);
-        clientThread.start();
+        clientThread.thread.start();
         clientThreads.add(clientThread);
     }
 
     public void dispose() {
         for (ClientThread clientThread : clientThreads) {
-            clientThread.interrupt();
+            clientThread.thread.interrupt();
         }
 
         serverSocket.dispose();

@@ -29,7 +29,7 @@ public class Lwjgl3Launcher {
         var displayMode = Lwjgl3ApplicationConfiguration.getDisplayMode();
 
         Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
-
+        
         configuration.setTitle("SchoolGame");
         configuration.useVsync(true);
 
