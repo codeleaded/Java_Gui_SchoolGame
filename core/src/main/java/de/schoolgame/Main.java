@@ -2,7 +2,6 @@ package de.schoolgame;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-
 import de.schoolgame.render.renderer.Renderer;
 import de.schoolgame.state.GameInputProcessor;
 import de.schoolgame.state.GameState;
@@ -39,5 +38,7 @@ public class Main extends ApplicationAdapter {
     @Override
     public void dispose() {
         renderer.dispose();
+        GameState.INSTANCE.assetManager.dispose();
+        Gdx.app.log("Main", "Disposed!");
     }
 }

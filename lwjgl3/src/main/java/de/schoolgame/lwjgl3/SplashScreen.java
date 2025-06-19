@@ -20,8 +20,8 @@ import de.schoolgame.render.texture.Animation;
 import de.schoolgame.render.texture.SpriteSheet;
 
 public class SplashScreen extends ApplicationAdapter {
-    public static final int WIDTH = 1280;
-    public static final int HEIGHT = 720;
+    public final Vec2i size;
+    private final int scale;
 
     private Texture loadingTexture;
     private Animation loadingAnimation;
@@ -36,6 +36,12 @@ public class SplashScreen extends ApplicationAdapter {
     private LoadingTask loadingTask;
     private float nextTime;
 
+    public SplashScreen(int screenHeight) {
+        float screenWidth = (float) screenHeight * (16f / 9f);
+        size = new Vec2i((int) screenWidth, screenHeight).div(3);
+        scale = screenHeight / 1080;
+    }
+
     @Override
     public void create() {
         loadingTexture = new Texture("entities/coin/coin.png");
@@ -45,7 +51,7 @@ public class SplashScreen extends ApplicationAdapter {
         batch = new SpriteBatch();
         font = new BitmapFont();
         font.setColor(Color.WHITE);
-        font.getData().setScale(2);
+        font.getData().setScale(scale);
         window = ((Lwjgl3Graphics) Gdx.graphics).getWindow();
         loadingTask = new LoadingTask();
     }
@@ -60,25 +66,25 @@ public class SplashScreen extends ApplicationAdapter {
 
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 
-        int coin_size = HEIGHT - 16;
+        int coin_size = size.y - 16;
         int bar_height = 16;
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        shapeRenderer.rect(0, 0, WIDTH, HEIGHT, Color.BLACK, Color.CORAL, Color.BLUE, Color.FOREST);
+        shapeRenderer.rect(0, 0, size.x, size.y, Color.BLACK, Color.CORAL, Color.BLUE, Color.FOREST);
 
         shapeRenderer.setColor(0.15f, 0.15f, 0.2f, 1.0f);
-        shapeRenderer.rect(0, 0, WIDTH, bar_height);
+        shapeRenderer.rect(0, 0, size.x, bar_height);
 
         shapeRenderer.setColor(1.0f, 1.0f, 0.95f, 1.0f);
-        shapeRenderer.rect(0, 0, WIDTH * loadingTask.getProgress(), bar_height);
+        shapeRenderer.rect(0, 0, size.x * loadingTask.getProgress(), bar_height);
 
         shapeRenderer.end();
         batch.begin();
 
         batch.draw(loadingAnimation.currentFrame(timeState),
-            (float) ((WIDTH / 2) - (coin_size / 2)),
-            (float) ((HEIGHT / 2) - (coin_size / 2)) + bar_height,
+            (float) ((size.x / 2) - (coin_size / 2)),
+            (float) ((size.y / 2) - (coin_size / 2)) + bar_height,
             coin_size, coin_size);
 
         font.draw(batch, loadingTask.getStatus(), 10 , bar_height + font.getLineHeight());

@@ -11,6 +11,8 @@ import de.schoolgame.world.entities.PlayerEntity;
 public class GameState {
     public static GameState INSTANCE = new GameState();
 
+    public GameStateType state = GameStateType.GAME;
+
     public DebugState debug;
 
     public World world;
@@ -29,5 +31,12 @@ public class GameState {
     public void writeSave() {
         var save = new Save(world.getTiles(), world.getTileSize(), world.getSpawn());
         save.writeSave();
+    }
+
+    public enum GameStateType {
+        MAIN_MENU,
+        GAME,
+        DEBUG,
+        WORLD_EDITOR,
     }
 }

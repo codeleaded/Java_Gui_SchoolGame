@@ -86,8 +86,8 @@ public class PlayerEntity extends MovingEntity {
     @Override
     public void render(Batch batch) {
         var state = GameState.INSTANCE;
-        var tileSize = state.world.getTileSize();
-        Texture texture = state.assetManager.get("entities/player/player.png", Texture.class);
+        int tileSize = state.world.getTileSize();
+        Texture texture = state.assetManager.get("entities/player/player", Texture.class);
         batch.draw(texture,
             position.x * tileSize, position.y * tileSize,
             size.x * tileSize, size.y * tileSize);

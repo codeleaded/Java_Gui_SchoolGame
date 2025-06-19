@@ -66,6 +66,7 @@ subprojects {
     api "io.github.spair:imgui-java-natives-linux:$imGuiVersion"
     api "io.github.spair:imgui-java-natives-macos:$imGuiVersion"
     api "io.github.spair:imgui-java-natives-windows:$imGuiVersion"
+    implementation "org.tomlj:tomlj:1.1.1"
   }
 }
 

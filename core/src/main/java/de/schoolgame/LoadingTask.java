@@ -2,7 +2,6 @@ package de.schoolgame;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Texture;
 import de.schoolgame.render.AssetManager;
 import de.schoolgame.state.DebugState;
 import de.schoolgame.state.GameState;
@@ -32,9 +31,9 @@ public class LoadingTask {
                 paths.addAll(Arrays.asList(file.list()));
             } else {
                 String path = file.path();
-                if (path.endsWith(".png")) {
+                if (path.endsWith(".asset")) {
                     addTask("Assets", () ->
-                        GameState.INSTANCE.assetManager.load(path, Texture.class)
+                        GameState.INSTANCE.assetManager.load(path)
                     );
                 }
             }
@@ -71,7 +70,7 @@ public class LoadingTask {
         }
         Task task = tasks.removeFirst();
         status = "Loading " + task.name + "...";
-        Gdx.app.log("INFO", status);
+        Gdx.app.log("LoadingTask", status);
         task.task.run();
     }
 

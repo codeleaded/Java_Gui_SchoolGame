@@ -12,7 +12,7 @@ public class TestTile extends Tile {
     public void render(Batch batch, Vec2f drawPosition, Vec2i worldPosition) {
         var state = GameState.INSTANCE;
         int tileSize = state.world.getTileSize();
-        Texture texture = state.assetManager.get("tiles/test.png", Texture.class);
+        Texture texture = state.assetManager.get("tiles/test", Texture.class);
         batch.draw(texture, drawPosition.x, drawPosition.y, tileSize, tileSize);
     }
 }

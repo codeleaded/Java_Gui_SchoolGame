@@ -28,8 +28,8 @@ public class RoamerEntity extends MovingEntity {
     @Override
     public void render(Batch batch) {
         var state = GameState.INSTANCE;
-        var tileSize = state.world.getTileSize();
-        Texture texture = state.assetManager.get("entities/roamer/roamer.png", Texture.class);
+        int tileSize = state.world.getTileSize();
+        Texture texture = state.assetManager.get("entities/roamer/roamer", Texture.class);
         batch.draw(texture, position.x * tileSize, position.y * tileSize,
             size.x * tileSize, size.y * tileSize,
             0, 0, tileSize, tileSize, velocity.x < 0.0f, false);
