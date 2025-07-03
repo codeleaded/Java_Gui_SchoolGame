@@ -1,17 +1,17 @@
 package de.schoolgame.world.entities;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 
 import de.schoolgame.primitives.Direction;
-import static de.schoolgame.primitives.Direction.NONE;
 import de.schoolgame.primitives.Rect;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
+
+import java.util.ArrayList;
+import java.util.stream.Stream;
 
 public abstract class MovingEntity extends Entity {
     public static final float GRAVITY = -25.0f;
@@ -34,20 +34,25 @@ public abstract class MovingEntity extends Entity {
 
     @Override
     public void update() {
-        Vec2f preposition = position.cpy();
-        velocity = velocity.add(acceleration.scl(Gdx.graphics.getDeltaTime()));
-        position = position.add(velocity.scl(Gdx.graphics.getDeltaTime()));
-
-        if (position.y <= 0.0f) {
-            velocity.y = 0.0f;
-            position.y = 1.0f;
-        }
-
         var state = GameState.INSTANCE;
         var worldSize = state.world.getSize();
 
+        if (position.y <= 0.0f) {
+            Vec2i sp = state.world.getSpawn();
+            position.x = (float)sp.x;
+            position.y = (float)sp.y;
+        }
+
+        velocity = velocity.add(acceleration.scl(Gdx.graphics.getDeltaTime()));
+        Vec2f targetposition = position.add(velocity.scl(Gdx.graphics.getDeltaTime()));
+        RayCollision(targetposition,worldSize);
+
+        /*
+
+        Sortierung fällt bei Ray Collisions raus!
+        Durch Raycasting erhält man die Rects eh in der richtigen Reihenfolge
+
         ArrayList<Rect> rects = new ArrayList<>();
-        addRectsRay(rects,preposition,position,worldSize);
 
         var rect = getRect();
 
@@ -63,40 +68,86 @@ public abstract class MovingEntity extends Entity {
             .forEach(this::onCollision);
 
         this.position = rect.pos;
+        */
     }
 
-    public void addRectsRay(ArrayList<Rect> rects,Vec2f prepos,Vec2f pos,Vec2i worldSize){
+    public void RayCollision(Vec2f pos,Vec2i worldSize){
         final float stepchange = 0.001f;
-        final Vec2f dir = pos.sub(prepos);
-        final Vec2f rdir = dir.norm().mul(stepchange);
+        final Vec2f dir = pos.sub(position);
         final float length = dir.len();
-        Vec2f newpos = prepos.cpy();
         
-        System.out.print("\rPre: "+prepos.x+","+prepos.y+" -> Pos: "+pos.x+","+pos.y+" | L: "+length+" , Step: "+rdir.x+","+rdir.y+"!");
-        for(float step = 0.0f;step<=length;step+=stepchange){
-            newpos = newpos.add(rdir);
-            addRects(rects,newpos.toVec2i(),worldSize);
+        ArrayList<Rect> retrects = new ArrayList<>();
+        ArrayList<Direction> retdirs = new ArrayList<>();
+
+        if(length==0.0f){
+            Search(retrects,retdirs,worldSize);
+        }else{
+            final Vec2f rdir = dir.norm().mul(stepchange);
+
+            for(float step = 0.0f;step<=length;step+=stepchange){
+                position = position.add(rdir);
+                Search(retrects,retdirs,worldSize);
+            }
         }
+
+        for(int i = 0;i<retrects.size();i++){
+            Rect r1 = retrects.get(i);
+            for(int j = i+1;j<retrects.size();j++){
+                Rect r2 = retrects.get(j);
+
+                if(r1.compareInt(r2)){
+                    retrects.remove(j);
+                    retdirs.remove(j);
+                    j--;
+                }
+            }
+        }
+
+        retdirs.forEach(this::onCollision);
     }
-    public void addRects(ArrayList<Rect> rects,Vec2i pos,Vec2i worldSize){
+    public void Search(ArrayList<Rect> retrects,ArrayList<Direction> retdirs,Vec2i worldSize){
+        var posi = position.toVec2i();
+        
         var state = GameState.INSTANCE;
         var search = size.toVec2i()
             .max(new Vec2i(1, 1))
             .mul(3);
-        var start = pos.sub(search);
-        var end = pos.add(search);
+        var start = posi.sub(search);
+        var end = posi.add(search);
+
+        ArrayList<Rect> rects = new ArrayList<>();
+
+        var rect = getRect();
 
         for (int x = start.x; x < end.x; x += 1) {
             for (int y = start.y; y < end.y; y += 1) {
                 if (y < 0 || x < 0) continue;
                 if (y > worldSize.y || x > worldSize.x) continue;
                 
-                WorldObject o = state.world.at(new Vec2i(x, y));
+                WorldObject o = state.world.at(new Vec2i(x,y));
                 if (o != WorldObject.NONE && o.isTile()) {
-                    rects.add(new Rect(new Vec2f(x,y),new Vec2f(1.0f,1.0f)));
+                    Rect r = new Rect(new Vec2f(x,y),new Vec2f(1.0f,1.0f));
+                    if(rect.overlap(r)) rects.add(r);
                 }
             }
         }
+
+        rects.sort((r1, r2) -> {
+            float d1 = r1.pos.sub(rect.pos).len();
+            float d2 = r2.pos.sub(rect.pos).len();
+            return Float.compare(d1, d2);
+        });
+        rects.removeIf(r -> {
+            if(!rect.overlap(r)) return true;
+
+            Direction d = rect.staticCollisionSolver(r);
+            if(d == Direction.NONE) return true;
+
+            retrects.add(r);
+            retdirs.add(d);
+
+            return false;
+        });
     }
 
     abstract void onCollision(Direction type);

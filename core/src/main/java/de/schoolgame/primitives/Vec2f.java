@@ -82,8 +82,12 @@ public class Vec2f implements Externalizable {
         return mul(d);
     }
 
+    public float dot(Vec2f v) {
+        return x * v.x + y * v.y;
+    }
+
     public float len2() {
-        return x * x + y * y;
+        return dot(this);
     }
 
     public float len() {
@@ -114,12 +118,8 @@ public class Vec2f implements Externalizable {
         return new Vec2f(y, -x);
     }
 
-    public float dot(Vec2f v) {
-        return x * v.x + y * v.y;
-    }
-
     public Vec2f norm() {
-        return div(dot(this));
+        return div(len());
     }
 
     public Vec2f cpy() {

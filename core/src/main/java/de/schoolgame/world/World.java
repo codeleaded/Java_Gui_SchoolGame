@@ -1,12 +1,12 @@
 package de.schoolgame.world;
 
-import de.schoolgame.primitives.Vec2f;
-import de.schoolgame.primitives.Vec2i;
-import de.schoolgame.render.texture.TileSet;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import de.schoolgame.primitives.Vec2f;
+import de.schoolgame.primitives.Vec2i;
+import de.schoolgame.render.texture.TileSet;
 
 public class World {
     private final WorldObject[][] worldObjects;
@@ -24,6 +24,7 @@ public class World {
         tileSize = 32;
         entities = new ArrayList<>();
         worldObjects = new WorldObject[size.x][size.y];
+        
         for (int x = 0; x < size.x; x++) {
             for (int y = 0; y < size.y; y++) {
                 worldObjects[x][y] = WorldObject.NONE;

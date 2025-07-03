@@ -67,6 +67,13 @@ public class Rect implements Externalizable {
 		return NONE;
 	}
 
+    public boolean compareInt(Rect r) {
+        return (int)pos.x == (int)r.pos.x &&
+               (int)pos.y == (int)r.pos.y &&
+               (int)size.x == (int)r.size.x &&
+               (int)size.y == (int)r.size.y;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

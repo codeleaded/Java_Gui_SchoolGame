@@ -2,6 +2,7 @@ package de.schoolgame;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+
 import de.schoolgame.render.renderer.Renderer;
 import de.schoolgame.state.GameInputProcessor;
 import de.schoolgame.state.GameState;
@@ -22,11 +23,9 @@ public class Main extends ApplicationAdapter {
     public void render() {
         var state = GameState.INSTANCE;
 
-        try {
-            Thread.sleep(100);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Für Debugging -> Clear Screen + Cursur to 0,0
+        // System.out.print("\033[2J\033[H");
+        // System.out.flush();
 
         inputProcessor.update();
         state.player.update();
