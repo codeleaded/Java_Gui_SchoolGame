@@ -1,5 +1,7 @@
 package de.schoolgame.world.entities;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 
 import de.schoolgame.primitives.Direction;
@@ -10,13 +12,11 @@ import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
 
-import java.util.ArrayList;
-import java.util.stream.Stream;
-
 public abstract class MovingEntity extends Entity {
     public static final float GRAVITY = -25.0f;
     public static final float GROUND_FRICTION = 2f;
     public static final float AIR_FRICTION = 2f;
+    public static final float RC_STEP_CHANGE = 0.001f;
 
     public static final Vec2f MAX_GROUND_VELOCITY = new Vec2f(6f, 20f);
     public static final Vec2f MAX_AIR_VELOCITY = new Vec2f(10f, 20f);
@@ -72,7 +72,6 @@ public abstract class MovingEntity extends Entity {
     }
 
     public void RayCollision(Vec2f pos,Vec2i worldSize){
-        final float stepchange = 0.001f;
         final Vec2f dir = pos.sub(position);
         final float length = dir.len();
         
@@ -82,9 +81,9 @@ public abstract class MovingEntity extends Entity {
         if(length==0.0f){
             Search(retrects,retdirs,worldSize);
         }else{
-            final Vec2f rdir = dir.norm().mul(stepchange);
+            final Vec2f rdir = dir.norm().mul(RC_STEP_CHANGE);
 
-            for(float step = 0.0f;step<=length;step+=stepchange){
+            for(float step = 0.0f;step<=length;step+=RC_STEP_CHANGE){
                 position = position.add(rdir);
                 Search(retrects,retdirs,worldSize);
             }
