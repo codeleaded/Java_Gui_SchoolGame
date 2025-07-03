@@ -39,8 +39,28 @@ public abstract class MovingEntity extends Entity {
 
         if (position.y <= 0.0f) {
             Vec2i sp = state.world.getSpawn();
-            position.x = (float)sp.x;
-            position.y = (float)sp.y;
+            
+            if(this instanceof PlayerEntity){
+                PlayerEntity pe = (PlayerEntity)this;
+                if(!pe.GetDead()){
+                    pe.setDead(true);
+                    pe.velocity.y = 8.0f;
+
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(1000);
+                            position.x = (float)sp.x;
+                            position.y = (float)sp.y;
+                            pe.setDead(false);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
+                }
+            }else{
+                position.x = (float)sp.x;
+                position.y = (float)sp.y;
+            }
         }
 
         velocity = velocity.add(acceleration.scl(Gdx.graphics.getDeltaTime()));
