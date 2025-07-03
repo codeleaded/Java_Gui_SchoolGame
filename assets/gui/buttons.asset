@@ -1,0 +1,8 @@
+type = "spritesheet"
+
+[spritesheet]
+count = 2
+
+[sprite]
+width = 256
+height = 48

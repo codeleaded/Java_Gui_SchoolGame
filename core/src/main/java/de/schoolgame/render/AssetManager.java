@@ -3,6 +3,7 @@ package de.schoolgame.render;
 import com.badlogic.gdx.graphics.Texture;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.Animation;
+import de.schoolgame.render.texture.Font;
 import de.schoolgame.render.texture.SpriteSheet;
 import de.schoolgame.render.texture.TileSet;
 import de.schoolgame.utils.AssetUtils;
@@ -24,23 +25,25 @@ public class AssetManager {
         if (path == null) throw new IllegalArgumentException("Path must not be null");
 
         TomlParseResult asset = AssetUtils.getAsset(path);
-        Class<?> type = AssetUtils.getClass(asset);
+        String type = AssetUtils.getTypeString(asset);
+
         load(path, type);
     }
 
-    private void load(String path, Class<?> type) throws IllegalStateException, NullPointerException {
+    private void load(String path, String type) throws IllegalStateException, NullPointerException {
         if (type == null) throw new IllegalArgumentException("Type must not be null");
+        Class<?> typeClass = AssetUtils.getClass(type);
 
         TomlParseResult asset = AssetUtils.getAsset(path);
         String pathWithoutExtension = path.substring(0, path.lastIndexOf('.'));
-        String name = pathWithoutExtension + "." + AssetUtils.getType(type);
+        String name = pathWithoutExtension + "." + type;
 
-        if (type == Texture.class) {
+        if (typeClass == Texture.class) {
             Texture texture = new Texture(pathWithoutExtension + ".png");
             assets.put(name, texture);
             return;
-        } else if (type == SpriteSheet.class) {
-            load(path, Texture.class);
+        } else if (typeClass == SpriteSheet.class) {
+            load(path, "texture");
             Texture texture = get(pathWithoutExtension, Texture.class);
 
             int count = AssetUtils.getInt(asset, "spritesheet.count", 1);
@@ -49,8 +52,8 @@ public class AssetManager {
             SpriteSheet spriteSheet = new SpriteSheet(texture, size, count);
             assets.put(name, spriteSheet);
             return;
-        } else if (type == Animation.class) {
-            load(path, SpriteSheet.class);
+        } else if (typeClass == Animation.class) {
+            load(path, "spritesheet");
             SpriteSheet spriteSheet = get(pathWithoutExtension, SpriteSheet.class);
 
             float frameDuration = AssetUtils.getFloat(asset, "animation.frameDuration", 0.03f);
@@ -58,14 +61,23 @@ public class AssetManager {
             Animation animation = new Animation(frameDuration, spriteSheet.getRegions());
             assets.put(name, animation);
             return;
-        } else if (type == TileSet.class) {
-            load(path, Texture.class);
+        } else if (typeClass == TileSet.class) {
+            load(path, "texture");
             Texture texture = get(pathWithoutExtension, Texture.class);
 
             Vec2i size = AssetUtils.getSpriteSize(asset, new Vec2i(32, 32));
 
             TileSet tileSet = new TileSet(texture, size);
             assets.put(name, tileSet);
+            return;
+        } else if (typeClass == Font.class) {
+            load(path, "spritesheet");
+            SpriteSheet spriteSheet = get(pathWithoutExtension, SpriteSheet.class);
+
+            System.out.println("Loading font: " + name);
+
+            Font font = new Font(spriteSheet.getRegions());
+            assets.put(name, font);
             return;
         }
         throw new IllegalStateException("No Asset loader for: " + type);

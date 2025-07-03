@@ -2,21 +2,12 @@ package de.schoolgame.state;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import static com.badlogic.gdx.Input.Keys.A;
-import static com.badlogic.gdx.Input.Keys.D;
-import static com.badlogic.gdx.Input.Keys.DOWN;
-import static com.badlogic.gdx.Input.Keys.L;
-import static com.badlogic.gdx.Input.Keys.LEFT;
-import static com.badlogic.gdx.Input.Keys.RIGHT;
-import static com.badlogic.gdx.Input.Keys.S;
-import static com.badlogic.gdx.Input.Keys.SPACE;
-import static com.badlogic.gdx.Input.Keys.UP;
-import static com.badlogic.gdx.Input.Keys.W;
 import com.badlogic.gdx.InputProcessor;
-
 import de.schoolgame.primitives.Direction;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.utils.DebugUtils;
+
+import static com.badlogic.gdx.Input.Keys.*;
 
 public class GameInputProcessor implements InputProcessor {
     private int lastMouseButton = Input.Buttons.LEFT;
@@ -46,9 +37,16 @@ public class GameInputProcessor implements InputProcessor {
         var state = GameState.INSTANCE;
         return switch (keycode) {
             case L: {
-                state.debug.enabled = !state.debug.enabled;
-                Gdx.app.log("DEBUG", state.debug.enabled ? "ImGui enabled" : "ImGui disabled");
-                yield true;
+                if (state.state == GameState.GameStateType.DEBUG) {
+                    state.state = GameState.GameStateType.GAME;
+                    Gdx.app.log("DEBUG", "ImGui disabled");
+                    yield true;
+                } else if (state.state == GameState.GameStateType.GAME) {
+                    state.state = GameState.GameStateType.DEBUG;
+                    Gdx.app.log("DEBUG", "ImGui enabled");
+                    yield true;
+                }
+                yield false;
             }
             case SPACE:
             case UP:
@@ -118,7 +116,7 @@ public class GameInputProcessor implements InputProcessor {
     @Override
     public boolean scrolled(float amountX, float amountY) {
         var state = GameState.INSTANCE;
-        if (state.debug.enabled && amountY != 0) {
+        if (state.state == GameState.GameStateType.DEBUG && amountY != 0) {
             state.camera.zoom += amountY * 0.1f;
             return true;
         }
@@ -127,7 +125,7 @@ public class GameInputProcessor implements InputProcessor {
 
     private boolean worldEdit(int screenX, int screenY) {
         var state = GameState.INSTANCE;
-        if (state.debug.enabled && state.debug.showWorldedit.get()) {
+        if (state.state == GameState.GameStateType.DEBUG && state.debug.showWorldedit.get()) {
             Vec2i pos = DebugUtils.getTilePosFromScreenPos(new Vec2i(screenX, screenY));
             try {
                 if (lastMouseButton == Input.Buttons.LEFT) {

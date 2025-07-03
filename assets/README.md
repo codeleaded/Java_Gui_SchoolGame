@@ -4,7 +4,7 @@ File extention: .asset
 Must have a png file with the same name alongside it
 
 ## asset type
-either texture, spritesheet, animation or tileset
+either texture, spritesheet, animation, tileset or font
 ```
 type = "texture"
 ```
@@ -22,7 +22,7 @@ height = 32
 ## spritesheet section
 amount of sprites in the spritesheet
 <br/>
-only needed for animation or spritesheet
+only needed for animation, spritesheet or font
 ```
 [spritesheet]
 count = 50

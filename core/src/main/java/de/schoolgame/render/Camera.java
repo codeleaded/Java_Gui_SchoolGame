@@ -21,6 +21,21 @@ public class Camera {
         zoom = 1f;
     }
 
+    public void focusPlayer() {
+        var state = GameState.INSTANCE;
+
+        var tileSize = state.world.getTileSize();
+        var worldSize = state.world.getSize().mul(tileSize).toVec2f();
+
+        var halfView = this.viewSize.toVec2f().div(2).mul(zoom);
+
+        position = new Vec3f(state.player.getRect().mid().mul(tileSize), 0)
+            .clamp(
+                new Vec3f(halfView, 0),
+                new Vec3f(worldSize.sub(halfView), 0)
+            );
+    }
+
     public void update() {
         var state = GameState.INSTANCE;
 
@@ -31,12 +46,6 @@ public class Camera {
         zoom = Math.clamp(zoom, 0.1f, Math.min(maxZoom.x, maxZoom.y));
 
         var halfView = this.viewSize.toVec2f().div(2).mul(zoom);
-
-        position = new Vec3f(state.player.getRect().mid().mul(tileSize), 0)
-            .clamp(
-                new Vec3f(halfView, 0),
-                new Vec3f(worldSize.sub(halfView), 0)
-            );
 
         projectionMatrix.setToOrtho(-halfView.x, halfView.x, -halfView.y, halfView.y, 0, 100);
         viewMatrix.setToLookAt(new Vector3(0, 0, -1), new Vector3(0, 1, 0));

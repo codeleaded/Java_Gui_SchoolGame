@@ -3,16 +3,12 @@ package de.schoolgame.world.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-
 import de.schoolgame.primitives.Direction;
-import static de.schoolgame.primitives.Direction.DOWN;
-import static de.schoolgame.primitives.Direction.LEFT;
-import static de.schoolgame.primitives.Direction.NONE;
-import static de.schoolgame.primitives.Direction.RIGHT;
-import static de.schoolgame.primitives.Direction.UP;
 import de.schoolgame.primitives.Rect;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.state.GameState;
+
+import static de.schoolgame.primitives.Direction.*;
 
 public class PlayerEntity extends MovingEntity {
     private long start;
@@ -72,6 +68,7 @@ public class PlayerEntity extends MovingEntity {
                 yield true;
             case NONE:
                 acceleration.x = 0;
+                yield true;
             default: yield false;
         };
     }
@@ -81,7 +78,7 @@ public class PlayerEntity extends MovingEntity {
 	    r.size = new Vec2f( 1.0f,1.0f );
 
         reverse = (velocity.x<0.0f && acceleration.x>0.0f) || (velocity.x>0.0f && acceleration.x<0.0f);
-            
+
 	    if(dead)				    r.pos = new Vec2f( 2.0f,1.0f );
 	    else if(!onGround){
 	    	if(!stamp)		        r.pos = new Vec2f( 2.0f,0.0f );
@@ -94,12 +91,12 @@ public class PlayerEntity extends MovingEntity {
 	    else if(velocity.x==0.0f)	r.pos = new Vec2f( 7.0f,0.0f );
 	    else{
 	    	long ld = System.nanoTime() - start;
-            float d = (float)ld / 1000_000_000.0f; 
-            
+            float d = (float)ld / 1000_000_000.0f;
+
             d = d - (float)Math.floor(d);
-	    	d *= (float)Math.abs(velocity.x) * 0.65f;
+	    	d *= Math.abs(velocity.x) * 0.65f;
 	    	d = d - (float)Math.floor(d);
-        
+
 	    	r.pos = new Vec2f( 4.0f + (int)(3.0f * d),0.0f );
 	    }
 
@@ -107,7 +104,7 @@ public class PlayerEntity extends MovingEntity {
 	    else if(power==2)	r.pos.y = 6.0f + r.pos.y * 2.0f;
 
 	    if(power>0)         r.size.y *= 2.0f;
-	    if(lookDir==false)  r.pos.x = 15.0f - r.pos.x;
+	    if(!lookDir)  r.pos.x = 15.0f - r.pos.x;
 
         r.pos = r.pos.div(new Vec2f(16.0f,12.0f));
         r.size = r.size.div(new Vec2f(16.0f,12.0f));
@@ -159,13 +156,13 @@ public class PlayerEntity extends MovingEntity {
         var state = GameState.INSTANCE;
         int tileSize = state.world.getTileSize();
         Texture texture = state.assetManager.get("entities/player/mario_atlas", Texture.class);
-        
+
         Rect r = getTexRect();
 
         batch.draw(texture,
             position.x * tileSize, position.y * tileSize,
             size.x * tileSize, size.y * tileSize,
-            r.pos.x + r.size.x,r.pos.y + r.size.y,r.pos.x,r.pos.y
+            r.pos.x + r.size.x,r.pos.y + r.size.y,r.pos.x, r.pos.y
         );
     }
 }

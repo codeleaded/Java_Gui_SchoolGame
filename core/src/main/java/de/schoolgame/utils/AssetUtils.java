@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.Animation;
+import de.schoolgame.render.texture.Font;
 import de.schoolgame.render.texture.SpriteSheet;
 import de.schoolgame.render.texture.TileSet;
 import org.tomlj.Toml;
@@ -28,13 +29,18 @@ public class AssetUtils {
         return asset.getString(key, () -> defaultValue);
     }
 
-    public static Class<?> getClass(TomlParseResult asset) {
-        return switch (getString(asset, "type", "null")) {
+    public static String getTypeString(TomlParseResult asset) {
+        return getString(asset, "type", "null");
+    }
+
+    public static Class<?> getClass(String type) {
+        return switch (type) {
             case "texture" -> Texture.class;
             case "spritesheet" -> SpriteSheet.class;
             case "animation" -> Animation.class;
             case "tileset" -> TileSet.class;
-            default -> throw new GdxRuntimeException("Unknown asset type: " + getString(asset, "type", "null"));
+            case "font" -> Font.class;
+            default -> throw new GdxRuntimeException("Unknown asset type: " + type);
         };
     }
 
@@ -43,6 +49,7 @@ public class AssetUtils {
         if (type == SpriteSheet.class) return "spritesheet";
         if (type == Animation.class) return "animation";
         if (type == TileSet.class) return "tileset";
+        if (type == Font.class) return "font";
         throw new GdxRuntimeException("Unknown asset type: " + type.getName());
     }
 

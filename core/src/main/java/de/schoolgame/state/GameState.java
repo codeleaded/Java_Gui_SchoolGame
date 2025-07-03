@@ -36,7 +36,9 @@ public class GameState {
     public enum GameStateType {
         MAIN_MENU,
         GAME,
+        MULTIPLAYER,
+        CHARACTER_SELECT,
+        OPTIONS,
         DEBUG,
-        WORLD_EDITOR,
     }
 }
