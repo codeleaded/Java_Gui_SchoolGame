@@ -51,7 +51,7 @@ public abstract class MovingEntity extends Entity {
                             position.y = (float)sp.y;
                             pe.setDead(false);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            Gdx.app.log("ERROR", "Player Death thread interrupted", e);
                         }
                     }).start();
                 }
