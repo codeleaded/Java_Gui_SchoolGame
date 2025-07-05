@@ -38,6 +38,11 @@ public class Rect implements Externalizable {
         return !(this.pos.y > r.pos.y + r.size.y);
     }
 
+    public boolean contains(Vec2f v){
+        return v.x >= pos.x && v.x <= pos.x + size.x &&
+            v.y >= pos.y && v.y <= pos.y + size.y;
+    }
+
 	public Direction staticCollisionSolver(Rect r){
 		if(overlap(r)) {
             Rect ex = new Rect(r.pos.sub(new Vec2f(this.size.x * 0.5f, this.size.y * 0.5f)), r.size.add(this.size));

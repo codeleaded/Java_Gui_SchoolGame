@@ -11,7 +11,7 @@ import de.schoolgame.world.entities.PlayerEntity;
 public class GameState {
     public static GameState INSTANCE = new GameState();
 
-    public GameStateType state = GameStateType.GAME;
+    public GameStateType state = GameStateType.MAIN_MENU;
 
     public DebugState debug;
 
@@ -20,6 +20,8 @@ public class GameState {
     public PlayerEntity player;
 
     public AssetManager assetManager;
+
+    public boolean escapeFlag = false;
 
     public void loadSave(Save s) {
         WorldObject[][] worldObjects = s.worldObjects();
@@ -36,9 +38,6 @@ public class GameState {
     public enum GameStateType {
         MAIN_MENU,
         GAME,
-        MULTIPLAYER,
-        CHARACTER_SELECT,
-        OPTIONS,
         DEBUG,
     }
 }

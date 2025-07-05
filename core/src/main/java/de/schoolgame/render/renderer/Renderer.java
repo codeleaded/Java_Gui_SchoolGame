@@ -15,25 +15,28 @@ public class Renderer implements IRenderer {
     }
 
     public void render() {
-        var camera = GameState.INSTANCE.camera;
+        var state = GameState.INSTANCE;
 
-        ScreenUtils.clear(0f, 0.5f, 1f, 1f);
-
+        var camera = state.camera;
         camera.update();
         camera.focusPlayer();
         worldRenderer.setView(camera);
 
-        switch (GameState.INSTANCE.state) {
-            case GAME -> {
-                worldRenderer.render();
-                guiRenderer.render();
-            }
+        if (state.state == GameState.GameStateType.MAIN_MENU) {
+            ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+        } else {
+            ScreenUtils.clear(0f, 0.5f, 1f, 1f);
+        }
+
+        switch (state.state) {
+            case GAME -> worldRenderer.render();
             case DEBUG -> {
                 worldRenderer.render();
                 debugRenderer.render();
             }
-            case MAIN_MENU -> guiRenderer.render();
         }
+
+        guiRenderer.render();
     }
 
     public void dispose() {

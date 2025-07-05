@@ -4,10 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import de.schoolgame.primitives.Direction;
+import de.schoolgame.primitives.Rect;
+import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
-import de.schoolgame.utils.DebugUtils;
+import de.schoolgame.utils.CoordinateUtils;
 
 import static com.badlogic.gdx.Input.Keys.*;
+import static de.schoolgame.render.renderer.GuiRenderer.*;
 
 public class GameInputProcessor implements InputProcessor {
     private int lastMouseButton = Input.Buttons.LEFT;
@@ -78,6 +81,12 @@ public class GameInputProcessor implements InputProcessor {
                 state.player.setStamp(false);
                 yield true;
             }
+            case ESCAPE: {
+                if (escape()) {
+                    GameState.INSTANCE.state = GameState.GameStateType.MAIN_MENU;
+                }
+                yield true;
+            }
             default: yield false;
         };
     }
@@ -90,7 +99,14 @@ public class GameInputProcessor implements InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         lastMouseButton = button;
-        return worldEdit(screenX, screenY);
+        var state = GameState.INSTANCE;
+        if (state.state == GameState.GameStateType.DEBUG && state.debug.showWorldedit.get()) {
+            return worldEdit(screenX, screenY);
+        }
+        if (state.state == GameState.GameStateType.MAIN_MENU) {
+            return mainMenu(screenX, screenY);
+        }
+        return false;
     }
 
     @Override
@@ -123,25 +139,70 @@ public class GameInputProcessor implements InputProcessor {
         return false;
     }
 
+    private boolean mainMenu(int screenX, int screenY) {
+        var state = GameState.INSTANCE;
+        var camera = state.camera;
+
+        Vec2f pos = CoordinateUtils.getCameraPosFromScreenPos(new Vec2i(screenX, screenY)).toVec2f();
+
+        int travel = BUTTON_HEIGHT + BUTTON_SPACING;
+        int x = (camera.viewSize.x - BUTTON_WIDTH) / 2;
+        int y = BUTTON_SPACING;
+
+        Rect exit = new Rect(new Vec2f(x, y), new Vec2f(BUTTON_WIDTH, BUTTON_HEIGHT));
+        y += travel;
+        Rect create = new Rect(new Vec2f(x, y), new Vec2f(BUTTON_WIDTH, BUTTON_HEIGHT));
+        y += travel;
+        Rect start = new Rect(new Vec2f(x, y), new Vec2f(BUTTON_WIDTH, BUTTON_HEIGHT));
+
+        if (exit.contains(pos)) {
+            Gdx.app.exit();
+        } else if (start.contains(pos)) {
+            state.state = GameState.GameStateType.GAME;
+        } else if (create.contains(pos)) {
+            state.state = GameState.GameStateType.DEBUG;
+        } else {
+            return false;
+        }
+
+        return true;
+    }
+
     private boolean worldEdit(int screenX, int screenY) {
         var state = GameState.INSTANCE;
-        if (state.state == GameState.GameStateType.DEBUG && state.debug.showWorldedit.get()) {
-            Vec2i pos = DebugUtils.getTilePosFromScreenPos(new Vec2i(screenX, screenY));
-            try {
-                if (lastMouseButton == Input.Buttons.LEFT) {
-                    state.world.removeAt(pos);
-                    state.world.addAt(pos, state.debug.selectedWorldObject);
-                    return true;
-                } else if (lastMouseButton == Input.Buttons.RIGHT) {
-                    state.world.removeAt(pos);
-                    return true;
-                } else if (lastMouseButton == Input.Buttons.MIDDLE) {
-                    state.debug.selectedWorldObject = state.world.at(pos);
-                }
-            } catch (ArrayIndexOutOfBoundsException ignored) {
-
+        Vec2i pos = CoordinateUtils.getTilePosFromScreenPos(new Vec2i(screenX, screenY));
+        try {
+            if (lastMouseButton == Input.Buttons.LEFT) {
+                state.world.removeAt(pos);
+                state.world.addAt(pos, state.debug.selectedWorldObject);
+                return true;
+            } else if (lastMouseButton == Input.Buttons.RIGHT) {
+                state.world.removeAt(pos);
+                return true;
+            } else if (lastMouseButton == Input.Buttons.MIDDLE) {
+                state.debug.selectedWorldObject = state.world.at(pos);
             }
+        } catch (ArrayIndexOutOfBoundsException ignored) {}
+        return false;
+    }
+
+    public boolean escape() {
+        var state = GameState.INSTANCE;
+
+        if (state.escapeFlag) {
+            state.escapeFlag = false;
+            return true;
         }
+        state.escapeFlag = true;
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Gdx.app.log("ERROR", "Escape thread interrupted", e);
+            }
+            state.escapeFlag = false;
+        }).start();
         return false;
     }
 }

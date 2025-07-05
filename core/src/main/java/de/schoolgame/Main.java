@@ -27,8 +27,11 @@ public class Main extends ApplicationAdapter {
         // System.out.flush();
 
         inputProcessor.update();
-        state.player.update();
-        state.world.getEntities().forEach(Entity::update);
+
+        if (state.state == GameState.GameStateType.GAME || state.state == GameState.GameStateType.DEBUG) {
+            state.player.update();
+            state.world.getEntities().forEach(Entity::update);
+        }
 
         renderer.render();
     }
