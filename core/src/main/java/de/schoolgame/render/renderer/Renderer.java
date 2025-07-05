@@ -24,7 +24,10 @@ public class Renderer implements IRenderer {
         worldRenderer.setView(camera);
 
         switch (GameState.INSTANCE.state) {
-            case GAME -> worldRenderer.render();
+            case GAME -> {
+                worldRenderer.render();
+                guiRenderer.render();
+            }
             case DEBUG -> {
                 worldRenderer.render();
                 debugRenderer.render();

@@ -1,22 +1,22 @@
 package de.schoolgame.world;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.TileSet;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class World {
-    private final WorldObject[][] worldObjects;
+    private WorldObject[][] worldObjects;
     private final List<Entity> entities;
 
     private Vec2i spawn;
-    private final Vec2i size;
+    private Vec2i size;
     private final int tileSize;
 
-    private final byte[][] connectionsCache;
+    private byte[][] connectionsCache;
 
     public World() {
         size = new Vec2i(100, 32);
@@ -24,7 +24,7 @@ public class World {
         tileSize = 32;
         entities = new ArrayList<>();
         worldObjects = new WorldObject[size.x][size.y];
-        
+
         for (int x = 0; x < size.x; x++) {
             for (int y = 0; y < size.y; y++) {
                 worldObjects[x][y] = WorldObject.NONE;
@@ -132,6 +132,25 @@ public class World {
 
     public Vec2i getSize() {
         return size;
+    }
+    public void setSize(Vec2i newSize) {
+        WorldObject[][] newWorldObjects = new WorldObject[newSize.x][newSize.y];
+
+        for (int x = 0; x < newSize.x; x++) {
+            for (int y = 0; y < newSize.y; y++) {
+                if (x >= size.x || y >= size.y) {
+                    newWorldObjects[x][y] = WorldObject.NONE;
+                } else {
+                    newWorldObjects[x][y] = worldObjects[x][y];
+                }
+
+            }
+        }
+
+        connectionsCache = new byte[newSize.x][newSize.y];
+        worldObjects = newWorldObjects;
+        size = newSize;
+        updateConnections();
     }
 
     public int getTileSize() {

@@ -127,6 +127,10 @@ public class Vec3f implements Externalizable {
         return new Vec2f(x, y);
     }
 
+    public float[] toArray() {
+        return new float[] {x, y, z};
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

@@ -1,9 +1,6 @@
 package de.schoolgame.world.entities;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
-
 import de.schoolgame.primitives.Direction;
 import de.schoolgame.primitives.Rect;
 import de.schoolgame.primitives.Vec2f;
@@ -11,6 +8,8 @@ import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
+
+import java.util.ArrayList;
 
 public abstract class MovingEntity extends Entity {
     public static final float GRAVITY = -25.0f;
@@ -39,10 +38,9 @@ public abstract class MovingEntity extends Entity {
 
         if (position.y <= 0.0f) {
             Vec2i sp = state.world.getSpawn();
-            
-            if(this instanceof PlayerEntity){
-                PlayerEntity pe = (PlayerEntity)this;
-                if(!pe.GetDead()){
+
+            if(this instanceof PlayerEntity pe){
+                if(!pe.getDead()){
                     pe.setDead(true);
                     pe.velocity.y = 8.0f;
 
@@ -66,35 +64,12 @@ public abstract class MovingEntity extends Entity {
         velocity = velocity.add(acceleration.scl(Gdx.graphics.getDeltaTime()));
         Vec2f targetposition = position.add(velocity.scl(Gdx.graphics.getDeltaTime()));
         RayCollision(targetposition,worldSize);
-
-        /*
-
-        Sortierung fällt bei Ray Collisions raus!
-        Durch Raycasting erhält man die Rects eh in der richtigen Reihenfolge
-
-        ArrayList<Rect> rects = new ArrayList<>();
-
-        var rect = getRect();
-
-        rects.stream()
-            .sorted((r1, r2) -> {
-                float d1 = r1.pos.sub(rect.pos).len();
-                float d2 = r2.pos.sub(rect.pos).len();
-                return Float.compare(d1, d2);
-            })
-            .map(rect::staticCollisionSolver)
-            .distinct()
-            .filter(type -> type != NONE)
-            .forEach(this::onCollision);
-
-        this.position = rect.pos;
-        */
     }
 
     public void RayCollision(Vec2f pos,Vec2i worldSize){
         final Vec2f dir = pos.sub(position);
         final float length = dir.len();
-        
+
         ArrayList<Rect> retrects = new ArrayList<>();
         ArrayList<Direction> retdirs = new ArrayList<>();
 
@@ -126,7 +101,7 @@ public abstract class MovingEntity extends Entity {
     }
     public void Search(ArrayList<Rect> retrects,ArrayList<Direction> retdirs,Vec2i worldSize){
         var posi = position.toVec2i();
-        
+
         var state = GameState.INSTANCE;
         var search = size.toVec2i()
             .max(new Vec2i(1, 1))
@@ -142,7 +117,7 @@ public abstract class MovingEntity extends Entity {
             for (int y = start.y; y < end.y; y += 1) {
                 if (y < 0 || x < 0) continue;
                 if (y > worldSize.y || x > worldSize.x) continue;
-                
+
                 WorldObject o = state.world.at(new Vec2i(x,y));
                 if (o != WorldObject.NONE && o.isTile()) {
                     Rect r = new Rect(new Vec2f(x,y),new Vec2f(1.0f,1.0f));

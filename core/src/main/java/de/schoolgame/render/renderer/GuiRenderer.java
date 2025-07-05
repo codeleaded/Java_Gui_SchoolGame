@@ -25,10 +25,25 @@ public class GuiRenderer implements IRenderer {
 
         switch (GameState.INSTANCE.state) {
             case MAIN_MENU -> renderMainMenu();
+            case GAME -> renderHud();
             case OPTIONS -> throw new IllegalStateException("Options are not yet implemented!");
             default -> {
             }
         }
+    }
+
+    private void renderHud() {
+        var state = GameState.INSTANCE;
+
+        Font font = state.assetManager.get("gui/font/aseprite_font", Font.class);
+        int font_size = 2;
+
+        int x = 10;
+        int y = camera.viewSize.y - 10 - (7 * font_size);
+
+        batch.begin();
+        font.draw(batch, "Coins: " + state.player.getCoins(), x, y, font_size);
+        batch.end();
     }
 
     private void renderMainMenu() {

@@ -11,6 +11,7 @@ import de.schoolgame.state.GameState;
 import static de.schoolgame.primitives.Direction.*;
 
 public class PlayerEntity extends MovingEntity {
+    private int coins;
     private long start;
 	private int power;
 	private boolean lookDir;
@@ -22,6 +23,7 @@ public class PlayerEntity extends MovingEntity {
 
     public PlayerEntity(Vec2f pos) {
         super(pos, new Vec2f(0.95f, 0.95f));
+        this.coins = 0;
         this.start = 0L;
 	    this.power = 0;
 	    this.lookDir = false;
@@ -41,23 +43,42 @@ public class PlayerEntity extends MovingEntity {
     public void setDead(boolean dead) {
         this.dead = dead;
     }
+    public void setPower(int power) {
+        switch (power) {
+            case 0:
+                size = new Vec2f(0.95f, 0.95f);
+                break;
+            case 1:
+            case 2:
+                size = new Vec2f(0.95f, 1.9f);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid power level: " + power);
+        }
+        this.power = power;
+    }
+    public void setCoins(int coins) {
+        this.coins = coins;
+    }
 
-    public boolean GetDead() {
+    public boolean getDead() {
         return this.dead;
     }
+    public int getCoins() { return this.coins; }
+    public int getPower() { return this.power; }
 
     public boolean move(Direction direction) {
         return switch (direction) {
             case UP:
                 if (onGround) {
                     velocity.y = 8;
-                    yield true;
                 }
+                yield true;
             case DOWN:
                 if (velocity.y>0) {
                     velocity.y = -8;
-                    yield true;
                 }
+                yield true;
             case LEFT:
                 acceleration.x = -10;
                 lookDir = false;
@@ -137,10 +158,14 @@ public class PlayerEntity extends MovingEntity {
 
         var state = GameState.INSTANCE;
         // Delete Coin
-        state.world.getEntities().removeIf(e ->
-            e instanceof CoinEntity &&
-                getRect().overlap(new Rect(e.getPosition(), new Vec2f(0.9f, 0.9f)))
-        );
+        state.world.getEntities().removeIf(e -> {
+            boolean touching = e instanceof CoinEntity &&
+                getRect().overlap(new Rect(e.getPosition(), new Vec2f(0.9f, 0.9f)));
+            if (touching) {
+                coins += 1;
+            }
+            return touching;
+        });
     }
 
     @Override

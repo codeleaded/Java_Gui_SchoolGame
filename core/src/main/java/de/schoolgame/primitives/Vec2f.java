@@ -1,10 +1,6 @@
 package de.schoolgame.primitives;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.io.Serial;
+import java.io.*;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
@@ -138,6 +134,10 @@ public class Vec2f implements Externalizable {
 
     public Vec2i toVec2i() {
         return new Vec2i((int) x, (int) y);
+    }
+
+    public float[] toArray() {
+        return new float[] {x, y};
     }
 
     @Override

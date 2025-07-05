@@ -26,6 +26,11 @@ public class Vec2i implements Externalizable {
         this.y = vec.y;
     }
 
+    public Vec2i(int[] array) {
+        this.x = array[0];
+        this.y = array[1];
+    }
+
     public Vec2i add(Vec2i vec) {
         return new Vec2i(x + vec.x, y + vec.y);
     }
@@ -122,6 +127,10 @@ public class Vec2i implements Externalizable {
 
     public Vec2f toVec2f() {
         return new Vec2f(x, y);
+    }
+
+    public int[] toArray() {
+        return new int[] {x, y};
     }
 
     @Override

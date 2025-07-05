@@ -34,7 +34,6 @@ public class Lwjgl3Launcher {
         Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
 
         configuration.setTitle("SchoolGame");
-        configuration.useVsync(true);
 
         configuration.setForegroundFPS(displayMode.refreshRate + 1);
         configuration.setWindowedMode(displayMode.width, displayMode.height);
