@@ -25,6 +25,7 @@ public class DebugRenderer implements IRenderer {
     private final int[] inputWorldSize;
     private final ImString inputCoins;
     private final ImString inputPower;
+    private final ImString worldName;
 
     public DebugRenderer() {
         imGuiGlfw = new ImGuiImplGlfw();
@@ -41,6 +42,7 @@ public class DebugRenderer implements IRenderer {
         inputWorldSize = new int[2];
         inputCoins = new ImString("" + Integer.MAX_VALUE);
         inputPower = new ImString("0");
+        worldName = new ImString("save");
     }
 
     public void render() {
@@ -110,30 +112,29 @@ public class DebugRenderer implements IRenderer {
                 ImGui.text("Scroll: zoom in/out");
                 if (ImGui.button("Swap Gravity")) {
                     MovingEntity.GRAVITY *= -1;
-                };
-
-                if (ImGui.collapsingHeader("World")) {
-                    ImGui.separatorText("Settings");
-
-                    ImGui.inputInt2("Size", inputWorldSize);
-                    ImGui.sameLine();
-                    if (ImGui.button("Set")) {
-                        state.world.setSize(new Vec2i(inputWorldSize));
-                    }
-
-                    ImGui.inputInt2("Spawn", state.world.getSpawn().toArray(), ImGuiInputTextFlags.ReadOnly);
-
-                    if (ImGui.button("Set Spawn")) {
-                        var pos = state.player.getPosition().round();
-                        Gdx.app.log("ImGui", "Set Spawn to " + pos);
-                        state.world.setSpawn(pos);
-                    }
-                    if (ImGui.button("Save World")) {
-                        state.writeSave();
-                    }
                 }
 
+                ImGui.separatorText("Settings");
 
+                ImGui.inputInt2("Size", inputWorldSize);
+                ImGui.sameLine();
+                if (ImGui.button("Set")) {
+                    state.world.setSize(new Vec2i(inputWorldSize).max(new Vec2i(3, 3)));
+                }
+
+                ImGui.inputInt2("Spawn", state.world.getSpawn().toArray(), ImGuiInputTextFlags.ReadOnly);
+                ImGui.sameLine();
+                if (ImGui.button("Set##2")) {
+                    var pos = state.player.getPosition().round();
+                    Gdx.app.log("ImGui", "Set Spawn to " + pos);
+                    state.world.setSpawn(pos);
+                }
+
+                ImGui.inputTextWithHint("##2", "World Name", worldName);
+                ImGui.sameLine();
+                if (ImGui.button("Save")) {
+                    state.worldManager.save(worldName.get());
+                }
             }
             ImGui.end();
         }
@@ -145,7 +146,7 @@ public class DebugRenderer implements IRenderer {
                 inputCoins.set("" + state.player.getCoins());
                 ImGui.inputText("Coins", inputCoins, ImGuiInputTextFlags.ReadOnly);
                 ImGui.sameLine();
-                if (ImGui.button("+1")) {
+                if (ImGui.button("+")) {
                     state.player.setCoins(state.player.getCoins() + 1);
                 }
 
@@ -153,13 +154,13 @@ public class DebugRenderer implements IRenderer {
                 ImGui.inputText("Power", inputPower, ImGuiInputTextFlags.ReadOnly);
                 if (state.player.getPower() != 2) {
                     ImGui.sameLine();
-                    if (ImGui.button("PowerUp")) {
+                    if (ImGui.button("+##2")) {
                         state.player.setPower(state.player.getPower() + 1);
                     }
                 }
                 if (state.player.getPower() != 0) {
                     ImGui.sameLine();
-                    if (ImGui.button("PowerDown")) {
+                    if (ImGui.button("-##2")) {
                         state.player.setPower(state.player.getPower() - 1);
                     }
                 }

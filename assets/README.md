@@ -5,12 +5,11 @@ Must have a png file with the same name alongside it
 
 ## asset types
 There are different types of assets:
-- "texture": a simple 2d Texture
+- "texture": just a simple 2d Texture
 - "spritesheet": a sheet of Textures
-- "animation" a sheet of Textures for an Animation
-- "tileset" a 47-tile tileset
+- "animation" an Animation from a sheet of Textures 
+- "tileset" to declare 47-tile tileset
 - "font" a bitmap font
-- "save" a savegame
 
 Example:
 ```

@@ -2,6 +2,7 @@ package de.schoolgame.render;
 
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.primitives.Vec3f;
 import de.schoolgame.state.GameState;
@@ -44,11 +45,15 @@ public class Camera {
     public void clampZoom() {
         var state = GameState.INSTANCE;
 
-        var tileSize = state.world.getTileSize();
-        var worldSize = state.world.getSize().mul(tileSize).toVec2f();
+        int tileSize = state.world.getTileSize();
+        Vec2f worldSize = state.world.getSize().mul(tileSize).toVec2f();
 
-        var maxZoom = worldSize.div(viewSize.toVec2f());
-        zoom = Math.clamp(zoom, 0.1f, Math.min(maxZoom.x, maxZoom.y));
+        Vec2f maxZoomVec = worldSize.div(viewSize.toVec2f());
+        float maxZoom = Math.min(maxZoomVec.x, maxZoomVec.y);
+
+        if (maxZoom <= 0.1f) maxZoom = 0.1f;
+
+        zoom = Math.clamp(zoom, 0.1f, maxZoom);
     }
 
     public void update() {

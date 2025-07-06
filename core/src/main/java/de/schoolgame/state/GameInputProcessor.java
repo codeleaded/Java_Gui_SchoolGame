@@ -9,6 +9,8 @@ import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.utils.CoordinateUtils;
 import de.schoolgame.utils.Save;
+import de.schoolgame.world.World;
+import de.schoolgame.world.entities.PlayerEntity;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static de.schoolgame.render.renderer.GuiRenderer.*;
@@ -176,12 +178,12 @@ public class GameInputProcessor implements InputProcessor {
         if (exit.contains(pos)) {
             Gdx.app.exit();
         } else if (start.contains(pos)) {
-            Save s = state.assetManager.get("worlds/save", Save.class);
+            Save s = state.worldManager.get("worlds/save");
             state.loadSave(s);
             state.state = GameState.GameStateType.GAME;
         } else if (create.contains(pos)) {
-            Save s = state.assetManager.get("worlds/save", Save.class);
-            state.loadSave(s);
+            state.world = new World();
+            state.player = new PlayerEntity(Vec2f.ZERO);
             state.state = GameState.GameStateType.DEBUG;
         } else {
             return false;

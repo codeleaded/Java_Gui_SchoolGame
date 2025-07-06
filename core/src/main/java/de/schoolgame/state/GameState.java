@@ -4,6 +4,7 @@ import de.schoolgame.render.AssetManager;
 import de.schoolgame.render.Camera;
 import de.schoolgame.utils.Save;
 import de.schoolgame.world.World;
+import de.schoolgame.world.WorldManager;
 import de.schoolgame.world.entities.PlayerEntity;
 
 public class GameState {
@@ -18,17 +19,13 @@ public class GameState {
     public PlayerEntity player;
 
     public AssetManager assetManager;
+    public WorldManager worldManager;
 
     public boolean escapeFlag = false;
 
     public void loadSave(Save s) {
         world = new World(s);
         player = new PlayerEntity(world.getSpawn().toVec2f());
-    }
-
-    public void writeSave() {
-        var save = new Save(world.getTiles(), world.getTileSize(), world.getSpawn());
-        save.writeSave();
     }
 
     public boolean controllable() {

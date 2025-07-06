@@ -6,6 +6,7 @@ import de.schoolgame.render.AssetManager;
 import de.schoolgame.render.Camera;
 import de.schoolgame.state.DebugState;
 import de.schoolgame.state.GameState;
+import de.schoolgame.world.WorldManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ public class LoadingTask {
         status = "Initializing...";
 
         addTask("AssetManager", () -> GameState.INSTANCE.assetManager = new AssetManager());
+        addTask("WorldManager", () -> GameState.INSTANCE.worldManager = new WorldManager());
 
         addTask("Camera", () -> GameState.INSTANCE.camera = new Camera());
 
@@ -34,8 +36,13 @@ public class LoadingTask {
             } else {
                 String path = file.path();
                 if (path.endsWith(".asset")) {
-                    addTask("Assets", () ->
+                    addTask("Asset: " + path, () ->
                         GameState.INSTANCE.assetManager.load(path)
+                    );
+                }
+                if (path.endsWith(".world")) {
+                    addTask("World: " + path, () ->
+                        GameState.INSTANCE.worldManager.load(path)
                     );
                 }
             }
