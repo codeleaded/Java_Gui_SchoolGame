@@ -78,7 +78,7 @@ public class GuiRenderer implements IRenderer {
 
         renderButton(x, y, "Beenden", BUTTON_WIDTH);
         y += travel;
-        renderButton(x, y, "Create", BUTTON_WIDTH);
+        renderButton(x, y, "Bauen", BUTTON_WIDTH);
         y += travel;
         renderButton(x, y, "Start", BUTTON_WIDTH);
     }

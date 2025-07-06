@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import de.schoolgame.primitives.Direction;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.state.GameState;
+import de.schoolgame.world.WorldObject;
 
 import static de.schoolgame.primitives.Direction.*;
 
@@ -16,11 +17,12 @@ public class RoamerEntity extends MovingEntity {
 
     @Override
     public void update() {
+        this.acceleration = new Vec2f(0.0f, GRAVITY);
         super.update();
     }
 
     @Override
-    void onCollision(Direction type) {
+    void onCollision(Direction type,  WorldObject object) {
         if (type == LEFT || type == RIGHT) velocity.x = -velocity.x;
         if (type == UP && velocity.y < 0.0f) velocity.y = 0.0f;
     }
@@ -30,8 +32,9 @@ public class RoamerEntity extends MovingEntity {
         var state = GameState.INSTANCE;
         int tileSize = state.world.getTileSize();
         Texture texture = state.assetManager.get("entities/roamer/roamer", Texture.class);
+
         batch.draw(texture, position.x * tileSize, position.y * tileSize,
             size.x * tileSize, size.y * tileSize,
-            0, 0, tileSize, tileSize, velocity.x < 0.0f, false);
+            0, 0, tileSize, tileSize, velocity.x < 0.0f, MovingEntity.GRAVITY > 0.0f);
     }
 }

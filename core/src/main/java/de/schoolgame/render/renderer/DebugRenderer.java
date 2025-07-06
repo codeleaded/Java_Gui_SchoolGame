@@ -6,6 +6,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.WorldObject;
+import de.schoolgame.world.entities.MovingEntity;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.ImVec2;
@@ -107,6 +108,9 @@ public class DebugRenderer implements IRenderer {
                 ImGui.text("Middle MB: copy Tile");
                 ImGui.text("Right MB: remove Tile");
                 ImGui.text("Scroll: zoom in/out");
+                if (ImGui.button("Swap Gravity")) {
+                    MovingEntity.GRAVITY *= -1;
+                };
 
                 if (ImGui.collapsingHeader("World")) {
                     ImGui.separatorText("Settings");

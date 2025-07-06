@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import de.schoolgame.render.renderer.Renderer;
 import de.schoolgame.state.GameInputProcessor;
 import de.schoolgame.state.GameState;
-import de.schoolgame.world.Entity;
 
 public class Main extends ApplicationAdapter {
     Renderer renderer;
@@ -30,7 +29,9 @@ public class Main extends ApplicationAdapter {
 
         if (state.controllable()) {
             state.player.update();
-            state.world.getEntities().forEach(Entity::update);
+            for (var entity : state.world.getEntities()) {
+                entity.update();
+            }
         } else {
             state.camera.setGui();
         }

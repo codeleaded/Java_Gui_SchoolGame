@@ -4,6 +4,7 @@ import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.world.entities.CoinEntity;
 import de.schoolgame.world.entities.RoamerEntity;
 import de.schoolgame.world.tiles.GrassTile;
+import de.schoolgame.world.tiles.SpikeTile;
 import de.schoolgame.world.tiles.TestTile;
 
 public enum WorldObject {
@@ -12,6 +13,7 @@ public enum WorldObject {
     GRASS(new GrassTile()),
     COIN(CoinEntity.class),
     ROAMER(RoamerEntity.class),
+    SPIKE(new SpikeTile())
     ;
 
     private final Object object;

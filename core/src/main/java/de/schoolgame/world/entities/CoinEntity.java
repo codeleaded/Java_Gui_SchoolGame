@@ -11,7 +11,7 @@ public class CoinEntity extends Entity {
     private float stateTime;
 
     public CoinEntity(Vec2f position) {
-        super(position);
+        super(position, new Vec2f(0.9f, 0.9f));
         stateTime = 0f;
     }
 

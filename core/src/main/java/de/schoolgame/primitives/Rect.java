@@ -43,34 +43,58 @@ public class Rect implements Externalizable {
             v.y >= pos.y && v.y <= pos.y + size.y;
     }
 
-	public Direction staticCollisionSolver(Rect r){
-		if(overlap(r)) {
+    public Vec2f GetDelta(Rect r){
+        final Vec2f d = r.mid().sub(this.mid());
+        final Vec2f newl = r.size.add(this.size);
+        d.x /= newl.x;
+        d.y /= newl.y;
+        return d;
+    }
+
+    public Direction getDirection(Rect r){
+        if(overlap(r)) {
             Rect ex = new Rect(r.pos.sub(new Vec2f(this.size.x * 0.5f, this.size.y * 0.5f)), r.size.add(this.size));
-            Vec2f d = r.mid().sub(this.mid());
+            Vec2f delta = GetDelta(r);
 
-            d.x /= ex.size.x;
-            d.y /= ex.size.y;
-
-			if(abs(d.x) > abs(d.y)) {
-				if(d.x > 0) {
-					this.pos.x = ex.pos.x - this.size.x/2;
+            if(abs(delta.x) > abs(delta.y)) {
+                if(delta.x > 0) {
                     return LEFT;
-				}else {
-					this.pos.x = ex.pos.x + ex.size.x - this.size.x/2;
+                }else {
                     return RIGHT;
-				}
-			}else {
-				if(d.y > 0) {
-					this.pos.y = ex.pos.y - this.size.y/2;
+                }
+            }else {
+                if(delta.y > 0) {
                     return DOWN;
-				}else {
-					this.pos.y = ex.pos.y + ex.size.y - this.size.y/2;
+                }else {
                     return UP;
-				}
-			}
-		}
-		return NONE;
-	}
+                }
+            }
+        }
+        return NONE;
+    }
+
+	public Direction staticCollisionSolver(Rect r) {
+        Direction d = getDirection(r);
+        Rect ex = new Rect(r.pos.sub(new Vec2f(this.size.x * 0.5f, this.size.y * 0.5f)), r.size.add(this.size));
+        Vec2f delta = GetDelta(r);
+
+        switch (d) {
+            case LEFT:
+                this.pos.x = ex.pos.x - this.size.x / 2;
+                break;
+            case RIGHT:
+                this.pos.x = ex.pos.x + ex.size.x - this.size.x / 2;
+                break;
+            case DOWN:
+                this.pos.y = ex.pos.y - this.size.y / 2;
+                break;
+            case UP:
+                this.pos.y = ex.pos.y + ex.size.y - this.size.y / 2;
+                break;
+        }
+
+        return d;
+    }
 
     public boolean compareInt(Rect r) {
         return (int)pos.x == (int)r.pos.x &&
