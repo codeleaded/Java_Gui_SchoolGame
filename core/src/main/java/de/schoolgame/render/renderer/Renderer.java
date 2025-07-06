@@ -17,11 +17,6 @@ public class Renderer implements IRenderer {
     public void render() {
         var state = GameState.INSTANCE;
 
-        var camera = state.camera;
-        camera.update();
-        camera.focusPlayer();
-        worldRenderer.setView(camera);
-
         if (state.state == GameState.GameStateType.MAIN_MENU) {
             ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         } else {

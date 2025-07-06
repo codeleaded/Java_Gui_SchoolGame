@@ -20,6 +20,7 @@ public class GuiRenderer implements IRenderer {
     public GuiRenderer() {
         batch = new SpriteBatch();
         camera = new Camera();
+        camera.setGui();
     }
 
     @Override

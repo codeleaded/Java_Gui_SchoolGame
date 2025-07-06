@@ -3,6 +3,7 @@ package de.schoolgame.world;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.TileSet;
+import de.schoolgame.utils.Save;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,6 +34,10 @@ public class World {
 
         connectionsCache = new byte[size.x][size.y];
         updateConnections();
+    }
+
+    public World(Save s) {
+        this(s.worldObjects(), new Vec2i(s.worldObjects().length, s.worldObjects()[0].length), s.tileSize(), s.spawn());
     }
 
     public World(WorldObject[][] worldObjects, Vec2i size, int tileSize, Vec2i spawn) {

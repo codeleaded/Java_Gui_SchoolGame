@@ -8,6 +8,7 @@ import de.schoolgame.primitives.Rect;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.utils.CoordinateUtils;
+import de.schoolgame.utils.Save;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static de.schoolgame.render.renderer.GuiRenderer.*;
@@ -18,16 +19,18 @@ public class GameInputProcessor implements InputProcessor {
     public void update() {
         var state = GameState.INSTANCE;
 
-        var leftPressed = isKeyPressed(A) || isKeyPressed(LEFT);
-        var rightPressed = isKeyPressed(D) || isKeyPressed(RIGHT);
-        if (leftPressed != rightPressed) {
-            if (leftPressed) {
-                state.player.move(Direction.LEFT);
+        if (state.controllable()) {
+            var leftPressed = isKeyPressed(A) || isKeyPressed(LEFT);
+            var rightPressed = isKeyPressed(D) || isKeyPressed(RIGHT);
+            if (leftPressed != rightPressed) {
+                if (leftPressed) {
+                    state.player.move(Direction.LEFT);
+                } else {
+                    state.player.move(Direction.RIGHT);
+                }
             } else {
-                state.player.move(Direction.RIGHT);
+                state.player.move(Direction.NONE);
             }
-        } else {
-            state.player.move(Direction.NONE);
         }
     }
 
@@ -38,57 +41,68 @@ public class GameInputProcessor implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         var state = GameState.INSTANCE;
-        return switch (keycode) {
-            case L: {
-                if (state.state == GameState.GameStateType.DEBUG) {
-                    state.state = GameState.GameStateType.GAME;
-                    Gdx.app.log("DEBUG", "ImGui disabled");
-                    yield true;
-                } else if (state.state == GameState.GameStateType.GAME) {
-                    state.state = GameState.GameStateType.DEBUG;
-                    Gdx.app.log("DEBUG", "ImGui enabled");
-                    yield true;
+
+        if (state.controllable()) {
+            return switch (keycode) {
+                case L: {
+                    if (state.state == GameState.GameStateType.DEBUG) {
+                        state.state = GameState.GameStateType.GAME;
+                        Gdx.app.log("DEBUG", "ImGui disabled");
+                        yield true;
+                    } else if (state.state == GameState.GameStateType.GAME) {
+                        state.state = GameState.GameStateType.DEBUG;
+                        Gdx.app.log("DEBUG", "ImGui enabled");
+                        yield true;
+                    }
+                    yield false;
                 }
-                yield false;
-            }
-            case SPACE:
-            case UP:
-            case W: {
-                state.player.setJump(true);
-                yield state.player.move(Direction.UP);
-            }
-            case DOWN:
-            case S: {
-                state.player.setStamp(true);
-                yield state.player.move(Direction.DOWN);
-            }
-            default: yield false;
-        };
+                case SPACE:
+                case UP:
+                case W: {
+                    state.player.setJump(true);
+                    yield state.player.move(Direction.UP);
+                }
+                case DOWN:
+                case S: {
+                    state.player.setStamp(true);
+                    yield state.player.move(Direction.DOWN);
+                }
+                default: yield false;
+            };
+        }
+
+        return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
         var state = GameState.INSTANCE;
-        return switch (keycode) {
-            case SPACE:
-            case UP:
-            case W: {
-                state.player.setJump(false);
-                yield true;
+
+        if (keycode == ESCAPE) {
+            if (escape()) {
+                GameState.INSTANCE.state = GameState.GameStateType.MAIN_MENU;
             }
-            case DOWN:
-            case S: {
-                state.player.setStamp(false);
-                yield true;
-            }
-            case ESCAPE: {
-                if (escape()) {
-                    GameState.INSTANCE.state = GameState.GameStateType.MAIN_MENU;
+            return true;
+        }
+
+        if (state.controllable()) {
+            return switch (keycode) {
+                case SPACE:
+                case UP:
+                case W: {
+                    state.player.setJump(false);
+                    yield true;
                 }
-                yield true;
-            }
-            default: yield false;
-        };
+                case DOWN:
+                case S: {
+                    state.player.setStamp(false);
+                    yield true;
+                }
+                default: yield false;
+            };
+        }
+
+        return false;
     }
 
     @Override
@@ -121,7 +135,11 @@ public class GameInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return worldEdit(screenX, screenY);
+        var state = GameState.INSTANCE;
+        if (state.state == GameState.GameStateType.DEBUG && state.debug.showWorldedit.get()) {
+            return worldEdit(screenX, screenY);
+        }
+        return false;
     }
 
     @Override
@@ -158,8 +176,12 @@ public class GameInputProcessor implements InputProcessor {
         if (exit.contains(pos)) {
             Gdx.app.exit();
         } else if (start.contains(pos)) {
+            Save s = state.assetManager.get("worlds/save", Save.class);
+            state.loadSave(s);
             state.state = GameState.GameStateType.GAME;
         } else if (create.contains(pos)) {
+            Save s = state.assetManager.get("worlds/save", Save.class);
+            state.loadSave(s);
             state.state = GameState.GameStateType.DEBUG;
         } else {
             return false;

@@ -1,11 +1,9 @@
 package de.schoolgame.state;
 
-import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.AssetManager;
 import de.schoolgame.render.Camera;
 import de.schoolgame.utils.Save;
 import de.schoolgame.world.World;
-import de.schoolgame.world.WorldObject;
 import de.schoolgame.world.entities.PlayerEntity;
 
 public class GameState {
@@ -24,15 +22,17 @@ public class GameState {
     public boolean escapeFlag = false;
 
     public void loadSave(Save s) {
-        WorldObject[][] worldObjects = s.worldObjects();
-        world = new World(worldObjects, new Vec2i(worldObjects.length, worldObjects[0].length), s.tileSize(), s.spawn());
+        world = new World(s);
         player = new PlayerEntity(world.getSpawn().toVec2f());
-        camera  = new Camera();
     }
 
     public void writeSave() {
         var save = new Save(world.getTiles(), world.getTileSize(), world.getSpawn());
         save.writeSave();
+    }
+
+    public boolean controllable() {
+        return state == GameStateType.GAME || state == GameStateType.DEBUG;
     }
 
     public enum GameStateType {

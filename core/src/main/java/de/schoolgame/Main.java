@@ -28,9 +28,11 @@ public class Main extends ApplicationAdapter {
 
         inputProcessor.update();
 
-        if (state.state == GameState.GameStateType.GAME || state.state == GameState.GameStateType.DEBUG) {
+        if (state.controllable()) {
             state.player.update();
             state.world.getEntities().forEach(Entity::update);
+        } else {
+            state.camera.setGui();
         }
 
         renderer.render();

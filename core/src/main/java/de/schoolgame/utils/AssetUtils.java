@@ -40,6 +40,7 @@ public class AssetUtils {
             case "animation" -> Animation.class;
             case "tileset" -> TileSet.class;
             case "font" -> Font.class;
+            case "save" -> Save.class;
             default -> throw new GdxRuntimeException("Unknown asset type: " + type);
         };
     }
@@ -50,6 +51,7 @@ public class AssetUtils {
         if (type == Animation.class) return "animation";
         if (type == TileSet.class) return "tileset";
         if (type == Font.class) return "font";
+        if (type == Save.class) return "save";
         throw new GdxRuntimeException("Unknown asset type: " + type.getName());
     }
 

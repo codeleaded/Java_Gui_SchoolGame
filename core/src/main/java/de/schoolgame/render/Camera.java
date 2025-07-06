@@ -36,7 +36,12 @@ public class Camera {
             );
     }
 
-    public void update() {
+    public void setGui() {
+        zoom = 1f;
+        position = new Vec3f(viewSize.toVec2f().div(2), 0);
+    }
+
+    public void clampZoom() {
         var state = GameState.INSTANCE;
 
         var tileSize = state.world.getTileSize();
@@ -44,7 +49,9 @@ public class Camera {
 
         var maxZoom = worldSize.div(viewSize.toVec2f());
         zoom = Math.clamp(zoom, 0.1f, Math.min(maxZoom.x, maxZoom.y));
+    }
 
+    public void update() {
         var halfView = this.viewSize.toVec2f().div(2).mul(zoom);
 
         projectionMatrix.setToOrtho(-halfView.x, halfView.x, -halfView.y, halfView.y, 0, 100);

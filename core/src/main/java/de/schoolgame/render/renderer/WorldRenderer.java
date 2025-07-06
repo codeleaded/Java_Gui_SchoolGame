@@ -28,6 +28,12 @@ public class WorldRenderer implements IRenderer {
 
     @Override
     public void render() {
+        var camera = GameState.INSTANCE.camera;
+        camera.clampZoom();
+        camera.update();
+        camera.focusPlayer();
+        setView(camera);
+
         final World world = GameState.INSTANCE.world;
         final int tileSize = world.getTileSize();
 

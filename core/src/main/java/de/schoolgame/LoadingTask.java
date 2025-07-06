@@ -3,9 +3,9 @@ package de.schoolgame;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import de.schoolgame.render.AssetManager;
+import de.schoolgame.render.Camera;
 import de.schoolgame.state.DebugState;
 import de.schoolgame.state.GameState;
-import de.schoolgame.utils.Save;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +21,8 @@ public class LoadingTask {
         status = "Initializing...";
 
         addTask("AssetManager", () -> GameState.INSTANCE.assetManager = new AssetManager());
+
+        addTask("Camera", () -> GameState.INSTANCE.camera = new Camera());
 
         ArrayList<FileHandle> paths = new ArrayList<>();
         paths.add(Gdx.files.internal("."));
@@ -46,8 +48,6 @@ public class LoadingTask {
             //networkTest = new NetworkTest();
             //networkTest.test();
         });
-
-        addTask("World", () -> GameState.INSTANCE.loadSave(Save.loadSave("worlds/save.dat")));
 
         initialTasks = tasks.size();
     }

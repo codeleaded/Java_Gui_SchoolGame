@@ -7,6 +7,7 @@ import de.schoolgame.render.texture.Font;
 import de.schoolgame.render.texture.SpriteSheet;
 import de.schoolgame.render.texture.TileSet;
 import de.schoolgame.utils.AssetUtils;
+import de.schoolgame.utils.Save;
 import org.tomlj.TomlParseResult;
 
 import java.util.HashMap;
@@ -78,6 +79,10 @@ public class AssetManager {
 
             Font font = new Font(spriteSheet.getRegions());
             assets.put(name, font);
+            return;
+        } else if (typeClass == Save.class) {
+            Save s = Save.loadSave(pathWithoutExtension + ".dat");
+            assets.put(name, s);
             return;
         }
         throw new IllegalStateException("No Asset loader for: " + type);

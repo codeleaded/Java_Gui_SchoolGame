@@ -37,8 +37,7 @@ public class DebugRenderer implements IRenderer {
         imGuiGlfw.init(windowHandle, true);
         imGuiGl3.init("#version 300 es");
 
-        var state = GameState.INSTANCE;
-        inputWorldSize = state.world.getSize().toArray();
+        inputWorldSize = new int[2];
         inputCoins = new ImString("" + Integer.MAX_VALUE);
         inputPower = new ImString("0");
     }
