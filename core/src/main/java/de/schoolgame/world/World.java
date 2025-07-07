@@ -167,7 +167,7 @@ public class World {
     }
 
     public Vec2i getSpawn() {
-        return spawn;
+        return spawn.clamp(Vec2i.ZERO, size.sub(1, 1)) ;
     }
 
     public void setSpawn(Vec2i spawn) {

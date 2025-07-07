@@ -41,11 +41,11 @@ public abstract class MovingEntity extends Entity {
             if (this instanceof PlayerEntity pe) {
                 pe.kill();
                 return;
-            } else {
-                Collection<Entity> entities = state.world.getEntities();
-                entities.remove(this);
-                return;
             }
+
+            Collection<Entity> entities = state.world.getEntities();
+            entities.remove(this);
+            return;
         }
 
         velocity = velocity.add(acceleration.scl(Gdx.graphics.getDeltaTime()));
@@ -129,13 +129,19 @@ public abstract class MovingEntity extends Entity {
 
         for (int x = start.x; x < end.x; x++) {
             for (int y = start.y; y < end.y; y++) {
-                if (!isValidWorldPosition(x, y, worldSize)) {
+                Rect tileRect = new Rect(new Vec2f(x, y), new Vec2f(1.0f, 1.0f));
+
+                if (y <= 0) {
                     continue;
+                }
+
+                if (x <= 0 || x >= worldSize.x - 1 || y >= worldSize.y - 1) {
+                    collisions.add(new CollisionObject(tileRect, Direction.NONE, WorldObject.NONE));
                 }
 
                 WorldObject worldObject = GameState.INSTANCE.world.at(new Vec2i(x, y));
                 if (worldObject != WorldObject.NONE && worldObject.isTile()) {
-                    Rect tileRect = new Rect(new Vec2f(x, y), new Vec2f(1.0f, 1.0f));
+
                     if (entityRect.overlap(tileRect)) {
                         collisions.add(new CollisionObject(tileRect, Direction.NONE, worldObject));
                     }
@@ -143,10 +149,6 @@ public abstract class MovingEntity extends Entity {
             }
         }
         return collisions;
-    }
-
-    private boolean isValidWorldPosition(int x, int y, Vec2i worldSize) {
-        return x >= 0 && y >= 0 && x <= worldSize.x && y <= worldSize.y;
     }
 
     private void handlePlayerEntityCollisions(PlayerEntity player) {

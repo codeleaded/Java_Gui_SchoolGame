@@ -13,25 +13,31 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
 public class WorldManager {
+    public static String WORLD_FOLDER = "./worlds/";
+
     private final HashMap<String, Save> worlds = new HashMap<>();
 
-    public void load(String path) {
-        if (path == null) throw new IllegalArgumentException("Path must not be null");
+    public void load(String worldName) {
+        FileHandle file = Gdx.files.internal(WORLD_FOLDER + worldName + ".world");
+        load(file);
+    }
 
-        FileHandle file = Gdx.files.internal(path);
+    public void load(FileHandle file) {
+        if (file == null) throw new IllegalArgumentException("File must not be null");
+
         try (
             InputStream inputStream = file.read();
             InflaterInputStream compressedStream = new InflaterInputStream(inputStream);
             ObjectInputStream ois = new ObjectInputStream(compressedStream)
         ) {
-            worlds.put(path, (Save) ois.readObject());
+            worlds.put(file.nameWithoutExtension(), (Save) ois.readObject());
         } catch (IOException | ClassNotFoundException | GdxRuntimeException e) {
-            Gdx.app.error("SchoolGame", "Failed to load world \"" + path + "\"", e);
+            Gdx.app.error("SchoolGame", "Failed to load world \"" + file.path() + "\"", e);
         }
     }
 
-    public Save get(String path) {
-        return worlds.get(path + ".world");
+    public Save get(String worldName) {
+        return worlds.get(worldName);
     }
 
     public void save(String filename) {

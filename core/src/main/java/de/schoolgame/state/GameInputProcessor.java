@@ -178,7 +178,7 @@ public class GameInputProcessor implements InputProcessor {
         if (exit.contains(pos)) {
             Gdx.app.exit();
         } else if (start.contains(pos)) {
-            Save s = state.worldManager.get("worlds/save");
+            Save s = state.worldManager.get("save");
             state.loadSave(s);
             state.state = GameState.GameStateType.GAME;
         } else if (create.contains(pos)) {

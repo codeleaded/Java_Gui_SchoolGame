@@ -51,9 +51,7 @@ public class Camera {
         Vec2f maxZoomVec = worldSize.div(viewSize.toVec2f());
         float maxZoom = Math.min(maxZoomVec.x, maxZoomVec.y);
 
-        if (maxZoom <= 0.1f) maxZoom = 0.1f;
-
-        zoom = Math.clamp(zoom, 0.1f, maxZoom);
+        zoom = Math.clamp(zoom, 0f, Math.nextDown(maxZoom));
     }
 
     public void update() {

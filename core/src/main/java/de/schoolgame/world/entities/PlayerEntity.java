@@ -189,8 +189,6 @@ public class PlayerEntity extends MovingEntity {
         } else {
             velocity = velocity.clamp(MAX_AIR_VELOCITY.neg(), MAX_AIR_VELOCITY);
         }
-
-        var state = GameState.INSTANCE;
     }
 
     @Override

@@ -42,7 +42,7 @@ public class LoadingTask {
                 }
                 if (path.endsWith(".world")) {
                     addTask("World: " + path, () ->
-                        GameState.INSTANCE.worldManager.load(path)
+                        GameState.INSTANCE.worldManager.load(file)
                     );
                 }
             }

@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
+import de.schoolgame.utils.Save;
 import de.schoolgame.world.WorldObject;
 import de.schoolgame.world.entities.MovingEntity;
 import imgui.ImGui;
@@ -42,7 +43,7 @@ public class DebugRenderer implements IRenderer {
         inputWorldSize = new int[2];
         inputCoins = new ImString("" + Integer.MAX_VALUE);
         inputPower = new ImString("0");
-        worldName = new ImString("save");
+        worldName = new ImString();
     }
 
     public void render() {
@@ -119,7 +120,7 @@ public class DebugRenderer implements IRenderer {
                 ImGui.inputInt2("Size", inputWorldSize);
                 ImGui.sameLine();
                 if (ImGui.button("Set")) {
-                    state.world.setSize(new Vec2i(inputWorldSize).max(new Vec2i(3, 3)));
+                    state.world.setSize(new Vec2i(inputWorldSize).max(Vec2i.ONE));
                 }
 
                 ImGui.inputInt2("Spawn", state.world.getSpawn().toArray(), ImGuiInputTextFlags.ReadOnly);
@@ -130,10 +131,18 @@ public class DebugRenderer implements IRenderer {
                     state.world.setSpawn(pos);
                 }
 
-                ImGui.inputTextWithHint("##2", "World Name", worldName);
-                ImGui.sameLine();
+                ImGui.separatorText("Save/Load");
+
+                ImGui.inputText("World Name", worldName);
+
                 if (ImGui.button("Save")) {
                     state.worldManager.save(worldName.get());
+                    state.worldManager.load(worldName.get());
+                }
+                ImGui.sameLine();
+                if (ImGui.button("Load")) {
+                    Save s = state.worldManager.get(worldName.get());
+                    state.loadSave(s);
                 }
             }
             ImGui.end();

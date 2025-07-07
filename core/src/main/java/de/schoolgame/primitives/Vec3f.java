@@ -106,7 +106,7 @@ public class Vec3f implements Externalizable {
         return new Vec3f(Math.min(x, v.x), Math.min(y, v.y), Math.min(z, v.z));
     }
 
-    public Vec3f clamp(Vec3f min, Vec3f max) {
+    public Vec3f clamp(Vec3f min, Vec3f max) throws IllegalArgumentException {
         return new Vec3f(Math.clamp(x, min.x, max.x), Math.clamp(y, min.y, max.y), Math.clamp(z, min.z, max.z));
     }
 

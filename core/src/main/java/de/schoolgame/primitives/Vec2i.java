@@ -99,7 +99,7 @@ public class Vec2i implements Externalizable {
         return new Vec2i(Math.min(x, vec.x), Math.min(y, vec.y));
     }
 
-    public Vec2i clamp(Vec2i min, Vec2i max) {
+    public Vec2i clamp(Vec2i min, Vec2i max) throws IllegalArgumentException {
         return new Vec2i(Math.clamp(x, min.x, max.x), Math.clamp(y, min.y, max.y));
     }
 
