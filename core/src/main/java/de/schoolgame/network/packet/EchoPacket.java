@@ -2,9 +2,9 @@ package de.schoolgame.network.packet;
 
 import de.schoolgame.network.Packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class EchoPacket extends Packet {
     private String message;
@@ -16,12 +16,12 @@ public class EchoPacket extends Packet {
     }
 
     @Override
-    public void write(DataOutputStream out) throws IOException {
+    public void write(ObjectOutputStream out) throws IOException {
         out.writeUTF(message);
     }
 
     @Override
-    public void read(DataInputStream in) throws IOException {
+    public void read(ObjectInputStream in) throws IOException {
         message = in.readUTF();
     }
 

@@ -6,9 +6,9 @@ import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.net.SocketHints;
 import de.schoolgame.network.packet.EchoPacket;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 @SuppressWarnings("unused")
 public class NetworkTest {
@@ -29,9 +29,11 @@ public class NetworkTest {
         Gdx.app.log("NetworkTest", "Connected to server");
 
         try (
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            DataInputStream in = new DataInputStream(socket.getInputStream())
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())
         ) {
+            out.flush(); //Ensure Header is sent
+
             PacketIO.writePacket(out, new EchoPacket("Hello World!"));
 
             Packet p = PacketIO.readPacket(in);

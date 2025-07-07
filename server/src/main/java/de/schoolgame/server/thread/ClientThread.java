@@ -1,15 +1,14 @@
 package de.schoolgame.server.thread;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.net.Socket;
-
 import de.schoolgame.network.Packet;
 import de.schoolgame.network.PacketIO;
 import de.schoolgame.network.packet.EchoPacket;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class ClientThread {
     public Thread thread;
@@ -22,11 +21,13 @@ public class ClientThread {
             public void run() {
                 String name = client.getRemoteAddress();
                 Gdx.app.debug("ClientThread " + name, "Connected");
-            
+
                 try (
-                    DataInputStream in = new DataInputStream(client.getInputStream());
-                    DataOutputStream out = new DataOutputStream(client.getOutputStream())
+                    ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream());
+                    ObjectInputStream in = new ObjectInputStream(client.getInputStream())
                 ) {
+                    out.flush(); //Ensure Header is sent
+
                     Packet p = PacketIO.readPacket(in);
                     if (p instanceof EchoPacket echoPacket) {
                         echoPacket.setMessage("Echo: " + echoPacket.getMessage());
