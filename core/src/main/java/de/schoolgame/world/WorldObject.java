@@ -6,6 +6,7 @@ import de.schoolgame.world.entities.RoamerEntity;
 import de.schoolgame.world.tiles.GrassTile;
 import de.schoolgame.world.tiles.SpikeTile;
 import de.schoolgame.world.tiles.TestTile;
+import de.schoolgame.world.tiles.TrackTile;
 
 public enum WorldObject {
     NONE(null),
@@ -14,7 +15,8 @@ public enum WorldObject {
     COIN(CoinEntity.class),
     ROAMER(RoamerEntity.class),
     SPIKE(new SpikeTile()),
-    WORLD_BORDER(null)
+    WORLD_BORDER(null),
+    TRACK(new TrackTile())
     ;
 
     private final Object object;
