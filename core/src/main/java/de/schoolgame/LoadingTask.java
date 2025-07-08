@@ -2,7 +2,6 @@ package de.schoolgame;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import de.schoolgame.network.NetworkTest;
 import de.schoolgame.render.AssetManager;
 import de.schoolgame.render.Camera;
 import de.schoolgame.state.DebugState;
@@ -53,8 +52,8 @@ public class LoadingTask {
 
         addTask("Networking", () -> {
             //TODO Networking
-            var networkTest = new NetworkTest();
-            networkTest.test();
+            //var networkTest = new NetworkTest();
+            //networkTest.test();
         });
 
         initialTasks = tasks.size();

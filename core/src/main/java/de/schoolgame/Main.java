@@ -29,7 +29,10 @@ public class Main extends ApplicationAdapter {
 
         if (state.controllable()) {
             state.player.update();
-            for (var entity : state.world.getEntities()) {
+
+            var entities = state.world.getEntities();
+            for (int i = entities.size() - 1; i >= 0; i--) {
+                var entity = entities.get(i);
                 entity.update();
             }
         } else {

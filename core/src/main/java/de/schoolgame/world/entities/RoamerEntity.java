@@ -23,8 +23,12 @@ public class RoamerEntity extends MovingEntity {
 
     @Override
     void onCollision(Direction type,  WorldObject object) {
-        if (type == LEFT || type == RIGHT) velocity.x = -velocity.x;
-        if (type == UP && velocity.y < 0.0f) velocity.y = 0.0f;
+        if (type == RIGHT || type == LEFT){
+            velocity.x = -velocity.x;
+        }
+
+        if (type == UP && velocity.y < 0.0f)    velocity.y = 0.0f;
+        if (type == DOWN && velocity.y > 0.0f)  velocity.y = 0.0f;
     }
 
     @Override

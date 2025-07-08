@@ -6,7 +6,6 @@ import de.schoolgame.render.texture.TileSet;
 import de.schoolgame.utils.Save;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class World {
@@ -131,7 +130,7 @@ public class World {
         return result;
     }
 
-    public Collection<Entity> getEntities() {
+    public List<Entity> getEntities() {
         return entities;
     }
 

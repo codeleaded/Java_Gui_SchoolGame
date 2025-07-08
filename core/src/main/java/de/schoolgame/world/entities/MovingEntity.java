@@ -37,20 +37,46 @@ public abstract class MovingEntity extends Entity {
         var state = GameState.INSTANCE;
         var worldSize = state.world.getSize();
 
-        if (position.y <= 0.0f) {
+        velocity = velocity.add(acceleration.scl(Gdx.graphics.getDeltaTime()));
+        Vec2f targetposition = position.add(velocity.scl(Gdx.graphics.getDeltaTime()));
+
+        if (this instanceof PlayerEntity pe && pe.getDead()) {
+            this.position = targetposition;
+            return;
+        }
+
+        if ((position.y < 0.0f && GRAVITY < 0.0f) || (position.y > worldSize.y - size.y && GRAVITY > 0.0f)) {
             if (this instanceof PlayerEntity pe) {
+                position.y = (GRAVITY < 0.0f ? 0.0f : worldSize.y - size.y);
                 pe.kill();
                 return;
             }
 
-            Collection<Entity> entities = state.world.getEntities();
-            entities.remove(this);
+            state.world.getEntities().remove(this);
             return;
         }
 
-        velocity = velocity.add(acceleration.scl(Gdx.graphics.getDeltaTime()));
-        Vec2f targetposition = position.add(velocity.scl(Gdx.graphics.getDeltaTime()));
         rayCollision(targetposition, worldSize);
+        worldCollision(worldSize);
+    }
+
+    private void worldCollision(Vec2i worldSize) {
+        if (position.x <= 0.0f) {
+            position.x = 0.0f;
+            onCollision(Direction.RIGHT, WorldObject.WORLD_BORDER);
+        }
+        if (position.x >= worldSize.x - size.x) {
+            position.x = worldSize.x - size.x;
+            onCollision(Direction.LEFT, WorldObject.WORLD_BORDER);
+        }
+        if (position.y <= 0.0f && GRAVITY > 0.0f) {
+            position.y = 0.0f;
+            velocity.y = 0.0f;
+        }
+        if (position.y >= worldSize.y - size.y && GRAVITY < 0.0f) {
+            position.y = worldSize.y - size.y;
+            onCollision(Direction.DOWN, WorldObject.WORLD_BORDER);
+        }
     }
 
     private void rayCollision(Vec2f pos, Vec2i worldSize) {
@@ -65,22 +91,20 @@ public abstract class MovingEntity extends Entity {
             performRaycast(direction, pathLength, collisionObjects, worldSize);
         }
 
-        removeOverlappingCollisions(collisionObjects);
-
-        collisionObjects.forEach((collisionObject) -> onCollision(collisionObject.direction, collisionObject.type));
-    }
-
-    private void removeOverlappingCollisions(ArrayList<CollisionObject> collisionObjects) {
-        for (int i = 0; i < collisionObjects.size(); i++) {
-            Rect r1 = collisionObjects.get(i).rect;
-            for (int j = i + 1; j < collisionObjects.size(); j++) {
-                Rect r2 = collisionObjects.get(j).rect;
-
-                if (r1.compareInt(r2)) {
-                    collisionObjects.remove(j);
-                    j--;
-                }
+        int size = 0;
+        CollisionObject[] dirs = new CollisionObject[Direction.values().length - 1];
+        for (CollisionObject collision : collisionObjects) {
+            int index = collision.direction.ordinal() - 1;
+            if (index >= 0 && dirs[index] == null) {
+                dirs[index] = collision;
+                if (size == 4) break;
+                size++;
             }
+        }
+
+        for (CollisionObject collision : dirs) {
+            if (collision == null) continue;
+            onCollision(collision.direction, collision.type);
         }
     }
 
@@ -96,10 +120,11 @@ public abstract class MovingEntity extends Entity {
     private void detectCollisions(ArrayList<CollisionObject> collisionObjects, Vec2i worldSize) {
         var entityPosition = position.toVec2i();
         var searchArea = size.toVec2i().max(new Vec2i(1, 1)).mul(3);
-        var searchStart = entityPosition.sub(searchArea);
-        var searchEnd = entityPosition.add(searchArea);
+        var searchStart = entityPosition.sub(searchArea).clamp(Vec2i.ZERO, worldSize);
+        var searchEnd = entityPosition.add(searchArea).clamp(Vec2i.ZERO, worldSize);
+        var entityRect = getRect();
 
-        ArrayList<CollisionObject> potentialCollisions = findTileCollisions(searchStart, searchEnd, worldSize);
+        ArrayList<CollisionObject> potentialCollisions = findTileCollisions(searchStart, searchEnd);
 
         if (this instanceof PlayerEntity player) {
             handlePlayerEntityCollisions(player);
@@ -107,37 +132,27 @@ public abstract class MovingEntity extends Entity {
 
         sortCollisionsByDistance(potentialCollisions, getRect());
 
-        var entityRect = getRect();
-        potentialCollisions.removeIf(collision -> {
+        potentialCollisions.forEach(collision -> {
             if (!entityRect.overlap(collision.rect)) {
-                return true;
+                return;
             }
             Direction collisionDirection = entityRect.staticCollisionSolver(collision.rect);
             if (collisionDirection == Direction.NONE) {
-                return true;
+                return;
             }
             collision.direction = collisionDirection;
 
             collisionObjects.add(collision);
-            return false;
         });
     }
 
-    private ArrayList<CollisionObject> findTileCollisions(Vec2i start, Vec2i end, Vec2i worldSize) {
+    private ArrayList<CollisionObject> findTileCollisions(Vec2i start, Vec2i end) {
         ArrayList<CollisionObject> collisions = new ArrayList<>();
         var entityRect = getRect();
 
         for (int x = start.x; x < end.x; x++) {
             for (int y = start.y; y < end.y; y++) {
                 Rect tileRect = new Rect(new Vec2f(x, y), new Vec2f(1.0f, 1.0f));
-
-                if (y <= 0) {
-                    continue;
-                }
-
-                if (x <= 0 || x >= worldSize.x - 1 || y >= worldSize.y - 1) {
-                    collisions.add(new CollisionObject(tileRect, Direction.NONE, WorldObject.NONE));
-                }
 
                 WorldObject worldObject = GameState.INSTANCE.world.at(new Vec2i(x, y));
                 if (worldObject != WorldObject.NONE && worldObject.isTile()) {

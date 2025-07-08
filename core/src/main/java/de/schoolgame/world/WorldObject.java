@@ -13,7 +13,8 @@ public enum WorldObject {
     GRASS(new GrassTile()),
     COIN(CoinEntity.class),
     ROAMER(RoamerEntity.class),
-    SPIKE(new SpikeTile())
+    SPIKE(new SpikeTile()),
+    WORLD_BORDER(null)
     ;
 
     private final Object object;

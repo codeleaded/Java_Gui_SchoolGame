@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import de.schoolgame.primitives.Direction;
 import de.schoolgame.primitives.Rect;
 import de.schoolgame.primitives.Vec2f;
+import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
@@ -13,30 +14,34 @@ import de.schoolgame.world.WorldObject;
 import static de.schoolgame.primitives.Direction.*;
 
 public class PlayerEntity extends MovingEntity {
-    public static float COYOTE_TIME = 100;
+    public static float COYOTE_TIME = 0.2f;
 
-    private int coins;
-    private long start;
+    private float stateTime;
+    private float coyote;
+
 	private int power;
+    private int coins;
+
 	private boolean lookDir;
-	private boolean stamp;
+    private boolean slideDir;
 	private boolean reverse;
-	private boolean dead;
+    private boolean stamp;
+    private boolean onWall;
     private boolean onGround;
     private boolean onJump;
-    private boolean slideDir;
-    private long coyote;
+    private boolean dead;
+
 
     public PlayerEntity(Vec2f pos) {
         super(pos, new Vec2f(0.95f, 0.95f));
+        this.stateTime = 0.0f;
+        this.coyote = 0.0f;
+
         this.coins = 0;
-        this.start = 0L;
 	    this.power = 0;
-        this.coyote = 0;
 	    this.lookDir = false;
 	    this.stamp = false;
 	    this.reverse = false;
-	    this.dead = false;
         this.onGround = false;
         this.onJump = false;
         this.slideDir = false;
@@ -67,34 +72,38 @@ public class PlayerEntity extends MovingEntity {
     }
 
     public boolean getDead() {
-        return this.dead;
+        return dead;
     }
     public int getCoins() { return this.coins; }
     public int getPower() { return this.power; }
 
-    public void kill() {
-        this.dead = true;
-        velocity.y = 8.0f;
+    public void checkKill() {
+        Vec2i worldSize = GameState.INSTANCE.world.getSize();
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                position = GameState.INSTANCE.world.getSpawn().toVec2f();
-                dead = false;
-            } catch (Exception e) {
-                Gdx.app.log("ERROR", "Player Death thread interrupted", e);
-            }
-        }).start();
+        if(getDead() && (position.y < -1.0f || position.y > worldSize.y || position.x < -1.0f || position.x > worldSize.x)) {
+            position = GameState.INSTANCE.world.getSpawn().toVec2f();
+            velocity = Vec2f.ZERO;
+            dead = false;
+        }
+    }
+
+    public void kill() {
+        if(getDead())   return;
+
+        this.dead = true;
+        velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
     }
 
     public boolean move(Direction direction) {
         return switch (direction) {
             case UP:
-                if (onGround || System.currentTimeMillis() - coyote < COYOTE_TIME) {
-                    if(velocity.y!=0.0f)
-                        velocity.x = 4.0f * (slideDir ? 1.0f : -1.0f);
+                if(onWall){
+                    velocity.x = 4.0f * (slideDir ? 1.0f : -1.0f);
                     velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
-                    this.coyote = 0;
+                }
+                if (onGround || stateTime - coyote < COYOTE_TIME) {
+                    velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
+                    this.coyote = 0.0f;
                 }
                 yield true;
             case DOWN:
@@ -123,7 +132,7 @@ public class PlayerEntity extends MovingEntity {
 
         reverse = (velocity.x<0.0f && acceleration.x>0.0f) || (velocity.x>0.0f && acceleration.x<0.0f);
 
-	    if(dead)				    r.pos = new Vec2f( 2.0f,1.0f );
+	    if(getDead())				    r.pos = new Vec2f( 2.0f,1.0f );
 	    else if(!onGround){
 	    	if(!stamp)		        r.pos = new Vec2f( 2.0f,0.0f );
 	    	else 				    r.pos = new Vec2f( 1.0f,1.0f );
@@ -133,24 +142,21 @@ public class PlayerEntity extends MovingEntity {
 	    }
 	    else if(reverse)		    r.pos = new Vec2f( 3.0f,0.0f );
         else if(velocity.y!=0.0f){
-            long ld = System.nanoTime() - start;
-            float d = (float)ld / 1000_000_000.0f;
+            float stateTime = this.stateTime;
 
-            d = d - (float)Math.floor(d);
-            d *= Math.abs(velocity.y) * 0.65f;
-            d = d - (float)Math.floor(d);
+            stateTime = stateTime - (float)Math.floor(stateTime);
+            stateTime *= Math.abs(velocity.y) * 0.65f;
+            stateTime = stateTime - (float)Math.floor(stateTime);
 
-            r.pos = new Vec2f( 4.0f + (int)(4.0f * d),1.0f );
+            r.pos = new Vec2f( 4.0f + (int)(4.0f * stateTime),1.0f );
         }else if(velocity.x==0.0f)	r.pos = new Vec2f( 7.0f,0.0f );
 	    else{
-	    	long ld = System.nanoTime() - start;
-            float d = (float)ld / 1000_000_000.0f;
+            float stateTime = this.stateTime;
+            stateTime = stateTime - (float)Math.floor(stateTime);
+	    	stateTime *= Math.abs(velocity.x) * 0.65f;
+	    	stateTime = stateTime - (float)Math.floor(stateTime);
 
-            d = d - (float)Math.floor(d);
-	    	d *= Math.abs(velocity.x) * 0.65f;
-	    	d = d - (float)Math.floor(d);
-
-	    	r.pos = new Vec2f( 4.0f + (int)(3.0f * d),0.0f );
+	    	r.pos = new Vec2f( 4.0f + (int)(3.0f * stateTime),0.0f );
 	    }
 
 	    if(power==1)		r.pos.y = 2.0f + r.pos.y * 2.0f;
@@ -167,8 +173,12 @@ public class PlayerEntity extends MovingEntity {
     @Override
     public void update() {
         float delta = Gdx.graphics.getDeltaTime();
+        stateTime += delta;
+
+        checkKill();
 
         onGround = false;
+        onWall = false;
         super.update();
 
         float friction = AIR_FRICTION;
@@ -193,25 +203,35 @@ public class PlayerEntity extends MovingEntity {
 
     @Override
     void onCollision(Direction type, WorldObject object) {
+        if (getDead()) return;
+
         if (object == WorldObject.SPIKE) {
             kill();
         }
 
         if (type == UP && velocity.y < 0.0f) velocity.y = 0.0f;
         if (type == DOWN && velocity.y > 0.0f) velocity.y = 0.0f;
+
         if (type == LEFT || type == RIGHT){
-            velocity.x = 0.0f;
-            slideDir = type == RIGHT;
-            onGround = true;
-            coyote = System.currentTimeMillis();
+            if(object==WorldObject.WORLD_BORDER)
+                velocity.x = 0.0f;
+            else {
+                onWall = true;
+                onGround = true;
+                velocity.x = 0.0f;
+                slideDir = type == RIGHT;
+                coyote = stateTime;
+            }
         }
         if ((type == UP && GRAVITY < 0.0f) || (type == DOWN && GRAVITY > 0.0f)) {
             onGround = true;
-            coyote = System.currentTimeMillis();
+            coyote = stateTime;
         }
     }
 
     boolean onEntityCollision(Entity entity, Direction direction) {
+        if (getDead()) return false;
+
         if (entity instanceof CoinEntity) {
             coins += 1;
             return true;
