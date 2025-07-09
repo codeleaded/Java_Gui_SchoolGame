@@ -29,11 +29,12 @@ public class GameState {
     }
 
     public boolean controllable() {
-        return state == GameStateType.GAME || state == GameStateType.DEBUG;
+        return state == GameStateType.GAME || state == GameStateType.DEBUG || state == GameStateType.WORLD_EDITOR;
     }
 
     public enum GameStateType {
         MAIN_MENU,
+        WORLD_EDITOR,
         GAME,
         DEBUG,
     }

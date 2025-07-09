@@ -5,11 +5,11 @@ import de.schoolgame.state.GameState;
 
 public class Renderer implements IRenderer {
     private final WorldRenderer worldRenderer;
-    private final DebugRenderer debugRenderer;
+    private final ImGuiRenderer imGuiRenderer;
     private final GuiRenderer guiRenderer;
 
     public Renderer() {
-        debugRenderer = new DebugRenderer();
+        imGuiRenderer = new ImGuiRenderer();
         worldRenderer = new WorldRenderer();
         guiRenderer = new GuiRenderer();
     }
@@ -24,10 +24,14 @@ public class Renderer implements IRenderer {
         }
 
         switch (state.state) {
-            case GAME -> worldRenderer.render();
-            case DEBUG -> {
+            case GAME:
                 worldRenderer.render();
-                debugRenderer.render();
+                break;
+            case WORLD_EDITOR:
+            case DEBUG: {
+                worldRenderer.render();
+                imGuiRenderer.render();
+                break;
             }
         }
 
@@ -36,6 +40,6 @@ public class Renderer implements IRenderer {
 
     public void dispose() {
         worldRenderer.dispose();
-        debugRenderer.dispose();
+        imGuiRenderer.dispose();
     }
 }

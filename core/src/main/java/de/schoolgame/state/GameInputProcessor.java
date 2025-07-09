@@ -116,7 +116,7 @@ public class GameInputProcessor implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         lastMouseButton = button;
         var state = GameState.INSTANCE;
-        if (state.state == GameState.GameStateType.DEBUG && state.debug.showWorldedit.get()) {
+        if ((state.state == GameState.GameStateType.DEBUG && state.debug.showWorldedit.get()) || state.state == GameState.GameStateType.WORLD_EDITOR) {
             return worldEdit(screenX, screenY);
         }
         if (state.state == GameState.GameStateType.MAIN_MENU) {
@@ -138,7 +138,7 @@ public class GameInputProcessor implements InputProcessor {
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         var state = GameState.INSTANCE;
-        if (state.state == GameState.GameStateType.DEBUG && state.debug.showWorldedit.get()) {
+        if ((state.state == GameState.GameStateType.DEBUG && state.debug.showWorldedit.get()) || state.state == GameState.GameStateType.WORLD_EDITOR) {
             return worldEdit(screenX, screenY);
         }
         return false;
@@ -184,7 +184,7 @@ public class GameInputProcessor implements InputProcessor {
         } else if (create.contains(pos)) {
             state.world = new World();
             state.player = new PlayerEntity(Vec2f.ZERO);
-            state.state = GameState.GameStateType.DEBUG;
+            state.state = GameState.GameStateType.WORLD_EDITOR;
         } else {
             return false;
         }

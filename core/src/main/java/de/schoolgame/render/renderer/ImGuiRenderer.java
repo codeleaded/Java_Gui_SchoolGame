@@ -18,7 +18,7 @@ import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 import imgui.type.ImString;
 
-public class DebugRenderer implements IRenderer {
+public class ImGuiRenderer implements IRenderer {
     private ImGuiImplGlfw imGuiGlfw;
     private ImGuiImplGl3 imGuiGl3;
     private InputProcessor tmpProcessor;
@@ -28,7 +28,7 @@ public class DebugRenderer implements IRenderer {
     private final ImString inputPower;
     private final ImString worldName;
 
-    public DebugRenderer() {
+    public ImGuiRenderer() {
         imGuiGlfw = new ImGuiImplGlfw();
         imGuiGl3 = new ImGuiImplGl3();
         long windowHandle = ((Lwjgl3Graphics) Gdx.graphics).getWindow().getWindowHandle();
@@ -52,31 +52,33 @@ public class DebugRenderer implements IRenderer {
         start();
         var viewport = ImGui.getMainViewport();
 
-        ImGui.setNextWindowPos(viewport.getPos(), ImGuiCond.Once);
-        if (ImGui.begin("Debug", null, ImGuiWindowFlags.AlwaysAutoResize)) {
-            ImGui.checkbox("Show Metrics", state.debug.showMetrics);
-
-            ImGui.checkbox("Show Worldedit", state.debug.showWorldedit);
-            ImGui.checkbox("Show Guide", state.debug.showGuide);
-            ImGui.checkbox("Show Demo", state.debug.showDemo);
-        }
-        ImGui.end();
-
-        if (state.debug.showMetrics.get()) {
+        if (GameState.INSTANCE.state == GameState.GameStateType.DEBUG) {
             ImGui.setNextWindowPos(viewport.getPos(), ImGuiCond.Once);
-            ImGui.showMetricsWindow();
-        }
+            if (ImGui.begin("Debug", null, ImGuiWindowFlags.AlwaysAutoResize)) {
+                ImGui.checkbox("Show Metrics", state.debug.showMetrics);
 
-        if (state.debug.showGuide.get()) {
-            ImGui.setNextWindowPos(viewport.getPos(), ImGuiCond.Once);
-            if (ImGui.begin("Guide", null, ImGuiWindowFlags.AlwaysAutoResize)) {
-                ImGui.showUserGuide();
+                ImGui.checkbox("Show Worldedit", state.debug.showWorldedit);
+                ImGui.checkbox("Show Guide", state.debug.showGuide);
+                ImGui.checkbox("Show Demo", state.debug.showDemo);
             }
             ImGui.end();
-        }
 
-        if (state.debug.showDemo.get()) {
-            ImGui.showDemoWindow();
+            if (state.debug.showMetrics.get()) {
+                ImGui.setNextWindowPos(viewport.getPos(), ImGuiCond.Once);
+                ImGui.showMetricsWindow();
+            }
+
+            if (state.debug.showGuide.get()) {
+                ImGui.setNextWindowPos(viewport.getPos(), ImGuiCond.Once);
+                if (ImGui.begin("Guide", null, ImGuiWindowFlags.AlwaysAutoResize)) {
+                    ImGui.showUserGuide();
+                }
+                ImGui.end();
+            }
+
+            if (state.debug.showDemo.get()) {
+                ImGui.showDemoWindow();
+            }
         }
 
         if (state.debug.showWorldedit.get()) {
