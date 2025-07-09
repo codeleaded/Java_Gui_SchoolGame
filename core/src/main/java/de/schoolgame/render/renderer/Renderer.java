@@ -17,22 +17,21 @@ public class Renderer implements IRenderer {
     public void render() {
         var state = GameState.INSTANCE;
 
-        if (state.state == GameState.GameStateType.MAIN_MENU) {
-            ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        } else {
-            ScreenUtils.clear(0f, 0.5f, 1f, 1f);
-        }
-
         switch (state.state) {
+            case MAIN_MENU:
+            case WORLD_SELECT:
+                ScreenUtils.clear(0.3f, 0.3f, 0.4f, 1f);
+                break;
             case GAME:
+                ScreenUtils.clear(0f, 0.5f, 1f, 1f);
                 worldRenderer.render();
                 break;
             case WORLD_EDITOR:
-            case DEBUG: {
+            case DEBUG:
+                ScreenUtils.clear(0f, 0.5f, 1f, 1f);
                 worldRenderer.render();
                 imGuiRenderer.render();
                 break;
-            }
         }
 
         guiRenderer.render();

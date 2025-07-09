@@ -13,7 +13,6 @@ import de.schoolgame.world.World;
 import de.schoolgame.world.entities.PlayerEntity;
 
 import static com.badlogic.gdx.Input.Keys.*;
-import static de.schoolgame.render.renderer.GuiRenderer.*;
 
 public class GameInputProcessor implements InputProcessor {
     private int lastMouseButton = Input.Buttons.LEFT;
@@ -116,13 +115,18 @@ public class GameInputProcessor implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         lastMouseButton = button;
         var state = GameState.INSTANCE;
-        if ((state.state == GameState.GameStateType.DEBUG && state.debug.showWorldedit.get()) || state.state == GameState.GameStateType.WORLD_EDITOR) {
-            return worldEdit(screenX, screenY);
-        }
-        if (state.state == GameState.GameStateType.MAIN_MENU) {
-            return mainMenu(screenX, screenY);
-        }
-        return false;
+
+        return switch (state.state) {
+            case MAIN_MENU:
+                yield mainMenu(screenX, screenY);
+            case WORLD_SELECT:
+                yield worldSelect(screenX, screenY);
+            case DEBUG:
+                if (!state.debug.showWorldedit.get()) yield false;
+            case WORLD_EDITOR:
+                yield worldEdit(screenX, screenY);
+            default: yield false;
+        };
     }
 
     @Override
@@ -159,28 +163,66 @@ public class GameInputProcessor implements InputProcessor {
         return false;
     }
 
-    private boolean mainMenu(int screenX, int screenY) {
+    private boolean worldSelect(int screenX, int screenY) {
         var state = GameState.INSTANCE;
         var camera = state.camera;
 
         Vec2f pos = CoordinateUtils.getCameraPosFromScreenPos(new Vec2i(screenX, screenY)).toVec2f();
 
-        int travel = BUTTON_HEIGHT + BUTTON_SPACING;
-        int x = (camera.viewSize.x - BUTTON_WIDTH) / 2;
-        int y = BUTTON_SPACING;
+        final int buttonSpacing = 10;
 
-        Rect exit = new Rect(new Vec2f(x, y), new Vec2f(BUTTON_WIDTH, BUTTON_HEIGHT));
+        final Vec2i campaignButtonSize = new Vec2i(64, 64);
+        final int campaignSpacing = campaignButtonSize.x + buttonSpacing;
+
+        final int font_size = 3;
+        final int font_height = font_size * 7;
+
+        int x = buttonSpacing;
+        int y = camera.viewSize.y;
+
+        y -= font_height + buttonSpacing;
+
+        y -= buttonSpacing + campaignButtonSize.y;
+        for (int i = 0; i < 7; i++) {
+            Rect rect = new Rect(new Vec2f(x, y), campaignButtonSize.toVec2f());
+
+            if (rect.contains(pos)) {
+                Gdx.app.log("WorldSelect", "Selected world: " + i);
+                Save save = state.worldManager.get("world_" + i);
+                state.loadSave(save);
+                state.state = GameState.GameStateType.GAME;
+                return true;
+            }
+
+            x += campaignSpacing;
+        }
+
+        return false;
+    }
+
+    private boolean mainMenu(int screenX, int screenY) {
+        var state = GameState.INSTANCE;
+        var camera = state.camera;
+
+        Vec2f buttonSize = new Vec2i(300, 64).toVec2f();
+        final int buttonSpacing = 10;
+
+        Vec2f pos = CoordinateUtils.getCameraPosFromScreenPos(new Vec2i(screenX, screenY)).toVec2f();
+
+        int travel = (int) (buttonSize.y + buttonSpacing);
+        int x = (int) ((camera.viewSize.x - buttonSize.x) / 2);
+        int y = buttonSpacing;
+
+        Rect exit = new Rect(new Vec2f(x, y), buttonSize);
         y += travel;
-        Rect create = new Rect(new Vec2f(x, y), new Vec2f(BUTTON_WIDTH, BUTTON_HEIGHT));
+        Rect create = new Rect(new Vec2f(x, y), buttonSize);
         y += travel;
-        Rect start = new Rect(new Vec2f(x, y), new Vec2f(BUTTON_WIDTH, BUTTON_HEIGHT));
+        Rect start = new Rect(new Vec2f(x, y), buttonSize);
 
         if (exit.contains(pos)) {
             Gdx.app.exit();
         } else if (start.contains(pos)) {
-            Save s = state.worldManager.get("save");
-            state.loadSave(s);
-            state.state = GameState.GameStateType.GAME;
+            state.state = GameState.GameStateType.WORLD_SELECT;
         } else if (create.contains(pos)) {
             state.world = new World();
             state.player = new PlayerEntity(Vec2f.ZERO);
