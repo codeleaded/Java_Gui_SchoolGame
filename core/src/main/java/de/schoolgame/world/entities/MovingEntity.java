@@ -60,8 +60,14 @@ public abstract class MovingEntity extends Entity {
             return;
         }
 
-        rayCollision(targetposition,worldSize);
-        //rayCollisionFast(targetposition,worldSize.toVec2f()); //TODO: Funktioniert in C, hier zum laufen kriegen...
+        //rayCollision(targetposition,worldSize);
+        
+        targetposition = rayCollisionFast(targetposition,worldSize.toVec2f());
+        if(this instanceof PlayerEntity pe && !pe.getGodmode()){
+            rayCollisionPlayerEntity(pe,targetposition);
+        }
+        this.position = targetposition;
+
         worldCollision(worldSize);
     }
 
@@ -84,63 +90,78 @@ public abstract class MovingEntity extends Entity {
         }
     }
 
-    private void rayCollisionFast(Vec2f pos, Vec2f worldSize) {
+    private void rayCollisionPlayerEntity(PlayerEntity player,Vec2f target) {
+        Collection<Entity> entities = GameState.INSTANCE.world.getEntities();
+        entities.removeIf(entity -> {
+            Rect playerRect = player.getRect();
+
+            Vec2f dir = target.sub(player.position);
+            if(dir.len()==0.0f){
+                if(playerRect.overlap(entity.getRect())){
+                    Direction collisionDirection = playerRect.getDirection(entity.getRect());
+                    return player.onEntityCollision(entity, collisionDirection);
+                }
+            }else{
+                ContactWrapper cw = playerRect.RI_Solver(target,entity.getRect());
+                if (cw != null && cw.d!=Direction.NONE) {
+                    return player.onEntityCollision(entity,cw.d);
+                }
+            }
+            return false;
+        });
+    }
+
+    private Vec2f rayCollisionFast(Vec2f pos, Vec2f worldSize) {
         list.clear();
-        final Vec2f direction = pos.sub(position);
-        var searchArea = size.add(direction.abs()).toVec2i().max(Vec2i.ONE).mul(3).toVec2f();
-
-        var searchStart = position.min(pos).sub(searchArea).clamp(Vec2f.ZERO, worldSize);
-        var searchEnd = position.max(pos).add(searchArea).clamp(Vec2f.ZERO, worldSize);
-
-
-        System.out.println(position+" "+pos);
-        System.out.println(searchStart+" "+searchEnd);
 
         var myRect = getRect();
 
         ArrayList<CollisionObject> potentialCollisions = findTileCollisions(
-            searchStart.toVec2i(),
-            searchEnd.toVec2i(),
             position,
-            pos
+            pos,
+            size,
+            worldSize
         );
 	    sortCollisionsByDistance(potentialCollisions,myRect);
-
-        System.out.println(potentialCollisions.size() + " pot collisions found");
 
         Vec2f cp = pos.cpy();
         for (CollisionObject co : potentialCollisions) {
             list.add(co.rect);
 
             ContactWrapper cw = myRect.RI_Solver(cp, co.rect);
-            if (cw != null) {
+            if (cw != null && cw.d!=Direction.NONE) {
                 onCollision(cw.d, co.type);
-                cp = cw.cp;
+                cp = cw.cp.cpy();
             }
         }
 
-	    position = cp;
+	    return cp;
     }
 
-    private ArrayList<CollisionObject> findTileCollisions(Vec2i start, Vec2i end, Vec2f from, Vec2f to) {
+    private ArrayList<CollisionObject> findTileCollisions(Vec2f from,Vec2f to,Vec2f size,Vec2f worldSize) {
         ArrayList<CollisionObject> collisions = new ArrayList<>();
 
-        // Swept AABB: Covers both start and end rects
-        Rect sweptRect = new Rect(
-            from.min(to),
-            size.add(from.sub(to).abs())
-        );
+        final Vec2f direction = to.sub(from);
+        final Vec2f searchArea = size.add(direction.abs()).max(Vec2f.ONE).mul(4);
+        final Vec2f start = from.min(to).sub(searchArea).clamp(Vec2f.ZERO,worldSize);
+        final Vec2f end = from.max(to).add(searchArea).clamp(Vec2f.ZERO,worldSize);
 
-        for (int x = start.x; x < end.x; x++) {
-            for (int y = start.y; y < end.y; y++) {
-                Rect tileRect = new Rect(new Vec2f(x, y), new Vec2f(1.0f, 1.0f));
+        final Vec2i n_start = start.toVec2i();
+        final Vec2i n_end = end.toVec2i();
 
-                WorldObject worldObject = GameState.INSTANCE.world.at(new Vec2i(x, y));
+        // final Rect sweptRect = new Rect(
+        //     start,
+        //     end.sub(start).add(size)
+        // );
+
+        for (int x = n_start.x; x < n_end.x; x++) {
+            for (int y = n_start.y; y < n_end.y; y++) {
+                Rect tileRect = new Rect(new Vec2f(x,y),new Vec2f(1.0f,1.0f));
+
+                WorldObject worldObject = GameState.INSTANCE.world.at(new Vec2i(x,y));
                 if (worldObject != WorldObject.NONE && worldObject.isTile()) {
-
-                    if (sweptRect.overlap(tileRect)) {
-                        collisions.add(new CollisionObject(tileRect, Direction.NONE, worldObject));
-                    }
+                    //if (sweptRect.overlap(tileRect)) 
+                    collisions.add(new CollisionObject(tileRect, Direction.NONE, worldObject));
                 }
             }
         }
@@ -188,8 +209,8 @@ public abstract class MovingEntity extends Entity {
     private void detectCollisions(ArrayList<CollisionObject> collisionObjects, Vec2i worldSize) {
         var entityPosition = position.toVec2i();
         var searchArea = size.toVec2i().max(new Vec2i(1, 1)).mul(3);
-        var searchStart = entityPosition.sub(searchArea).clamp(Vec2i.ZERO, worldSize);
-        var searchEnd = entityPosition.add(searchArea).clamp(Vec2i.ZERO, worldSize);
+        var searchStart = entityPosition.sub(searchArea).clamp(Vec2i.ZERO,worldSize);
+        var searchEnd = entityPosition.add(searchArea).clamp(Vec2i.ZERO,worldSize);
         var entityRect = getRect();
 
         ArrayList<CollisionObject> potentialCollisions = findTileCollisions(searchStart, searchEnd);
@@ -198,7 +219,7 @@ public abstract class MovingEntity extends Entity {
             handlePlayerEntityCollisions(player);
         }
 
-        sortCollisionsByDistance(potentialCollisions, getRect());
+        sortCollisionsByDistance(potentialCollisions,getRect());
 
         potentialCollisions.forEach(collision -> {
             if (!entityRect.overlap(collision.rect)) {
@@ -247,10 +268,11 @@ public abstract class MovingEntity extends Entity {
     }
 
     private void sortCollisionsByDistance(ArrayList<CollisionObject> collisions, Rect entityRect) {
-        collisions.sort((r1, r2) -> {
-            float distance1 = r1.rect.pos.sub(entityRect.pos).len();
-            float distance2 = r2.rect.pos.sub(entityRect.pos).len();
-            return Float.compare(distance1, distance2);
+        collisions.sort((r1,r2) -> {
+            Vec2f me = entityRect.mid();
+            float d1 = r1.rect.mid().sub(me).len();
+            float d2 = r2.rect.mid().sub(me).len();
+            return Float.compare(d1,d2);
         });
     }
 

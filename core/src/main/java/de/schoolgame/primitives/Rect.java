@@ -6,6 +6,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serial;
 import static java.lang.Math.abs;
+import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
@@ -102,9 +103,9 @@ public class Rect implements Externalizable {
     public Vec2f getDirection(Direction d){
     	if(d==Direction.RIGHT)  return new Vec2f( 1.0f, 0.0f);
     	if(d==Direction.LEFT)   return new Vec2f(-1.0f, 0.0f);
-    	if(d==Direction.UP)   return new Vec2f( 0.0f, 1.0f);
-    	if(d==Direction.DOWN)     return new Vec2f( 0.0f,-1.0f);
-    	return Vec2f.ZERO;
+    	if(d==Direction.UP)     return new Vec2f( 0.0f, 1.0f);
+    	if(d==Direction.DOWN)   return new Vec2f( 0.0f,-1.0f);
+    	return Vec2f.ZERO.cpy();
     }
 
     public ContactWrapper Rect_Ray_NearIntersection(Vec2f ray_origin,Vec2f ray_dir,Vec2f target_p,Vec2f target_l){
@@ -177,10 +178,10 @@ public class Rect implements Externalizable {
     	cw.cp = ray_dir.mul(cw.t).add(ray_origin);
     	if (t_near.x > t_near.y)
     		if (invdir.x < 0.0f){
-                cw.d = Direction.LEFT;
+                cw.d = Direction.RIGHT;
                 return cw;
             }else{
-                cw.d = Direction.RIGHT;
+                cw.d = Direction.LEFT;
                 return cw;
             }
     	else if (t_near.x < t_near.y)
@@ -204,7 +205,9 @@ public class Rect implements Externalizable {
         final Vec2f l_ex = size.add(collisionObject.size);
 
         ContactWrapper cw = Rect_Ray_NearIntersection(middlePos, vector, p_ex, l_ex);
-        if (cw.d != Direction.NONE && cw.t >= 0.0f && cw.t <= 1.01f) {
+        if (cw.d != Direction.NONE && cw.t >= 0.0f && cw.t <= 1.0f) {
+            System.out.println(pos+" "+target+" "+cw.cp);
+            
             Vec2f n = getDirection(cw.d);
             Vec2f c_m = cw.cp.sub(size.mul(0.5f));
             Vec2f vel = new Vec2f(
@@ -214,7 +217,6 @@ public class Rect implements Externalizable {
             cw.cp = c_m.add(vel);
             return cw;
         }
-
         return null;
     }
 

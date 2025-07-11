@@ -3,15 +3,19 @@ package de.schoolgame.world.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+
 import de.schoolgame.primitives.Direction;
+import static de.schoolgame.primitives.Direction.DOWN;
+import static de.schoolgame.primitives.Direction.LEFT;
+import static de.schoolgame.primitives.Direction.NONE;
+import static de.schoolgame.primitives.Direction.RIGHT;
+import static de.schoolgame.primitives.Direction.UP;
 import de.schoolgame.primitives.Rect;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
-
-import static de.schoolgame.primitives.Direction.*;
 
 public class PlayerEntity extends MovingEntity {
     public static float COYOTE_TIME = 0.2f;
@@ -31,7 +35,6 @@ public class PlayerEntity extends MovingEntity {
     private boolean onJump;
     private boolean dead;
     private boolean godmode;
-
 
     public PlayerEntity(Vec2f pos) {
         super(pos, new Vec2f(0.95f, 0.95f));
@@ -81,13 +84,14 @@ public class PlayerEntity extends MovingEntity {
     }
     public int getCoins() { return this.coins; }
     public int getPower() { return this.power; }
+    public boolean getGodmode() { return this.godmode; }
 
     public void checkKill() {
         Vec2i worldSize = GameState.INSTANCE.world.getSize();
 
         if(getDead() && (position.y < -1.0f || position.y > worldSize.y || position.x < -1.0f || position.x > worldSize.x)) {
             position = GameState.INSTANCE.world.getSpawn().toVec2f();
-            velocity = Vec2f.ZERO;
+            velocity = Vec2f.ZERO.cpy();
             dead = false;
         }
     }
@@ -111,32 +115,37 @@ public class PlayerEntity extends MovingEntity {
                 case DOWN:
                     velocity.y = 0f;
             }
-        }
-        switch (direction) {
-            case LEFT:
-            case RIGHT:
-                acceleration.x = 0;
-                break;
-            case UP:
-                setJump(false);
-            case DOWN:
-                setStamp(false);
+        }else{
+            switch (direction) {
+                case LEFT:
+                case RIGHT:
+                    acceleration.x = 0;
+                    break;
+                case UP:
+                    setJump(false);
+                case DOWN:
+                    setStamp(false);
+            }
         }
     }
 
     public boolean move(Direction direction) {
         if (direction == NONE) return false;
         if (godmode) {
-            acceleration = Vec2f.ZERO;
             switch (direction) {
                 case UP -> velocity.y = 10f;
                 case DOWN -> velocity.y = -10f;
-                case LEFT -> velocity.x = -10f;
-                case RIGHT -> velocity.x = 10f;
+                case LEFT -> {
+                    velocity.x = -10f;
+                    lookDir = false;
+                }
+                case RIGHT -> {
+                    velocity.x = 10f;
+                    lookDir = true;
+                }
             }
             return true;
         }
-        acceleration.y = GRAVITY;
         switch (direction) {
             case UP -> {
                 setJump(true);
@@ -145,7 +154,7 @@ public class PlayerEntity extends MovingEntity {
                     velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
                 }
                 if (onGround || stateTime - coyote < COYOTE_TIME) {
-                    velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
+                    velocity.y = 12.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
                     this.coyote = 0.0f;
                 }
             }
@@ -218,6 +227,10 @@ public class PlayerEntity extends MovingEntity {
 
         onGround = false;
         onWall = false;
+
+        if(getGodmode())    acceleration.y = 0.0f;
+        else                acceleration.y = GRAVITY;
+
         super.update();
 
         float friction = AIR_FRICTION;
