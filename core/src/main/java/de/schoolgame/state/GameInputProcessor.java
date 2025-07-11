@@ -30,7 +30,23 @@ public class GameInputProcessor implements InputProcessor {
                     state.player.move(Direction.RIGHT);
                 }
             } else {
-                state.player.move(Direction.NONE);
+                state.player.cancelMovement(Direction.LEFT);
+                state.player.cancelMovement(Direction.RIGHT);
+            }
+
+            var upPressed = isKeyPressed(W) || isKeyPressed(UP) || isKeyPressed(SPACE);
+            var downPressed = isKeyPressed(S) || isKeyPressed(DOWN);
+            if (upPressed != downPressed) {
+                if (upPressed) {
+                    state.player.cancelMovement(Direction.DOWN);
+                    state.player.move(Direction.UP);
+                } else {
+                    state.player.cancelMovement(Direction.UP);
+                    state.player.move(Direction.DOWN);
+                }
+            } else {
+                state.player.cancelMovement(Direction.DOWN);
+                state.player.cancelMovement(Direction.UP);
             }
         }
     }
@@ -56,17 +72,6 @@ public class GameInputProcessor implements InputProcessor {
                         yield true;
                     }
                     yield false;
-                }
-                case SPACE:
-                case UP:
-                case W: {
-                    state.player.setJump(true);
-                    yield state.player.move(Direction.UP);
-                }
-                case DOWN:
-                case S: {
-                    state.player.setStamp(true);
-                    yield state.player.move(Direction.DOWN);
                 }
                 default: yield false;
             };
@@ -225,7 +230,8 @@ public class GameInputProcessor implements InputProcessor {
             state.state = GameState.GameStateType.WORLD_SELECT;
         } else if (create.contains(pos)) {
             state.world = new World();
-            state.player = new PlayerEntity(Vec2f.ZERO);
+            state.player = new PlayerEntity(Vec2f.ONE);
+            state.player.setGodmode(true);
             state.state = GameState.GameStateType.WORLD_EDITOR;
         } else {
             return false;

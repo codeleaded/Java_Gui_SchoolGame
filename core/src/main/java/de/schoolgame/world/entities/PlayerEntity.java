@@ -30,6 +30,7 @@ public class PlayerEntity extends MovingEntity {
     private boolean onGround;
     private boolean onJump;
     private boolean dead;
+    private boolean godmode;
 
 
     public PlayerEntity(Vec2f pos) {
@@ -45,6 +46,7 @@ public class PlayerEntity extends MovingEntity {
         this.onGround = false;
         this.onJump = false;
         this.slideDir = false;
+        this.godmode = false;
     }
 
     public void setJump(boolean jump) {
@@ -70,6 +72,9 @@ public class PlayerEntity extends MovingEntity {
     public void setCoins(int coins) {
         this.coins = coins;
     }
+    public void setGodmode(boolean godmode) {
+        this.godmode = godmode;
+    }
 
     public boolean getDead() {
         return dead;
@@ -88,16 +93,54 @@ public class PlayerEntity extends MovingEntity {
     }
 
     public void kill() {
-        if(getDead())   return;
+        if (godmode) return;
+        if(getDead()) return;
 
         this.dead = true;
         velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
     }
 
-    public boolean move(Direction direction) {
-        return switch (direction) {
+    public void cancelMovement(Direction direction) {
+        if (godmode) {
+            switch (direction) {
+                case LEFT:
+                case RIGHT:
+                    velocity.x = 0f;
+                    break;
+                case UP:
+                case DOWN:
+                    velocity.y = 0f;
+            }
+        }
+        switch (direction) {
+            case LEFT:
+            case RIGHT:
+                acceleration.x = 0;
+                break;
             case UP:
-                if(onWall){
+                setJump(false);
+            case DOWN:
+                setStamp(false);
+        }
+    }
+
+    public boolean move(Direction direction) {
+        if (direction == NONE) return false;
+        if (godmode) {
+            acceleration = Vec2f.ZERO;
+            switch (direction) {
+                case UP -> velocity.y = 10f;
+                case DOWN -> velocity.y = -10f;
+                case LEFT -> velocity.x = -10f;
+                case RIGHT -> velocity.x = 10f;
+            }
+            return true;
+        }
+        acceleration.y = GRAVITY;
+        switch (direction) {
+            case UP -> {
+                setJump(true);
+                if (onWall) {
                     velocity.x = 4.0f * (slideDir ? 1.0f : -1.0f);
                     velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
                 }
@@ -105,25 +148,21 @@ public class PlayerEntity extends MovingEntity {
                     velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
                     this.coyote = 0.0f;
                 }
-                yield true;
-            case DOWN:
-                if (velocity.y>0) {
-                    velocity.y = -8;
-                }
-                yield true;
-            case LEFT:
+            }
+            case DOWN -> {
+                setStamp(true);
+                if (velocity.y>0) velocity.y = -8;
+            }
+            case LEFT -> {
                 acceleration.x = -10;
                 lookDir = false;
-                yield true;
-            case RIGHT:
+            }
+            case RIGHT -> {
                 acceleration.x = 10;
                 lookDir = true;
-                yield true;
-            case NONE:
-                acceleration.x = 0;
-                yield true;
-            default: yield false;
-        };
+            }
+        }
+        return true;
     }
 
     public Rect getTexRect(){
@@ -253,6 +292,12 @@ public class PlayerEntity extends MovingEntity {
     public void render(Batch batch) {
         var state = GameState.INSTANCE;
         int tileSize = state.world.getTileSize();
+
+        Texture dbg = state.assetManager.get("tiles/test", Texture.class);
+        for (Rect v : list) {
+            batch.draw(dbg, v.pos.x * tileSize, v.pos.y * tileSize, v.size.x * tileSize, v.size.y * tileSize);
+        }
+
         Texture texture = state.assetManager.get("entities/player/mario_atlas", Texture.class);
 
         Rect r = getTexRect();

@@ -102,18 +102,19 @@ public class Rect implements Externalizable {
     public Vec2f getDirection(Direction d){
     	if(d==Direction.RIGHT)  return new Vec2f( 1.0f, 0.0f);
     	if(d==Direction.LEFT)   return new Vec2f(-1.0f, 0.0f);
-    	if(d==Direction.DOWN)   return new Vec2f( 0.0f, 1.0f);
-    	if(d==Direction.UP)     return new Vec2f( 0.0f,-1.0f);
+    	if(d==Direction.UP)   return new Vec2f( 0.0f, 1.0f);
+    	if(d==Direction.DOWN)     return new Vec2f( 0.0f,-1.0f);
     	return Vec2f.ZERO;
     }
 
     public ContactWrapper Rect_Ray_NearIntersection(Vec2f ray_origin,Vec2f ray_dir,Vec2f target_p,Vec2f target_l){
     	ContactWrapper cw = new ContactWrapper();
 
+        if(ray_dir.x == 0.0f && ray_dir.y == 0.0f)
+            return cw;
+
     	if(ray_dir.y==0.0f){
     		if(ray_origin.y > target_p.y && ray_origin.y < target_p.y + target_l.y){
-    			if(ray_dir.x == 0.0f)
-    				return cw;
     			if(ray_dir.x > 0.0f){
     				if(target_p.x > ray_origin.x && target_p.x < ray_origin.x + ray_dir.x){
     					cw.cp = new Vec2f( target_p.x,ray_origin.y );
@@ -133,9 +134,7 @@ public class Rect implements Externalizable {
     	}
     	if(ray_dir.x==0.0f){
     		if(ray_origin.x > target_p.x && ray_origin.x < target_p.x + target_l.x){
-    			if(ray_dir.y == 0.0f)
-    				return cw;
-    			if(ray_dir.y > 0.0f){
+                if(ray_dir.y > 0.0f){
     				if(target_p.y > ray_origin.y && target_p.y < ray_origin.y + ray_dir.y){
     					cw.cp = new Vec2f( ray_origin.x,target_p.y );
                         cw.d = Direction.DOWN;
@@ -168,50 +167,55 @@ public class Rect implements Externalizable {
             t_far.y = swap;
         }
     	if (t_near.x > t_far.y || t_near.y > t_far.x) return cw;
-    
+
     	cw.t = Math.max(t_near.x,t_near.y);
     	float t_hit_far = Math.min(t_far.x,t_far.y);
-    
+
     	if (t_hit_far < 0.0f)
     		return cw;
 
     	cw.cp = ray_dir.mul(cw.t).add(ray_origin);
     	if (t_near.x > t_near.y)
     		if (invdir.x < 0.0f){
-                cw.d = Direction.RIGHT;
+                cw.d = Direction.LEFT;
                 return cw;
             }else{
-                cw.d = Direction.LEFT;
+                cw.d = Direction.RIGHT;
                 return cw;
             }
     	else if (t_near.x < t_near.y)
     		if (invdir.y < 0.0f){
-                cw.d = Direction.DOWN;
-                return cw;
-            }else{
                 cw.d = Direction.UP;
                 return cw;
+            }else{
+                cw.d = Direction.DOWN;
+                return cw;
             }
-    
+
     	return cw;
     }
-    
-    public ContactWrapper RI_Solver(Vec2f t1,Vec2f p2,Vec2f l2){
-    	final Vec2f p_m = pos.add(size.mul(0.5f));
-    	final Vec2f t_m = t1.add(size.mul(0.5f));
-    	final Vec2f dir = t_m.sub(p_m);
-    	final Vec2f p_ex = p2.sub(size.mul(0.5f));
-    	final Vec2f l_ex = size.add(l2);
 
-    	ContactWrapper cw = Rect_Ray_NearIntersection(p_m,dir,p_ex,l_ex);
-    	if(cw.d != Direction.NONE && cw.t>=0.0f && cw.t<=1.0f){
-    		Vec2f n = getDirection(cw.d);
-    		Vec2f c_m = cw.cp.sub(size.mul(0.5f));
-    		Vec2f vel = new Vec2f( dir.x * Math.abs(n.y) * (1.0f - cw.t),dir.y * Math.abs(n.x) * (1.0f - cw.t) );
-    		cw.cp = c_m.add(vel);
-    		return cw;
-    	}
-    	return cw;
+    public ContactWrapper RI_Solver(Vec2f target, Rect collisionObject){
+        final Vec2f middlePos = pos.add(size.mul(0.5f));
+        final Vec2f middleTarget = target.add(size.mul(0.5f));
+        final Vec2f vector = middleTarget.sub(middlePos);
+
+        final Vec2f p_ex = collisionObject.pos.sub(size.mul(0.5f));
+        final Vec2f l_ex = size.add(collisionObject.size);
+
+        ContactWrapper cw = Rect_Ray_NearIntersection(middlePos, vector, p_ex, l_ex);
+        if (cw.d != Direction.NONE && cw.t >= 0.0f && cw.t <= 1.01f) {
+            Vec2f n = getDirection(cw.d);
+            Vec2f c_m = cw.cp.sub(size.mul(0.5f));
+            Vec2f vel = new Vec2f(
+                vector.x * Math.abs(n.y) * (1.0f - cw.t),
+                vector.y * Math.abs(n.x) * (1.0f - cw.t)
+            );
+            cw.cp = c_m.add(vel);
+            return cw;
+        }
+
+        return null;
     }
 
 

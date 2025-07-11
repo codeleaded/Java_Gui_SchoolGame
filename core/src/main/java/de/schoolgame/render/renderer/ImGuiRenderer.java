@@ -16,6 +16,7 @@ import imgui.flag.ImGuiInputTextFlags;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
+import imgui.type.ImBoolean;
 import imgui.type.ImString;
 
 public class ImGuiRenderer implements IRenderer {
@@ -26,7 +27,8 @@ public class ImGuiRenderer implements IRenderer {
     private final int[] inputWorldSize;
     private final ImString inputCoins;
     private final ImString inputPower;
-    private final ImString worldName;
+    private final ImString inputWorldName;
+    private final ImBoolean inputGodmode;
 
     public ImGuiRenderer() {
         imGuiGlfw = new ImGuiImplGlfw();
@@ -43,7 +45,8 @@ public class ImGuiRenderer implements IRenderer {
         inputWorldSize = new int[2];
         inputCoins = new ImString("" + Integer.MAX_VALUE);
         inputPower = new ImString("0");
-        worldName = new ImString();
+        inputWorldName = new ImString();
+        inputGodmode = new ImBoolean(false);
     }
 
     public void render() {
@@ -135,15 +138,15 @@ public class ImGuiRenderer implements IRenderer {
 
                 ImGui.separatorText("Save/Load");
 
-                ImGui.inputText("World Name", worldName);
+                ImGui.inputText("World Name", inputWorldName);
 
                 if (ImGui.button("Save")) {
-                    state.worldManager.save(worldName.get());
-                    state.worldManager.load(worldName.get());
+                    state.worldManager.save(inputWorldName.get());
+                    state.worldManager.load(inputWorldName.get());
                 }
                 ImGui.sameLine();
                 if (ImGui.button("Load")) {
-                    Save s = state.worldManager.get(worldName.get());
+                    Save s = state.worldManager.get(inputWorldName.get());
                     state.loadSave(s);
                 }
             }
@@ -178,6 +181,9 @@ public class ImGuiRenderer implements IRenderer {
 
                 ImGui.inputFloat2("Pos", state.player.getPosition().toArray(), ImGuiInputTextFlags.ReadOnly);
                 ImGui.checkbox("Dead", state.player.getDead());
+
+                ImGui.checkbox("Godmode", inputGodmode);
+                state.player.setGodmode(inputGodmode.get());
             }
             ImGui.end();
         }

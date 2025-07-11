@@ -20,7 +20,7 @@ public class NetworkTest {
 
         Socket socket;
         try {
-            socket = Gdx.net.newClientSocket(Net.Protocol.TCP, "localhost", 5500, hints);
+            socket = Gdx.net.newClientSocket(Net.Protocol.TCP, "10.0.3.18", 5500, hints);
         } catch (Exception e) {
             Gdx.app.error("NetworkTest", "Error connecting to server", e);
             return;
