@@ -1,6 +1,11 @@
 package de.schoolgame.world.entities;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.badlogic.gdx.Gdx;
+
+import de.schoolgame.primitives.ContactWrapper;
 import de.schoolgame.primitives.Direction;
 import de.schoolgame.primitives.Rect;
 import de.schoolgame.primitives.Vec2f;
@@ -8,9 +13,6 @@ import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public abstract class MovingEntity extends Entity {
     public static final float DEFAULT_GRAVITY = -25.0f;
@@ -56,7 +58,8 @@ public abstract class MovingEntity extends Entity {
             return;
         }
 
-        rayCollision(targetposition, worldSize);
+        rayCollision(targetposition,worldSize);
+        //rayCollisionFast(targetposition,worldSize); TODO: Funktioniert in C, hier zum laufen kriegen...
         worldCollision(worldSize);
     }
 
@@ -77,6 +80,37 @@ public abstract class MovingEntity extends Entity {
             position.y = worldSize.y - size.y;
             onCollision(Direction.DOWN, WorldObject.WORLD_BORDER);
         }
+    }
+
+    private void rayCollisionFast(Vec2f pos, Vec2i worldSize) {
+        final Vec2f direction = pos.sub(position);
+
+        var entityPosition = position.toVec2i();
+        var searchArea = size.add(direction.abs()).toVec2i().max(new Vec2i(1, 1)).mul(3);
+        
+        var searchStart = entityPosition.sub(searchArea);
+        var searchEnd = entityPosition.add(searchArea);
+        searchStart = searchStart.min(searchEnd).clamp(new Vec2i(0,worldSize.x),new Vec2i(0,worldSize.y));
+        searchEnd = searchStart.max(searchEnd).clamp(new Vec2i(0,worldSize.x),new Vec2i(0,worldSize.y));
+        
+        var myRect = getRect();
+
+        ArrayList<CollisionObject> potentialCollisions = findTileCollisions(searchStart,searchEnd);
+
+	    sortCollisionsByDistance(potentialCollisions,myRect);
+
+        Vec2f cp = pos.cpy();
+	    for(int i = 0;i<potentialCollisions.size();i++){
+	    	CollisionObject co = potentialCollisions.get(i);
+	    	
+            ContactWrapper cw = myRect.RI_Solver(pos,co.rect.pos,co.rect.size);
+	    	if(cw.d != Direction.NONE){
+	    		onCollision(cw.d,co.type);
+                cp = cw.cp;
+	    	}
+	    }
+
+	    position = cp;
     }
 
     private void rayCollision(Vec2f pos, Vec2i worldSize) {

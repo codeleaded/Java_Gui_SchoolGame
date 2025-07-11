@@ -1,6 +1,10 @@
 package de.schoolgame.primitives;
 
-import java.io.*;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.Serial;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
@@ -100,6 +104,10 @@ public class Vec2f implements Externalizable {
 
     public Vec2f clamp(Vec2f min, Vec2f max) throws IllegalArgumentException {
         return new Vec2f(Math.clamp(x, min.x, max.x), Math.clamp(y, min.y, max.y));
+    }
+
+    public Vec2f abs(){
+        return new Vec2f(Math.abs(x),Math.abs(y));
     }
 
     public Vec2f neg() {
