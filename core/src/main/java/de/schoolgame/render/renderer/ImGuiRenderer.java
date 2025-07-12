@@ -125,7 +125,7 @@ public class ImGuiRenderer implements IRenderer {
                 ImGui.inputInt2("Size", inputWorldSize);
                 ImGui.sameLine();
                 if (ImGui.button("Set")) {
-                    state.world.setSize(new Vec2i(inputWorldSize).max(Vec2i.ONE));
+                    state.world.setSize(new Vec2i(inputWorldSize).max(new Vec2i(1, 1)));
                 }
 
                 ImGui.inputInt2("Spawn", state.world.getSpawn().toArray(), ImGuiInputTextFlags.ReadOnly);

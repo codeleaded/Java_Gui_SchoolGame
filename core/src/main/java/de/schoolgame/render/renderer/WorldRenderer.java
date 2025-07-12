@@ -39,9 +39,9 @@ public class WorldRenderer implements IRenderer {
 
         Vec2i start = bounds.pos.toVec2i()
             .div(tileSize)
-            .max(Vec2i.ZERO);
+            .max(new Vec2i(0, 0));
         Vec2i end = bounds.end().toVec2i()
-            .div(tileSize).add(Vec2i.ONE)
+            .div(tileSize).add(new Vec2i(1, 1))
             .min(world.getSize());
 
         batch.begin();

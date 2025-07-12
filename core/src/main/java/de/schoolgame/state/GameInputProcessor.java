@@ -2,19 +2,7 @@ package de.schoolgame.state;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import static com.badlogic.gdx.Input.Keys.A;
-import static com.badlogic.gdx.Input.Keys.D;
-import static com.badlogic.gdx.Input.Keys.DOWN;
-import static com.badlogic.gdx.Input.Keys.ESCAPE;
-import static com.badlogic.gdx.Input.Keys.L;
-import static com.badlogic.gdx.Input.Keys.LEFT;
-import static com.badlogic.gdx.Input.Keys.RIGHT;
-import static com.badlogic.gdx.Input.Keys.S;
-import static com.badlogic.gdx.Input.Keys.SPACE;
-import static com.badlogic.gdx.Input.Keys.UP;
-import static com.badlogic.gdx.Input.Keys.W;
 import com.badlogic.gdx.InputProcessor;
-
 import de.schoolgame.primitives.Direction;
 import de.schoolgame.primitives.Rect;
 import de.schoolgame.primitives.Vec2f;
@@ -23,6 +11,8 @@ import de.schoolgame.utils.CoordinateUtils;
 import de.schoolgame.utils.Save;
 import de.schoolgame.world.World;
 import de.schoolgame.world.entities.PlayerEntity;
+
+import static com.badlogic.gdx.Input.Keys.*;
 
 public class GameInputProcessor implements InputProcessor {
     private int lastMouseButton = Input.Buttons.LEFT;
@@ -240,7 +230,7 @@ public class GameInputProcessor implements InputProcessor {
             state.state = GameState.GameStateType.WORLD_SELECT;
         } else if (create.contains(pos)) {
             state.world = new World();
-            state.player = new PlayerEntity(Vec2f.ONE);
+            state.player = new PlayerEntity(new Vec2f(1.0f,1.0f));
             state.player.setGodmode(true);
             state.state = GameState.GameStateType.WORLD_EDITOR;
         } else {

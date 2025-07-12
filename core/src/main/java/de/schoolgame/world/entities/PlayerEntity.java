@@ -91,7 +91,7 @@ public class PlayerEntity extends MovingEntity {
 
         if(getDead() && (position.y < -1.0f || position.y > worldSize.y || position.x < -1.0f || position.x > worldSize.x)) {
             position = GameState.INSTANCE.world.getSpawn().toVec2f();
-            velocity = Vec2f.ZERO.cpy();
+            velocity = new Vec2f(0.0f,0.0f);
             dead = false;
         }
     }

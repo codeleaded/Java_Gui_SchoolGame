@@ -7,8 +7,6 @@ import java.util.Objects;
 public class Vec2i implements Externalizable {
     @Serial
     private static final long serialVersionUID = 1L;
-    public static final Vec2i ZERO = new Vec2i();
-    public static final Vec2i ONE = new Vec2i(1, 1);
 
     public int x, y;
 

@@ -1,18 +1,13 @@
 package de.schoolgame.world.entities;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import com.badlogic.gdx.Gdx;
-
-import de.schoolgame.primitives.ContactWrapper;
-import de.schoolgame.primitives.Direction;
-import de.schoolgame.primitives.Rect;
-import de.schoolgame.primitives.Vec2f;
-import de.schoolgame.primitives.Vec2i;
+import de.schoolgame.primitives.*;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public abstract class MovingEntity extends Entity {
     public static final float DEFAULT_GRAVITY = -25.0f;
@@ -61,7 +56,7 @@ public abstract class MovingEntity extends Entity {
         }
 
         //rayCollision(targetposition,worldSize);
-        
+
         targetposition = rayCollisionFast(targetposition,worldSize.toVec2f());
         if(this instanceof PlayerEntity pe && !pe.getGodmode()){
             rayCollisionPlayerEntity(pe,targetposition);
@@ -142,9 +137,9 @@ public abstract class MovingEntity extends Entity {
         ArrayList<CollisionObject> collisions = new ArrayList<>();
 
         final Vec2f direction = to.sub(from);
-        final Vec2f searchArea = size.add(direction.abs()).max(Vec2f.ONE).mul(4);
-        final Vec2f start = from.min(to).sub(searchArea).clamp(Vec2f.ZERO,worldSize);
-        final Vec2f end = from.max(to).add(searchArea).clamp(Vec2f.ZERO,worldSize);
+        final Vec2f searchArea = size.add(direction.abs()).max(new Vec2f(1.0f,1.0f)).mul(4);
+        final Vec2f start = from.min(to).sub(searchArea).clamp(new Vec2f(0.0f,0.0f),worldSize);
+        final Vec2f end = from.max(to).add(searchArea).clamp(new Vec2f(0.0f,0.0f),worldSize);
 
         final Vec2i n_start = start.toVec2i();
         final Vec2i n_end = end.toVec2i();
@@ -160,7 +155,7 @@ public abstract class MovingEntity extends Entity {
 
                 WorldObject worldObject = GameState.INSTANCE.world.at(new Vec2i(x,y));
                 if (worldObject != WorldObject.NONE && worldObject.isTile()) {
-                    //if (sweptRect.overlap(tileRect)) 
+                    //if (sweptRect.overlap(tileRect))
                     collisions.add(new CollisionObject(tileRect, Direction.NONE, worldObject));
                 }
             }
@@ -209,8 +204,8 @@ public abstract class MovingEntity extends Entity {
     private void detectCollisions(ArrayList<CollisionObject> collisionObjects, Vec2i worldSize) {
         var entityPosition = position.toVec2i();
         var searchArea = size.toVec2i().max(new Vec2i(1, 1)).mul(3);
-        var searchStart = entityPosition.sub(searchArea).clamp(Vec2i.ZERO,worldSize);
-        var searchEnd = entityPosition.add(searchArea).clamp(Vec2i.ZERO,worldSize);
+        var searchStart = entityPosition.sub(searchArea).clamp(new Vec2i(0,0),worldSize);
+        var searchEnd = entityPosition.add(searchArea).clamp(new Vec2i(0,0),worldSize);
         var entityRect = getRect();
 
         ArrayList<CollisionObject> potentialCollisions = findTileCollisions(searchStart, searchEnd);

@@ -1,13 +1,9 @@
 package de.schoolgame.primitives;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.io.Serial;
-import static java.lang.Math.abs;
-import java.util.List;
+import java.io.*;
 import java.util.Objects;
+
+import static java.lang.Math.abs;
 
 @SuppressWarnings("unused")
 public class Rect implements Externalizable {
@@ -105,7 +101,7 @@ public class Rect implements Externalizable {
     	if(d==Direction.LEFT)   return new Vec2f(-1.0f, 0.0f);
     	if(d==Direction.UP)     return new Vec2f( 0.0f, 1.0f);
     	if(d==Direction.DOWN)   return new Vec2f( 0.0f,-1.0f);
-    	return Vec2f.ZERO.cpy();
+    	return new Vec2f(0.0f,0.0f);
     }
 
     public ContactWrapper Rect_Ray_NearIntersection(Vec2f ray_origin,Vec2f ray_dir,Vec2f target_p,Vec2f target_l){
@@ -153,7 +149,7 @@ public class Rect implements Externalizable {
     		}
     	}
 
-    	Vec2f invdir = Vec2f.ONE.div(ray_dir);
+    	Vec2f invdir = new Vec2f().div(ray_dir);
     	Vec2f t_near = target_p.sub(ray_origin).mul(invdir);
     	Vec2f t_far = target_p.add(target_l.sub(ray_origin)).mul(invdir);
 
@@ -207,7 +203,7 @@ public class Rect implements Externalizable {
         ContactWrapper cw = Rect_Ray_NearIntersection(middlePos, vector, p_ex, l_ex);
         if (cw.d != Direction.NONE && cw.t >= 0.0f && cw.t <= 1.0f) {
             System.out.println(pos+" "+target+" "+cw.cp);
-            
+
             Vec2f n = getDirection(cw.d);
             Vec2f c_m = cw.cp.sub(size.mul(0.5f));
             Vec2f vel = new Vec2f(

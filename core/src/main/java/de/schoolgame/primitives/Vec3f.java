@@ -7,8 +7,6 @@ import java.util.Objects;
 public class Vec3f implements Externalizable {
     @Serial
     private static final long serialVersionUID = 1L;
-    public static final Vec3f ZERO = new Vec3f();
-    public static final Vec3f ONE = new Vec3f(1, 1, 1);
 
     public float x, y, z;
 
