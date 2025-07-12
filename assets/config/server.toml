@@ -1,0 +1,3 @@
+ip = "localhost"
+tcp = 5500
+udp = 5501

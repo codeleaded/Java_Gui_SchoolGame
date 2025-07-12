@@ -3,19 +3,15 @@ package de.schoolgame.world.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-
 import de.schoolgame.primitives.Direction;
-import static de.schoolgame.primitives.Direction.DOWN;
-import static de.schoolgame.primitives.Direction.LEFT;
-import static de.schoolgame.primitives.Direction.NONE;
-import static de.schoolgame.primitives.Direction.RIGHT;
-import static de.schoolgame.primitives.Direction.UP;
 import de.schoolgame.primitives.Rect;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
+
+import static de.schoolgame.primitives.Direction.*;
 
 public class PlayerEntity extends MovingEntity {
     public static float COYOTE_TIME = 0.2f;
@@ -303,11 +299,6 @@ public class PlayerEntity extends MovingEntity {
     public void render(Batch batch) {
         var state = GameState.INSTANCE;
         int tileSize = state.world.getTileSize();
-
-        Texture dbg = state.assetManager.get("tiles/test", Texture.class);
-        for (Rect v : list) {
-            batch.draw(dbg, v.pos.x * tileSize, v.pos.y * tileSize, v.size.x * tileSize, v.size.y * tileSize);
-        }
 
         Texture texture = state.assetManager.get("entities/player/mario_atlas", Texture.class);
 

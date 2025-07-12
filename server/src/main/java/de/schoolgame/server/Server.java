@@ -3,16 +3,19 @@ package de.schoolgame.server;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import de.schoolgame.server.thread.ServerThread;
+import de.schoolgame.server.db.Database;
+import de.schoolgame.server.state.ServerState;
 
 public class Server extends ApplicationAdapter {
-    ServerThread serverThread;
-
     @Override
     public void create() {
+        Gdx.app.log("Server", "Server starting...");
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
-        serverThread = new ServerThread();
-        serverThread.start();
+
+        Database.init();
+        ServerState.INSTANCE.server = new KryoServer();
+
+        Gdx.app.log("Server", "Server started");
     }
 
     @Override
@@ -22,6 +25,7 @@ public class Server extends ApplicationAdapter {
 
     @Override
     public void dispose() {
-        serverThread.interrupt();
+        ServerState.INSTANCE.server.dispose();
+        Gdx.app.log("Server", "Server stopped");
     }
 }

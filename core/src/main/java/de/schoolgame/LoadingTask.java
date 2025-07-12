@@ -2,7 +2,9 @@ package de.schoolgame;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import de.schoolgame.network.NetworkTest;
+import de.schoolgame.network.ServerConnection;
+import de.schoolgame.network.packet.EchoPacket;
+import de.schoolgame.network.packet.LoginPacket;
 import de.schoolgame.render.AssetManager;
 import de.schoolgame.render.Camera;
 import de.schoolgame.state.DebugState;
@@ -50,11 +52,12 @@ public class LoadingTask {
         }
 
         addTask("DebugState", () -> GameState.INSTANCE.debug = new DebugState());
+        addTask("ServerConnection", () -> GameState.INSTANCE.server = new ServerConnection());
 
         addTask("Networking", () -> {
-            //TODO Networking
-            var networkTest = new NetworkTest();
-            networkTest.test();
+            GameState.INSTANCE.server.connect();
+            GameState.INSTANCE.server.sendPacket(new EchoPacket("Hi!"), true);
+            GameState.INSTANCE.server.sendPacket(new LoginPacket("Player1", null, 0), true);
         });
 
         initialTasks = tasks.size();

@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS clients(
+    id uuid PRIMARY KEY NOT NULL,
+    ip cidr NOT NULL,
+    name text NOT NULL,
+    style smallint NOT NULL DEFAULT 0,
+    active boolean NOT NULL DEFAULT true
+);
+
+CREATE TABLE IF NOT EXISTS worlds(
+    id serial PRIMARY KEY NOT NULL,
+    creator uuid NOT NULL REFERENCES clients(id),
+    name text UNIQUE NOT NULL,
+    data bytea NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS scores(
+    id serial PRIMARY KEY NOT NULL,
+    client uuid NOT NULL REFERENCES clients(id),
+    score integer NOT NULL
+);

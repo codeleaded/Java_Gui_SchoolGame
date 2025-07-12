@@ -39,6 +39,9 @@ dependencies {
     implementation "io.github.berstanio:gdx-svmhelper-extension-freetype:$graalHelperVersion"
   }
 
+  implementation "com.zaxxer:HikariCP:$hikariCPVersion"
+  implementation "org.postgresql:postgresql:$postgresVersion"
+  implementation "org.slf4j:slf4j-simple:$slf4jVersion"
 }
 
 def os = System.properties['os.name'].toLowerCase()

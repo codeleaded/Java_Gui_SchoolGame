@@ -1,10 +1,7 @@
 package de.schoolgame.network;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import com.esotericsoftware.kryonet.Connection;
 
-public abstract class Packet {
-    public abstract void write(ObjectOutputStream out) throws IOException;
-    public abstract void read(ObjectInputStream in) throws IOException;
+public interface Packet {
+    void handle(Connection connection);
 }

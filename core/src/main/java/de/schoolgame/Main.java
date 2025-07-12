@@ -27,8 +27,6 @@ public class Main extends ApplicationAdapter {
 
         inputProcessor.update();
 
-        System.out.println();
-
         if (state.controllable()) {
             state.player.update();
 

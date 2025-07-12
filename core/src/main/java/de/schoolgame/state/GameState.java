@@ -1,5 +1,6 @@
 package de.schoolgame.state;
 
+import de.schoolgame.network.ServerConnection;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.render.AssetManager;
 import de.schoolgame.render.Camera;
@@ -13,7 +14,11 @@ public class GameState {
 
     public GameStateType state = GameStateType.MAIN_MENU;
 
+    public String username = "Anonym";
+    public int playerStyle = 0;
+
     public DebugState debug;
+    public ServerConnection server;
 
     public World world;
     public Camera camera;
