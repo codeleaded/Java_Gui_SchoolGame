@@ -135,9 +135,17 @@ public class Vec2f implements Externalizable {
     }
 
     public Vec2i toVec2i() {
-        return new Vec2i((int) x, (int) y);
+        return new Vec2i((int)x,(int)y);
     }
 
+    public Vec2i toVec2iF() {
+        return new Vec2i((int)Math.floor(x),(int)Math.floor(y));
+    }
+
+    public Vec2i toVec2iC() {
+        return new Vec2i((int)Math.ceil(x),(int)Math.ceil(y));
+    }
+    
     public float[] toArray() {
         return new float[] {x, y};
     }

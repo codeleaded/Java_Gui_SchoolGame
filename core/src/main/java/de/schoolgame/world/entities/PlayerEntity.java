@@ -90,7 +90,7 @@ public class PlayerEntity extends MovingEntity {
         Vec2i worldSize = GameState.INSTANCE.world.getSize();
 
         if(getDead() && (position.y < -1.0f || position.y > worldSize.y || position.x < -1.0f || position.x > worldSize.x)) {
-            position = GameState.INSTANCE.world.getSpawn().toVec2f();
+            position = GameState.INSTANCE.world.getSpawn().toVec2f().add(new Vec2f(0.0f,0.001f));
             velocity = new Vec2f(0.0f,0.0f);
             dead = false;
         }

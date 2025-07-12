@@ -1,9 +1,12 @@
 package de.schoolgame.primitives;
 
-import java.io.*;
-import java.util.Objects;
-
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.Serial;
 import static java.lang.Math.abs;
+import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class Rect implements Externalizable {
@@ -32,7 +35,7 @@ public class Rect implements Externalizable {
 
     public boolean overlap(Rect r){
         if (this.pos.x < r.pos.x - this.size.x) return false;
-        if (this.pos.x > r.pos.x + r.size.x) return false;
+        if (this.pos.x > r.pos.x + r.size.x)    return false;
         if (this.pos.y < r.pos.y - this.size.y) return false;
         return !(this.pos.y > r.pos.y + r.size.y);
     }
@@ -97,10 +100,10 @@ public class Rect implements Externalizable {
 
 
     public Vec2f getDirection(Direction d){
-    	if(d==Direction.RIGHT)  return new Vec2f( 1.0f, 0.0f);
-    	if(d==Direction.LEFT)   return new Vec2f(-1.0f, 0.0f);
-    	if(d==Direction.UP)     return new Vec2f( 0.0f, 1.0f);
-    	if(d==Direction.DOWN)   return new Vec2f( 0.0f,-1.0f);
+    	if(d==Direction.RIGHT)  return new Vec2f(1.0f,0.0f);
+    	if(d==Direction.LEFT)   return new Vec2f(-1.0f,0.0f);
+    	if(d==Direction.UP)     return new Vec2f(0.0f,1.0f);
+    	if(d==Direction.DOWN)   return new Vec2f(0.0f,-1.0f);
     	return new Vec2f(0.0f,0.0f);
     }
 
@@ -132,13 +135,13 @@ public class Rect implements Externalizable {
     	if(ray_dir.x==0.0f){
     		if(ray_origin.x > target_p.x && ray_origin.x < target_p.x + target_l.x){
                 if(ray_dir.y > 0.0f){
-    				if(target_p.y > ray_origin.y && target_p.y < ray_origin.y + ray_dir.y){
+    				if(target_p.y >= ray_origin.y && target_p.y <= ray_origin.y + ray_dir.y){
     					cw.cp = new Vec2f( ray_origin.x,target_p.y );
                         cw.d = Direction.DOWN;
     					return cw;
     				}
     			}else{
-    				if(target_p.y < ray_origin.y && target_p.y > ray_origin.y + ray_dir.y){
+    				if(target_p.y + target_l.y <= ray_origin.y && target_p.y + target_l.y >= ray_origin.y + ray_dir.y){
     					cw.cp = new Vec2f( ray_origin.x,target_p.y + target_l.y );
                         cw.d = Direction.UP;
     					return cw;
@@ -149,9 +152,9 @@ public class Rect implements Externalizable {
     		}
     	}
 
-    	Vec2f invdir = new Vec2f().div(ray_dir);
+    	Vec2f invdir = new Vec2f(1.0f,1.0f).div(ray_dir);
     	Vec2f t_near = target_p.sub(ray_origin).mul(invdir);
-    	Vec2f t_far = target_p.add(target_l.sub(ray_origin)).mul(invdir);
+    	Vec2f t_far = target_p.add(target_l).sub(ray_origin).mul(invdir);
 
     	if (t_near.x > t_far.x){
             float swap = t_near.x;
@@ -163,7 +166,7 @@ public class Rect implements Externalizable {
             t_near.y = t_far.y;
             t_far.y = swap;
         }
-    	if (t_near.x > t_far.y || t_near.y > t_far.x) return cw;
+        if (t_near.x > t_far.y || t_near.y > t_far.x) return cw;
 
     	cw.t = Math.max(t_near.x,t_near.y);
     	float t_hit_far = Math.min(t_far.x,t_far.y);
@@ -171,7 +174,7 @@ public class Rect implements Externalizable {
     	if (t_hit_far < 0.0f)
     		return cw;
 
-    	cw.cp = ray_dir.mul(cw.t).add(ray_origin);
+    	cw.cp = ray_origin.add(ray_dir.mul(cw.t));
     	if (t_near.x > t_near.y)
     		if (invdir.x < 0.0f){
                 cw.d = Direction.RIGHT;
@@ -194,16 +197,13 @@ public class Rect implements Externalizable {
 
     public ContactWrapper RI_Solver(Vec2f target, Rect collisionObject){
         final Vec2f middlePos = pos.add(size.mul(0.5f));
-        final Vec2f middleTarget = target.add(size.mul(0.5f));
-        final Vec2f vector = middleTarget.sub(middlePos);
+        final Vec2f vector = target.sub(pos);
 
         final Vec2f p_ex = collisionObject.pos.sub(size.mul(0.5f));
         final Vec2f l_ex = size.add(collisionObject.size);
 
-        ContactWrapper cw = Rect_Ray_NearIntersection(middlePos, vector, p_ex, l_ex);
+        ContactWrapper cw = Rect_Ray_NearIntersection(middlePos,vector,p_ex,l_ex);
         if (cw.d != Direction.NONE && cw.t >= 0.0f && cw.t <= 1.0f) {
-            System.out.println(pos+" "+target+" "+cw.cp);
-
             Vec2f n = getDirection(cw.d);
             Vec2f c_m = cw.cp.sub(size.mul(0.5f));
             Vec2f vel = new Vec2f(

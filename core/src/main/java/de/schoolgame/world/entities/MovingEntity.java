@@ -1,13 +1,18 @@
 package de.schoolgame.world.entities;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.badlogic.gdx.Gdx;
-import de.schoolgame.primitives.*;
+
+import de.schoolgame.primitives.ContactWrapper;
+import de.schoolgame.primitives.Direction;
+import de.schoolgame.primitives.Rect;
+import de.schoolgame.primitives.Vec2f;
+import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public abstract class MovingEntity extends Entity {
     public static final float DEFAULT_GRAVITY = -25.0f;
@@ -57,7 +62,9 @@ public abstract class MovingEntity extends Entity {
 
         //rayCollision(targetposition,worldSize);
 
-        targetposition = rayCollisionFast(targetposition,worldSize.toVec2f());
+        if(!(this instanceof PlayerEntity pe && pe.getGodmode())){
+            targetposition = rayCollisionFast(targetposition,worldSize.toVec2f());
+        }
         if(this instanceof PlayerEntity pe && !pe.getGodmode()){
             rayCollisionPlayerEntity(pe,targetposition);
         }
@@ -109,7 +116,7 @@ public abstract class MovingEntity extends Entity {
     private Vec2f rayCollisionFast(Vec2f pos, Vec2f worldSize) {
         list.clear();
 
-        var myRect = getRect();
+        var myRect = new Rect(position.cpy(),size.cpy());
 
         ArrayList<CollisionObject> potentialCollisions = findTileCollisions(
             position,
@@ -121,8 +128,6 @@ public abstract class MovingEntity extends Entity {
 
         Vec2f cp = pos.cpy();
         for (CollisionObject co : potentialCollisions) {
-            list.add(co.rect);
-
             ContactWrapper cw = myRect.RI_Solver(cp, co.rect);
             if (cw != null && cw.d!=Direction.NONE) {
                 onCollision(cw.d, co.type);
@@ -137,12 +142,12 @@ public abstract class MovingEntity extends Entity {
         ArrayList<CollisionObject> collisions = new ArrayList<>();
 
         final Vec2f direction = to.sub(from);
-        final Vec2f searchArea = size.add(direction.abs()).max(new Vec2f(1.0f,1.0f)).mul(4);
+        final Vec2f searchArea = size.add(direction.abs()).max(new Vec2f(1.0f,1.0f));
         final Vec2f start = from.min(to).sub(searchArea).clamp(new Vec2f(0.0f,0.0f),worldSize);
         final Vec2f end = from.max(to).add(searchArea).clamp(new Vec2f(0.0f,0.0f),worldSize);
 
-        final Vec2i n_start = start.toVec2i();
-        final Vec2i n_end = end.toVec2i();
+        final Vec2i n_start = start.toVec2iF();
+        final Vec2i n_end = end.toVec2iC();
 
         // final Rect sweptRect = new Rect(
         //     start,

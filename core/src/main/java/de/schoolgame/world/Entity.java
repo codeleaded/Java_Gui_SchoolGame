@@ -27,6 +27,6 @@ public abstract class Entity {
     }
 
     public Rect getRect(){
-        return new Rect(position, size);
+        return new Rect(position,size);
     }
 }

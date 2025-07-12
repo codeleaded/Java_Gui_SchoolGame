@@ -1,5 +1,6 @@
 package de.schoolgame.state;
 
+import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.render.AssetManager;
 import de.schoolgame.render.Camera;
 import de.schoolgame.utils.Save;
@@ -25,7 +26,7 @@ public class GameState {
 
     public void loadSave(Save s) {
         world = new World(s);
-        player = new PlayerEntity(world.getSpawn().toVec2f());
+        player = new PlayerEntity(world.getSpawn().toVec2f().add(new Vec2f(0.0f,0.001f)));
     }
 
     public boolean controllable() {

@@ -7,12 +7,12 @@ public class ContactWrapper {
 
     public ContactWrapper(){
         this.d = Direction.NONE;
-        this.cp = new Vec2f(0,0);
+        this.cp = new Vec2f(0.0f,0.0f);
         this.t = 0.0f;
     }
     public ContactWrapper(Direction d,Vec2f cp,float t){
         this.d = d;
-        this.cp = cp;
+        this.cp = cp.cpy();
         this.t = t;
     }
 }
