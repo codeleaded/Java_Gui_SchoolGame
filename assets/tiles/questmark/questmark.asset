@@ -1,0 +1,11 @@
+type = "animation"
+
+[spritesheet]
+count = 4
+
+[sprite]
+width = 32
+height = 32
+
+[animation]
+frameDuration = 0.3

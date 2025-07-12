@@ -2,7 +2,9 @@ package de.schoolgame.world;
 
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.world.entities.CoinEntity;
+import de.schoolgame.world.entities.Fireflower;
 import de.schoolgame.world.entities.RoamerEntity;
+import de.schoolgame.world.tiles.Brick;
 import de.schoolgame.world.tiles.Grass;
 import de.schoolgame.world.tiles.Laboratorytable;
 import de.schoolgame.world.tiles.Spike;
@@ -11,6 +13,7 @@ import de.schoolgame.world.tiles.Track;
 import de.schoolgame.world.tiles.Table;
 import de.schoolgame.world.tiles.Hurde;
 import de.schoolgame.world.tiles.Corridor;
+import de.schoolgame.world.tiles.QuestMark;
 
 public enum WorldObject {
     NONE(null),
@@ -18,13 +21,16 @@ public enum WorldObject {
     GRASS(new Grass()),
     COIN(CoinEntity.class),
     ROAMER(RoamerEntity.class),
+    FIREFLOWER(Fireflower.class),
     SPIKE(new Spike()),
     WORLD_BORDER(null),
     TRACK(new Track()),
     LABORATROYTABLE(new Laboratorytable()),
     TABLE(new Table()),
     HURDE(new Hurde()),
-    CORRIDOR(new Corridor())
+    CORRIDOR(new Corridor()),
+    QUESTMARK(new QuestMark()),
+    BRICK(new Brick())
     ;
 
     private final Object object;
