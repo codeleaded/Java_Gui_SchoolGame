@@ -21,10 +21,6 @@ public class Main extends ApplicationAdapter {
     public void render() {
         var state = GameState.INSTANCE;
 
-        // Für Debugging -> Clear Screen + Cursur to 0,0
-        // System.out.print("\033[2J\033[H");
-        // System.out.flush();
-
         inputProcessor.update();
 
         if (state.controllable()) {

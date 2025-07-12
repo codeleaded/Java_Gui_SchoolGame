@@ -1,5 +1,7 @@
 package de.schoolgame.render.renderer;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import de.schoolgame.primitives.Rect;
@@ -44,6 +46,8 @@ public class WorldRenderer implements IRenderer {
             .div(tileSize).add(new Vec2i(1, 1))
             .min(world.getSize());
 
+        Texture egg = GameState.INSTANCE.assetManager.get("tiles/egg/egg", Texture.class);
+
         batch.begin();
         float y = start.y * tileSize;
         for (int row = start.y; row < end.y; row++) {
@@ -54,6 +58,12 @@ public class WorldRenderer implements IRenderer {
                 var tile = worldObject.getTile();
 
                 if (tile == null) {
+                    if (worldObject.isEntity() && GameState.INSTANCE.state == GameState.GameStateType.WORLD_EDITOR) {
+                        batch.setColor(worldObject.getEntityColor());
+                        batch.draw(egg, x, y, tileSize, tileSize);
+                        batch.setColor(Color.WHITE);
+                    }
+
                     x += tileSize;
                     continue;
                 }

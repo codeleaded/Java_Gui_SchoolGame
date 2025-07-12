@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Animation {
     public enum Mode {
-        Single, Loop
+        Single, Loop, Bounce
     }
 
     private final TextureRegion[] frames;
@@ -27,6 +27,10 @@ public class Animation {
         frameIndex = switch (mode) {
             case Single -> Math.min(frames.length - 1, frameIndex);
             case Loop -> frameIndex % frames.length;
+            case Bounce -> {
+                int mod = frameIndex % (frames.length * 2);
+                yield mod < frames.length ? mod : frames.length - 1 - (mod - frames.length);
+            }
         };
 
         return frames[frameIndex];

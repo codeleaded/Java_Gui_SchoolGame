@@ -195,6 +195,7 @@ public class GameInputProcessor implements InputProcessor {
                 Gdx.app.log("WorldSelect", "Selected world: " + i);
                 Save save = state.worldManager.get("world_" + i);
                 state.loadSave(save);
+                state.world.summonEntities();
                 state.state = GameState.GameStateType.GAME;
                 return true;
             }

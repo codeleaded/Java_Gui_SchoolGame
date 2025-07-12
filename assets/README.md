@@ -40,7 +40,7 @@ count = 50
 ```
 
 ## animation section
-duration of a single animation frame
+duration of a single animation frame and animation mode (Loop/Single/Bounce)
 <br/>
 only needed for animation
 
@@ -48,4 +48,5 @@ Example:
 ```
 [animation]
 frameDuration = 0.03
+mode = "Loop"
 ```

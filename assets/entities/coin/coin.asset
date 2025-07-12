@@ -9,3 +9,4 @@ height = 32
 
 [animation]
 frameDuration = 0.03
+mode = "Loop"

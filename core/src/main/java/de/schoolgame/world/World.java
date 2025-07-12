@@ -3,6 +3,7 @@ package de.schoolgame.world;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.TileSet;
+import de.schoolgame.state.GameState;
 import de.schoolgame.utils.Save;
 
 import java.util.ArrayList;
@@ -46,6 +47,11 @@ public class World {
         this.entities = new ArrayList<>();
         this.spawn = spawn;
 
+        connectionsCache = new byte[size.x][size.y];
+        updateConnections();
+    }
+
+    public void summonEntities() {
         for (int x = 0; x < size.x; x++) {
             for (int y = 0; y < size.y; y++) {
                 var tile = worldObjects[x][y];
@@ -58,9 +64,6 @@ public class World {
                 }
             }
         }
-
-        connectionsCache = new byte[size.x][size.y];
-        updateConnections();
     }
 
     public void dispose() {
@@ -94,9 +97,11 @@ public class World {
     public void addAt(Vec2i pos, WorldObject worldObject) {
         if(invalidPos(pos)) return;
         this.worldObjects[pos.x][pos.y] = worldObject;
-        var e = worldObject.createEntity(pos.toVec2f());
-        if (e != null) {
-            entities.add(e);
+        if (GameState.INSTANCE.state != GameState.GameStateType.WORLD_EDITOR) {
+            var e = worldObject.createEntity(pos.toVec2f());
+            if (e != null) {
+                entities.add(e);
+            }
         }
         updateConnectionsAt(pos);
     }

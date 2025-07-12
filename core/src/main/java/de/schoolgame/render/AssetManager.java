@@ -57,8 +57,9 @@ public class AssetManager {
             SpriteSheet spriteSheet = get(pathWithoutExtension, SpriteSheet.class);
 
             float frameDuration = AssetUtils.getFloat(asset, "animation.frameDuration", 0.03f);
+            Animation.Mode animationType = Animation.Mode.valueOf(AssetUtils.getString(asset, "animation.mode", "Loop"));
 
-            Animation animation = new Animation(frameDuration, spriteSheet.getRegions());
+            Animation animation = new Animation(frameDuration, spriteSheet.getRegions(), animationType);
             assets.put(name, animation);
             return;
         } else if (typeClass == TileSet.class) {
