@@ -8,7 +8,7 @@ import de.schoolgame.render.texture.TileSet;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Tile;
 
-public class GrassTile extends Tile {
+public class Grass extends Tile {
     @Override
     public void render(Batch batch, Vec2f drawPosition, Vec2i worldPosition) {
         var state = GameState.INSTANCE;

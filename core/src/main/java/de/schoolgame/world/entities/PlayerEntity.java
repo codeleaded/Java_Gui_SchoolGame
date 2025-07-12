@@ -79,9 +79,7 @@ public class PlayerEntity extends MovingEntity {
         this.godmode = godmode;
     }
 
-    public boolean getDead() {
-        return dead;
-    }
+    public boolean getDead() { return dead; }
     public int getCoins() { return this.coins; }
     public int getPower() { return this.power; }
     public boolean getGodmode() { return this.godmode; }

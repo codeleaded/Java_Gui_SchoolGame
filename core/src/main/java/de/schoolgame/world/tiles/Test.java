@@ -7,12 +7,12 @@ import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Tile;
 
-public class SpikeTile extends Tile {
+public class Test extends Tile {
     @Override
     public void render(Batch batch, Vec2f drawPosition, Vec2i worldPosition) {
         var state = GameState.INSTANCE;
         int tileSize = state.world.getTileSize();
-        Texture texture = state.assetManager.get("tiles/test", Texture.class);
+        Texture texture = state.assetManager.get("tiles/test/test", Texture.class);
         batch.draw(texture, drawPosition.x, drawPosition.y, tileSize, tileSize);
     }
 }

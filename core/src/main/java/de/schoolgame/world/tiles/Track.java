@@ -8,7 +8,7 @@ import de.schoolgame.render.texture.TileSet;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Tile;
 
-public class TrackTile extends Tile {
+public class Track extends Tile {
     @Override
     public void render(Batch batch, Vec2f drawPosition, Vec2i worldPosition) {
         var state = GameState.INSTANCE;
