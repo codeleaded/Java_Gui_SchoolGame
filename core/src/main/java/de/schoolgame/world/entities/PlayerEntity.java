@@ -3,15 +3,19 @@ package de.schoolgame.world.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+
 import de.schoolgame.primitives.Direction;
+import static de.schoolgame.primitives.Direction.DOWN;
+import static de.schoolgame.primitives.Direction.LEFT;
+import static de.schoolgame.primitives.Direction.NONE;
+import static de.schoolgame.primitives.Direction.RIGHT;
+import static de.schoolgame.primitives.Direction.UP;
 import de.schoolgame.primitives.Rect;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
-
-import static de.schoolgame.primitives.Direction.*;
 
 public class PlayerEntity extends MovingEntity {
     public static float COYOTE_TIME = 0.2f;
@@ -87,6 +91,7 @@ public class PlayerEntity extends MovingEntity {
             position = GameState.INSTANCE.world.getSpawn().toVec2f().add(new Vec2f(0.0f,0.001f));
             velocity = new Vec2f(0.0f,0.0f);
             dead = false;
+            setPower(0);
         }
     }
 
@@ -248,11 +253,30 @@ public class PlayerEntity extends MovingEntity {
     }
 
     @Override
-    void onCollision(Direction type, WorldObject object) {
+    public void onCollision(Direction type,Vec2i pos,WorldObject object) {
         if (getDead()) return;
 
         if (object == WorldObject.SPIKE) {
             kill();
+        }
+
+        if (object == WorldObject.BRICK) {
+            if ((type == UP && velocity.y < 0.0f) || (type == DOWN && velocity.y > 0.0f)){
+                var world = GameState.INSTANCE.world;
+                world.addAt(pos,WorldObject.NONE);
+            }
+        }
+        if (object == WorldObject.QUESTMARK) {
+            if (type == DOWN && GRAVITY < 0.0f){
+                var world = GameState.INSTANCE.world;
+                world.addAt(pos,WorldObject.OPENQUESTMARK);
+                world.addAt(pos.add(0,1),WorldObject.FIREFLOWER);
+            }
+            if (type == UP && GRAVITY > 0.0f){
+                var world = GameState.INSTANCE.world;
+                world.addAt(pos,WorldObject.OPENQUESTMARK);
+                world.addAt(pos.add(0,-1),WorldObject.FIREFLOWER);
+            }
         }
 
         if (type == UP && velocity.y < 0.0f) velocity.y = 0.0f;
@@ -275,11 +299,15 @@ public class PlayerEntity extends MovingEntity {
         }
     }
 
-    boolean onEntityCollision(Entity entity, Direction direction) {
+    public boolean onEntityCollision(Entity entity, Direction direction) {
         if (getDead()) return false;
 
         if (entity instanceof CoinEntity) {
             coins += 1;
+            return true;
+        }
+        if (entity instanceof Fireflower) {
+            setPower(2);
             return true;
         }
 
@@ -301,7 +329,6 @@ public class PlayerEntity extends MovingEntity {
         int tileSize = state.world.getTileSize();
 
         Texture texture = state.assetManager.get("entities/player/mario_atlas", Texture.class);
-
         Rect r = getTexRect();
 
         float yS = r.pos.y + r.size.y;

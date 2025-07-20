@@ -2,12 +2,16 @@ package de.schoolgame.world.entities;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+
 import de.schoolgame.primitives.Direction;
+import static de.schoolgame.primitives.Direction.DOWN;
+import static de.schoolgame.primitives.Direction.LEFT;
+import static de.schoolgame.primitives.Direction.RIGHT;
+import static de.schoolgame.primitives.Direction.UP;
 import de.schoolgame.primitives.Vec2f;
+import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.WorldObject;
-
-import static de.schoolgame.primitives.Direction.*;
 
 public class RoamerEntity extends MovingEntity {
     public RoamerEntity(Vec2f position) {
@@ -22,7 +26,7 @@ public class RoamerEntity extends MovingEntity {
     }
 
     @Override
-    void onCollision(Direction type,  WorldObject object) {
+    void onCollision(Direction type,Vec2i pos,WorldObject object) {
         if (type == RIGHT || type == LEFT){
             velocity.x = -velocity.x;
         }

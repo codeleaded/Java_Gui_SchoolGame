@@ -76,11 +76,11 @@ public abstract class MovingEntity extends Entity {
     private void worldCollision(Vec2i worldSize) {
         if (position.x <= 0.0f) {
             position.x = 0.0f;
-            onCollision(Direction.RIGHT, WorldObject.WORLD_BORDER);
+            onCollision(Direction.RIGHT,new Vec2i(0,0),WorldObject.WORLD_BORDER);
         }
         if (position.x >= worldSize.x - size.x) {
             position.x = worldSize.x - size.x;
-            onCollision(Direction.LEFT, WorldObject.WORLD_BORDER);
+            onCollision(Direction.LEFT,new Vec2i((int)(worldSize.x - size.x),0),WorldObject.WORLD_BORDER);
         }
         if (position.y <= 0.0f && GRAVITY > 0.0f) {
             position.y = 0.0f;
@@ -88,7 +88,7 @@ public abstract class MovingEntity extends Entity {
         }
         if (position.y >= worldSize.y - size.y && GRAVITY < 0.0f) {
             position.y = worldSize.y - size.y;
-            onCollision(Direction.DOWN, WorldObject.WORLD_BORDER);
+            onCollision(Direction.DOWN,new Vec2i(0,(int)(worldSize.y - size.y)),WorldObject.WORLD_BORDER);
         }
     }
 
@@ -130,7 +130,7 @@ public abstract class MovingEntity extends Entity {
         for (CollisionObject co : potentialCollisions) {
             ContactWrapper cw = myRect.RI_Solver(cp, co.rect);
             if (cw != null && cw.d!=Direction.NONE) {
-                onCollision(cw.d, co.type);
+                onCollision(cw.d,co.rect.pos.toVec2i(),co.type);
                 cp = cw.cp.cpy();
             }
         }
@@ -147,7 +147,7 @@ public abstract class MovingEntity extends Entity {
             if(myRect.overlap(co.rect)){
                 Rect r = new Rect(cp.cpy(),size.cpy());
                 Direction d = r.staticCollisionSolver(co.rect);
-                onCollision(d,co.type);
+                onCollision(d,co.rect.pos.toVec2i(),co.type);
                 cp = r.pos.cpy();
             }
         }
@@ -210,7 +210,7 @@ public abstract class MovingEntity extends Entity {
 
         for (CollisionObject collision : dirs) {
             if (collision == null) continue;
-            onCollision(collision.direction, collision.type);
+            onCollision(collision.direction,collision.rect.pos.toVec2i(),collision.type);
         }
     }
 
@@ -294,7 +294,7 @@ public abstract class MovingEntity extends Entity {
     }
 
 
-    abstract void onCollision(Direction direction, WorldObject object);
+    abstract void onCollision(Direction direction,Vec2i pos,WorldObject object);
 
     private static class CollisionObject {
         public final Rect rect;

@@ -22,6 +22,7 @@ public enum WorldObject {
     HURDE(new Hurde()),
     CORRIDOR(new Corridor()),
     QUESTMARK(new QuestMark()),
+    OPENQUESTMARK(new OpenQuestMark()),
     BRICK(new Brick())
     ;
 
