@@ -140,15 +140,26 @@ public class ImGuiRenderer implements IRenderer {
 
                 ImGui.inputText("World Name", inputWorldName);
 
-                if (ImGui.button("Save")) {
-                    state.worldManager.save(inputWorldName.get());
-                    state.worldManager.load(inputWorldName.get());
+                if (state.server.isConnected()) {
+                    if (ImGui.button("Upload")) {
+                        state.worldManager.upload(inputWorldName.get());
+                    }
+                    if (ImGui.button("Download")) {
+                        state.worldManager.download(inputWorldName.get());
+                    }
+                } else {
+                    if (ImGui.button("Save")) {
+                        state.worldManager.save(inputWorldName.get());
+                        state.worldManager.load(inputWorldName.get());
+                    }
+                    ImGui.sameLine();
+                    if (ImGui.button("Load")) {
+                        Save s = state.worldManager.get(inputWorldName.get());
+                        state.loadSave(s);
+                    }
                 }
-                ImGui.sameLine();
-                if (ImGui.button("Load")) {
-                    Save s = state.worldManager.get(inputWorldName.get());
-                    state.loadSave(s);
-                }
+
+
             }
             ImGui.end();
         }

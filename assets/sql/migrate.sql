@@ -2,8 +2,8 @@ CREATE TABLE IF NOT EXISTS clients(
     id uuid PRIMARY KEY NOT NULL,
     ip cidr NOT NULL,
     name text NOT NULL,
-    style smallint NOT NULL DEFAULT 0,
-    active boolean NOT NULL DEFAULT true
+    style smallint NOT NULL,
+    active boolean NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS worlds(
