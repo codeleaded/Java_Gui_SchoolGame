@@ -6,6 +6,7 @@ import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.world.entities.CoinEntity;
 import de.schoolgame.world.entities.EichelsbacherEntity;
 import de.schoolgame.world.entities.Fireflower;
+import de.schoolgame.world.entities.FlashEntity;
 import de.schoolgame.world.entities.FriedrichEntity;
 import de.schoolgame.world.entities.KoenigEntity;
 import de.schoolgame.world.entities.RoamerEntity;
@@ -31,6 +32,7 @@ public enum WorldObject {
     KOENIG(KoenigEntity.class),
     EICHELSBACHER(EichelsbacherEntity.class),
     FIREFLOWER(Fireflower.class),
+    FLASH(FlashEntity.class),
     SPIKE(new Spike()),
     WORLD_BORDER(null),
     TRACK(new Track()),

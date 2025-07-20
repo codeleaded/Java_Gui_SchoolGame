@@ -323,6 +323,9 @@ public class PlayerEntity extends MovingEntity {
             }
             kill();
         }
+        if (entity instanceof FlashEntity) {
+            kill();
+        }
 
         if (entity instanceof FriedrichEntity fe && !fe.getDead()) {
             if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
