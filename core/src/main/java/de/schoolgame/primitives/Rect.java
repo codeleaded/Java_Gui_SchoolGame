@@ -216,6 +216,9 @@ public class Rect implements Externalizable {
         return null;
     }
 
+    public Rect cpy(){
+        return new Rect(pos.cpy(),size.cpy());
+    }
 
     public boolean compareInt(Rect r) {
         return (int)pos.x == (int)r.pos.x &&

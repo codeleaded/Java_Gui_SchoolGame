@@ -135,6 +135,23 @@ public abstract class MovingEntity extends Entity {
             }
         }
 
+        potentialCollisions = findTileCollisions(
+            position,
+            pos,
+            size,
+            worldSize
+        );
+	    sortCollisionsByDistance(potentialCollisions,myRect);
+
+        for (CollisionObject co : potentialCollisions) {
+            if(myRect.overlap(co.rect)){
+                Rect r = new Rect(cp.cpy(),size.cpy());
+                Direction d = r.staticCollisionSolver(co.rect);
+                onCollision(d,co.type);
+                cp = r.pos.cpy();
+            }
+        }
+
 	    return cp;
     }
 
