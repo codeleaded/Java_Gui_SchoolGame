@@ -1,24 +1,18 @@
 package de.schoolgame.world.entities;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import com.badlogic.gdx.Gdx;
-
-import de.schoolgame.primitives.ContactWrapper;
-import de.schoolgame.primitives.Direction;
-import de.schoolgame.primitives.Rect;
-import de.schoolgame.primitives.Vec2f;
-import de.schoolgame.primitives.Vec2i;
+import de.schoolgame.primitives.*;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public abstract class MovingEntity extends Entity {
     public static final float DEFAULT_GRAVITY = -25.0f;
     public static final float GROUND_FRICTION = 2f;
     public static final float AIR_FRICTION = 2f;
-    public static final float RC_STEP_CHANGE = 0.001f;
 
     public ArrayList<Rect> list = new ArrayList<>();
 
@@ -42,52 +36,47 @@ public abstract class MovingEntity extends Entity {
         var worldSize = state.world.getSize();
 
         velocity = velocity.add(acceleration.scl(Gdx.graphics.getDeltaTime()));
-        Vec2f targetposition = position.add(velocity.scl(Gdx.graphics.getDeltaTime()));
+        Vec2f targetPosition = position.add(velocity.scl(Gdx.graphics.getDeltaTime()));
 
         if ((this instanceof PlayerEntity pe && pe.getDead()) ||
             (this instanceof FriedrichEntity fe && fe.getDead()) ||
             (this instanceof KoenigEntity ke && ke.getDead()) ||
             (this instanceof EichelsbacherEntity ee && ee.getDead()))
         {
-            this.position = targetposition;
+            this.position = targetPosition;
             return;
         }
 
         if ((position.y < 0.0f && GRAVITY < 0.0f) || (position.y > worldSize.y - size.y && GRAVITY > 0.0f)) {
-            if (this instanceof PlayerEntity pe) {
-                position.y = (GRAVITY < 0.0f ? 0.0f : worldSize.y - size.y);
-                pe.kill();
-                return;
+            switch (this) {
+                case PlayerEntity pe -> {
+                    position.y = (GRAVITY < 0.0f ? 0.0f : worldSize.y - size.y);
+                    pe.kill();
+                }
+                case FriedrichEntity pe -> {
+                    position.y = (GRAVITY < 0.0f ? 0.0f : worldSize.y - size.y);
+                    pe.kill();
+                }
+                case KoenigEntity pe -> {
+                    position.y = (GRAVITY < 0.0f ? 0.0f : worldSize.y - size.y);
+                    pe.kill();
+                }
+                case EichelsbacherEntity pe -> {
+                    position.y = (GRAVITY < 0.0f ? 0.0f : worldSize.y - size.y);
+                    pe.kill();
+                }
+                default -> state.world.getEntities().remove(this);
             }
-            if (this instanceof FriedrichEntity pe) {
-                position.y = (GRAVITY < 0.0f ? 0.0f : worldSize.y - size.y);
-                pe.kill();
-                return;
-            }
-            if (this instanceof KoenigEntity pe) {
-                position.y = (GRAVITY < 0.0f ? 0.0f : worldSize.y - size.y);
-                pe.kill();
-                return;
-            }
-            if (this instanceof EichelsbacherEntity pe) {
-                position.y = (GRAVITY < 0.0f ? 0.0f : worldSize.y - size.y);
-                pe.kill();
-                return;
-            }
-
-            state.world.getEntities().remove(this);
             return;
         }
 
-        //rayCollision(targetposition,worldSize);
-
         if(!(this instanceof PlayerEntity pe && pe.getGodmode())){
-            targetposition = rayCollisionFast(targetposition,worldSize.toVec2f());
+            targetPosition = rayCollisionFast(targetPosition,worldSize.toVec2f());
         }
         if(this instanceof PlayerEntity pe && !pe.getGodmode()){
-            rayCollisionPlayerEntity(pe,targetposition);
+            rayCollisionPlayerEntity(pe,targetPosition);
         }
-        this.position = targetposition;
+        this.position = targetPosition;
 
         worldCollision(worldSize);
     }
@@ -187,11 +176,6 @@ public abstract class MovingEntity extends Entity {
         final Vec2i n_start = start.toVec2iF();
         final Vec2i n_end = end.toVec2iC();
 
-        // final Rect sweptRect = new Rect(
-        //     start,
-        //     end.sub(start).add(size)
-        // );
-
         for (int x = n_start.x; x < n_end.x; x++) {
             for (int y = n_start.y; y < n_end.y; y++) {
                 Rect tileRect = new Rect(new Vec2f(x,y),new Vec2f(1.0f,1.0f));
@@ -204,105 +188,6 @@ public abstract class MovingEntity extends Entity {
             }
         }
         return collisions;
-    }
-
-    private void rayCollision(Vec2f pos, Vec2i worldSize) {
-        final Vec2f direction = pos.sub(position);
-        final float pathLength = direction.len();
-
-        ArrayList<CollisionObject> collisionObjects = new ArrayList<>();
-
-        if (pathLength == 0.0f) {
-            detectCollisions(collisionObjects, worldSize);
-        } else {
-            performRaycast(direction, pathLength, collisionObjects, worldSize);
-        }
-
-        int size = 0;
-        CollisionObject[] dirs = new CollisionObject[Direction.values().length - 1];
-        for (CollisionObject collision : collisionObjects) {
-            int index = collision.direction.ordinal() - 1;
-            if (index >= 0 && dirs[index] == null) {
-                dirs[index] = collision;
-                if (size == 4) break;
-                size++;
-            }
-        }
-
-        for (CollisionObject collision : dirs) {
-            if (collision == null) continue;
-            onCollision(collision.direction,collision.rect.pos.toVec2i(),collision.type);
-        }
-    }
-
-    private void performRaycast(Vec2f direction, float pathLength, ArrayList<CollisionObject> collisionObjects, Vec2i worldSize) {
-        final Vec2f rdir = direction.norm().mul(RC_STEP_CHANGE);
-
-        for (float step = 0.0f; step <= pathLength; step += RC_STEP_CHANGE) {
-            position = position.add(rdir);
-            detectCollisions(collisionObjects, worldSize);
-        }
-    }
-
-    private void detectCollisions(ArrayList<CollisionObject> collisionObjects, Vec2i worldSize) {
-        var entityPosition = position.toVec2i();
-        var searchArea = size.toVec2i().max(new Vec2i(1, 1)).mul(3);
-        var searchStart = entityPosition.sub(searchArea).clamp(new Vec2i(0,0),worldSize);
-        var searchEnd = entityPosition.add(searchArea).clamp(new Vec2i(0,0),worldSize);
-        var entityRect = getRect();
-
-        ArrayList<CollisionObject> potentialCollisions = findTileCollisions(searchStart, searchEnd);
-
-        if (this instanceof PlayerEntity player) {
-            handlePlayerEntityCollisions(player);
-        }
-
-        sortCollisionsByDistance(potentialCollisions,getRect());
-
-        potentialCollisions.forEach(collision -> {
-            if (!entityRect.overlap(collision.rect)) {
-                return;
-            }
-            Direction collisionDirection = entityRect.staticCollisionSolver(collision.rect);
-            if (collisionDirection == Direction.NONE) {
-                return;
-            }
-            collision.direction = collisionDirection;
-
-            collisionObjects.add(collision);
-        });
-    }
-
-    private ArrayList<CollisionObject> findTileCollisions(Vec2i start, Vec2i end) {
-        ArrayList<CollisionObject> collisions = new ArrayList<>();
-        var entityRect = getRect();
-
-        for (int x = start.x; x < end.x; x++) {
-            for (int y = start.y; y < end.y; y++) {
-                Rect tileRect = new Rect(new Vec2f(x, y), new Vec2f(1.0f, 1.0f));
-
-                WorldObject worldObject = GameState.INSTANCE.world.at(new Vec2i(x, y));
-                if (worldObject != WorldObject.NONE && worldObject.isTile()) {
-
-                    if (entityRect.overlap(tileRect)) {
-                        collisions.add(new CollisionObject(tileRect, Direction.NONE, worldObject));
-                    }
-                }
-            }
-        }
-        return collisions;
-    }
-
-    private void handlePlayerEntityCollisions(PlayerEntity player) {
-        Collection<Entity> entities = GameState.INSTANCE.world.getEntities();
-        entities.removeIf(entity -> {
-            Rect playerRect = player.getRect();
-            if (playerRect.overlap(entity.getRect())) {
-                Direction collisionDirection = playerRect.getDirection(entity.getRect());
-                return player.onEntityCollision(entity, collisionDirection);
-            }
-            return false;
-        });
     }
 
     private void sortCollisionsByDistance(ArrayList<CollisionObject> collisions, Rect entityRect) {
