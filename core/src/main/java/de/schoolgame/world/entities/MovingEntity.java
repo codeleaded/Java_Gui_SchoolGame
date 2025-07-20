@@ -44,13 +44,32 @@ public abstract class MovingEntity extends Entity {
         velocity = velocity.add(acceleration.scl(Gdx.graphics.getDeltaTime()));
         Vec2f targetposition = position.add(velocity.scl(Gdx.graphics.getDeltaTime()));
 
-        if (this instanceof PlayerEntity pe && pe.getDead()) {
+        if ((this instanceof PlayerEntity pe && pe.getDead()) ||
+            (this instanceof FriedrichEntity fe && fe.getDead()) ||
+            (this instanceof KoenigEntity ke && ke.getDead()) ||
+            (this instanceof EichelsbacherEntity ee && ee.getDead()))
+        {
             this.position = targetposition;
             return;
         }
 
         if ((position.y < 0.0f && GRAVITY < 0.0f) || (position.y > worldSize.y - size.y && GRAVITY > 0.0f)) {
             if (this instanceof PlayerEntity pe) {
+                position.y = (GRAVITY < 0.0f ? 0.0f : worldSize.y - size.y);
+                pe.kill();
+                return;
+            }
+            if (this instanceof FriedrichEntity pe) {
+                position.y = (GRAVITY < 0.0f ? 0.0f : worldSize.y - size.y);
+                pe.kill();
+                return;
+            }
+            if (this instanceof KoenigEntity pe) {
+                position.y = (GRAVITY < 0.0f ? 0.0f : worldSize.y - size.y);
+                pe.kill();
+                return;
+            }
+            if (this instanceof EichelsbacherEntity pe) {
                 position.y = (GRAVITY < 0.0f ? 0.0f : worldSize.y - size.y);
                 pe.kill();
                 return;
