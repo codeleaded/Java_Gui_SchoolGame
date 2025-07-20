@@ -1,5 +1,8 @@
 package de.schoolgame.render;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.Animation;
@@ -77,6 +80,11 @@ public class AssetManager {
 
             Font font = new Font(spriteSheet.getRegions());
             assets.put(name, font);
+            return;
+        } else if (typeClass == Sound.class) {
+            FileHandle handle = Gdx.files.internal(pathWithoutExtension + ".wav");
+            Sound sound = Gdx.audio.newSound(handle);
+            assets.put(name, sound);
             return;
         }
         throw new IllegalStateException("No Asset loader for: " + type);

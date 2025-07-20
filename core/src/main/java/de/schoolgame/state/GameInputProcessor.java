@@ -3,6 +3,7 @@ package de.schoolgame.state;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Sound;
 import de.schoolgame.primitives.Direction;
 import de.schoolgame.primitives.Rect;
 import de.schoolgame.primitives.Vec2f;
@@ -197,6 +198,9 @@ public class GameInputProcessor implements InputProcessor {
                 state.loadSave(save);
                 state.world.summonEntities();
                 state.state = GameState.GameStateType.GAME;
+
+                Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/tap", Sound.class);
+                sound.play(1.0f);
                 return true;
             }
 
@@ -237,6 +241,9 @@ public class GameInputProcessor implements InputProcessor {
         } else {
             return false;
         }
+
+        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/tap", Sound.class);
+        sound.play(1.0f);
 
         return true;
     }

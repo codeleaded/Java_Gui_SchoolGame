@@ -1,6 +1,7 @@
 package de.schoolgame.world.entities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import de.schoolgame.primitives.Direction;
 import de.schoolgame.primitives.Vec2f;
@@ -93,6 +94,9 @@ public class PlayerEntity extends MovingEntity {
 
         this.dead = true;
         velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
+
+        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/explosion", Sound.class);
+        sound.play(2.0f);
     }
 
     public void cancelMovement(Direction direction) {
@@ -143,10 +147,14 @@ public class PlayerEntity extends MovingEntity {
                 if (onWall) {
                     velocity.x = 4.0f * (slideDir ? 1.0f : -1.0f);
                     velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
+                    Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump", Sound.class);
+                    sound.play(1.0f);
                 }
                 if (onGround || stateTime - coyote < COYOTE_TIME) {
                     velocity.y = 12.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
                     this.coyote = 0.0f;
+                    Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump", Sound.class);
+                    sound.play(1.0f);
                 }
             }
             case DOWN -> {
@@ -290,10 +298,16 @@ public class PlayerEntity extends MovingEntity {
 
         if (entity instanceof CoinEntity) {
             coins += 1;
+
+            Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/coin", Sound.class);
+            sound.play(1.0f);
             return true;
         }
         if (entity instanceof Fireflower) {
             setPower(2);
+
+            Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/power_up", Sound.class);
+            sound.play(1.0f);
             return true;
         }
 

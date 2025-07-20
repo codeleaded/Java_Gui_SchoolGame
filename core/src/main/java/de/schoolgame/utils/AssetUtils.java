@@ -1,6 +1,7 @@
 package de.schoolgame.utils;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import de.schoolgame.primitives.Vec2i;
@@ -40,6 +41,7 @@ public class AssetUtils {
             case "animation" -> Animation.class;
             case "tileset" -> TileSet.class;
             case "font" -> Font.class;
+            case "sound" -> Sound.class;
             default -> throw new GdxRuntimeException("Unknown asset type: " + type);
         };
     }
@@ -50,6 +52,7 @@ public class AssetUtils {
         if (type == Animation.class) return "animation";
         if (type == TileSet.class) return "tileset";
         if (type == Font.class) return "font";
+        if (type == Sound.class) return "sound";
         throw new GdxRuntimeException("Unknown asset type: " + type.getName());
     }
 
