@@ -107,6 +107,8 @@ public abstract class MovingEntity extends Entity {
                 ContactWrapper cw = playerRect.RI_Solver(target,entity.getRect());
                 if (cw != null && cw.d!=Direction.NONE) {
                     return player.onEntityCollision(entity,cw.d);
+                }else if(playerRect.overlap(entity.getRect())){
+                    return player.onEntityCollision(entity,playerRect.getDirection(entity.getRect()));
                 }
             }
             return false;

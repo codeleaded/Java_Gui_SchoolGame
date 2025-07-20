@@ -159,7 +159,8 @@ public class PlayerEntity extends MovingEntity {
             }
             case DOWN -> {
                 setStamp(true);
-                if (velocity.y>0) velocity.y = -8;
+                if (velocity.y * (GRAVITY > 0.0f ? -1.0f : 1.0f)>0)
+                    velocity.y = 8.0f * (GRAVITY > 0.0f ? 1.0f : -1.0f);
             }
             case LEFT -> {
                 acceleration.x = -10;
@@ -267,12 +268,12 @@ public class PlayerEntity extends MovingEntity {
             }
         }
         if (object == WorldObject.QUESTMARK) {
-            if (type == DOWN && GRAVITY < 0.0f){
+            if (type == DOWN && (GRAVITY < 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
                 var world = GameState.INSTANCE.world;
                 world.addAt(pos,WorldObject.OPENQUESTMARK);
                 world.addAt(pos.add(0,1),WorldObject.FIREFLOWER);
             }
-            if (type == UP && GRAVITY > 0.0f){
+            if (type == UP && (GRAVITY > 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
                 var world = GameState.INSTANCE.world;
                 world.addAt(pos,WorldObject.OPENQUESTMARK);
                 world.addAt(pos.add(0,-1),WorldObject.FIREFLOWER);
