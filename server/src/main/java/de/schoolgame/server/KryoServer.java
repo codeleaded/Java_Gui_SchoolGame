@@ -8,6 +8,7 @@ import de.schoolgame.network.PacketList;
 import de.schoolgame.network.packet.EchoPacket;
 import de.schoolgame.network.packet.LoginPacket;
 import de.schoolgame.network.packet.SavePacket;
+import de.schoolgame.network.packet.ScorePacket;
 import de.schoolgame.server.db.SQLUtils;
 import org.tomlj.Toml;
 import org.tomlj.TomlParseResult;
@@ -45,9 +46,7 @@ public class KryoServer {
         });
         typeListener.addTypeHandler(LoginPacket.class, (connection, packet) -> {
             packet.uuid = UUID.randomUUID().toString();
-
             SQLUtils.addClient(packet, connection.getRemoteAddressTCP().getAddress().getHostAddress());
-
             connection.sendTCP(packet);
         });
         typeListener.addTypeHandler(SavePacket.class, (connection, packet) -> {
@@ -57,7 +56,9 @@ public class KryoServer {
             } else {
                 SQLUtils.addWorld(packet);
             }
-
+        });
+        typeListener.addTypeHandler(ScorePacket.class, (connection, packet) -> {
+            SQLUtils.addScore(packet);
         });
 
         server.addListener(typeListener);

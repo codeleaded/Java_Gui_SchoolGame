@@ -4,8 +4,8 @@ import com.esotericsoftware.kryonet.Connection;
 import de.schoolgame.network.Packet;
 
 public class ScorePacket implements Packet {
-    String creator;
-    int score;
+    public String creator;
+    public int score;
 
     public ScorePacket() {}
 
