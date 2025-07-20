@@ -10,6 +10,7 @@ import de.schoolgame.world.entities.FlashEntity;
 import de.schoolgame.world.entities.FriedrichEntity;
 import de.schoolgame.world.entities.KoenigEntity;
 import de.schoolgame.world.entities.RoamerEntity;
+import de.schoolgame.world.entities.TeslaEntity;
 import de.schoolgame.world.tiles.Brick;
 import de.schoolgame.world.tiles.Corridor;
 import de.schoolgame.world.tiles.Grass;
@@ -27,6 +28,7 @@ public enum WorldObject {
     TEST_TILE(new Test()),
     GRASS(new Grass()),
     COIN(CoinEntity.class),
+    TESLA(TeslaEntity.class),
     ROAMER(RoamerEntity.class),
     FRIEDRICH(FriedrichEntity.class),
     KOENIG(KoenigEntity.class),

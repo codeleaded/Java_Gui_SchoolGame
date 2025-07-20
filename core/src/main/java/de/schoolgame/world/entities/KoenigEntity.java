@@ -2,6 +2,7 @@ package de.schoolgame.world.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Affine2;
 
 import de.schoolgame.primitives.Direction;
 import static de.schoolgame.primitives.Direction.DOWN;
@@ -218,12 +219,16 @@ public class KoenigEntity extends MovingEntity {
         SpriteSheet texture = state.assetManager.get("entities/koenig/koenig",SpriteSheet.class);
         int index = getTexIndex() + ((lookDir && MovingEntity.GRAVITY < 0.0f) || (!lookDir && MovingEntity.GRAVITY > 0.0f) ? 0 : 9);
 
-        batch.draw(texture.getRegions()[index],
-            position.x * tileSize, position.y * tileSize,
-            0.5f * tileSize,0.5f * tileSize,
+        Affine2 tf = new Affine2();
+        tf.translate(position.x * tileSize, position.y * tileSize);
+        tf.translate(0.5f * size.x * tileSize,0.5f * size.y * tileSize);
+        tf.rotate(MovingEntity.GRAVITY < 0.0f ? 0.0f : 180.0f);
+        tf.translate(-0.5f * size.x * tileSize,-0.5f * size.y * tileSize);
+
+        batch.draw(
+            texture.getRegions()[index],
             size.x * tileSize, size.y * tileSize,// * (1.0f / (1.0f - (6.0f / 32.0f)))
-            1.0f,1.0f,
-            MovingEntity.GRAVITY < 0.0f ? 0.0f : 180.0f
+            tf
         );
     }
 }
