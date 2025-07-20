@@ -29,6 +29,7 @@ public class ImGuiRenderer implements IRenderer {
     private final ImString inputPower;
     private final ImString inputWorldName;
     private final ImBoolean inputGodmode;
+    private final ImString inputStyle;
 
     public ImGuiRenderer() {
         imGuiGlfw = new ImGuiImplGlfw();
@@ -45,6 +46,7 @@ public class ImGuiRenderer implements IRenderer {
         inputWorldSize = new int[2];
         inputCoins = new ImString("" + Integer.MAX_VALUE);
         inputPower = new ImString("0");
+        inputStyle = new ImString("1");
         inputWorldName = new ImString();
         inputGodmode = new ImBoolean(false);
     }
@@ -187,6 +189,21 @@ public class ImGuiRenderer implements IRenderer {
                     ImGui.sameLine();
                     if (ImGui.button("-##2")) {
                         state.player.setPower(state.player.getPower() - 1);
+                    }
+                }
+
+                inputStyle.set("" + state.playerStyle);
+                ImGui.inputText("Style", inputStyle, ImGuiInputTextFlags.ReadOnly);
+                if (state.playerStyle != 7) {
+                    ImGui.sameLine();
+                    if (ImGui.button("+##3")) {
+                        state.playerStyle ++;
+                    }
+                }
+                if (state.playerStyle != 1) {
+                    ImGui.sameLine();
+                    if (ImGui.button("-##3")) {
+                        state.playerStyle--;
                     }
                 }
 

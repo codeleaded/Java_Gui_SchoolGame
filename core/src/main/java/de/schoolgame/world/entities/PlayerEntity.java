@@ -1,21 +1,16 @@
 package de.schoolgame.world.entities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-
 import de.schoolgame.primitives.Direction;
-import static de.schoolgame.primitives.Direction.DOWN;
-import static de.schoolgame.primitives.Direction.LEFT;
-import static de.schoolgame.primitives.Direction.NONE;
-import static de.schoolgame.primitives.Direction.RIGHT;
-import static de.schoolgame.primitives.Direction.UP;
-import de.schoolgame.primitives.Rect;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
+import de.schoolgame.render.texture.SpriteSheet;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
+
+import static de.schoolgame.primitives.Direction.*;
 
 public class PlayerEntity extends MovingEntity {
     public static float COYOTE_TIME = 0.2f;
@@ -37,7 +32,7 @@ public class PlayerEntity extends MovingEntity {
     private boolean godmode;
 
     public PlayerEntity(Vec2f pos) {
-        super(pos, new Vec2f(0.95f, 0.95f));
+        super(pos, new Vec2f(0.95f, 1.9f));
         this.stateTime = 0.0f;
         this.coyote = 0.0f;
 
@@ -61,11 +56,8 @@ public class PlayerEntity extends MovingEntity {
     public void setPower(int power) {
         switch (power) {
             case 0:
-                size = new Vec2f(0.95f, 0.95f);
-                break;
             case 1:
             case 2:
-                size = new Vec2f(0.95f, 1.9f);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid power level: " + power);
@@ -174,48 +166,41 @@ public class PlayerEntity extends MovingEntity {
         return true;
     }
 
-    public Rect getTexRect(){
-        Rect r = new Rect();
-	    r.size = new Vec2f( 1.0f,1.0f );
+    public static final int[] WALK_LUT = new int[]{6, 8, 5, 8, 6, 7, 4, 7};
 
+    public int getTexIndex(){
         reverse = (velocity.x<0.0f && acceleration.x>0.0f) || (velocity.x>0.0f && acceleration.x<0.0f);
 
-	    if(getDead())				    r.pos = new Vec2f( 2.0f,1.0f );
-	    else if(!onGround){
-	    	if(!stamp)		        r.pos = new Vec2f( 2.0f,0.0f );
-	    	else 				    r.pos = new Vec2f( 1.0f,1.0f );
-	    }else if(stamp){
-	    	if(velocity.x==0.0f)	r.pos = new Vec2f( 1.0f,1.0f );
-	    	else 				    r.pos = new Vec2f( 0.0f,1.0f );
-	    }
-	    else if(reverse)		    r.pos = new Vec2f( 3.0f,0.0f );
+        if(getDead())				return 2;
+        else if(!onGround){
+            if(!stamp)		        return 3;
+            else 				    return 1;
+        }else if(stamp){
+            if(velocity.x==0.0f)	return 1;
+            else 				    return 1;
+        }
+        else if(reverse)		    return 1;
         else if(velocity.y!=0.0f){
             float stateTime = this.stateTime;
 
             stateTime = stateTime - (float)Math.floor(stateTime);
-            stateTime *= Math.abs(velocity.y) * 0.65f;
+            stateTime *= Math.abs(velocity.y) * 0.4f;
             stateTime = stateTime - (float)Math.floor(stateTime);
 
-            r.pos = new Vec2f( 4.0f + (int)(4.0f * stateTime),1.0f );
-        }else if(velocity.x==0.0f)	r.pos = new Vec2f( 7.0f,0.0f );
-	    else{
+            return WALK_LUT[(int)(WALK_LUT.length * stateTime)];
+        }else if(velocity.x==0.0f)	return 0;
+        else{
             float stateTime = this.stateTime;
             stateTime = stateTime - (float)Math.floor(stateTime);
-	    	stateTime *= Math.abs(velocity.x) * 0.65f;
-	    	stateTime = stateTime - (float)Math.floor(stateTime);
+            stateTime *= Math.abs(velocity.x) * 0.4f;
+            stateTime = stateTime - (float)Math.floor(stateTime);
 
-	    	r.pos = new Vec2f( 4.0f + (int)(3.0f * stateTime),0.0f );
-	    }
+            return WALK_LUT[(int)(WALK_LUT.length * stateTime)];
+        }
 
-	    if(power==1)		r.pos.y = 2.0f + r.pos.y * 2.0f;
-	    else if(power==2)	r.pos.y = 6.0f + r.pos.y * 2.0f;
-
-	    if(power>0)         r.size.y *= 2.0f;
-	    if(!lookDir)  r.pos.x = 15.0f - r.pos.x;
-
-        r.pos = r.pos.div(new Vec2f(16.0f,12.0f));
-        r.size = r.size.div(new Vec2f(16.0f,12.0f));
-	    return r;
+        //if(power==1)		return 0;
+        //else if(power==2)	return 0;
+        //if(power>0)         r.size.y *= 2.0f;
     }
 
     @Override
@@ -329,21 +314,16 @@ public class PlayerEntity extends MovingEntity {
         var state = GameState.INSTANCE;
         int tileSize = state.world.getTileSize();
 
-        Texture texture = state.assetManager.get("entities/player/mario_atlas", Texture.class);
-        Rect r = getTexRect();
+        int style = Math.clamp(state.playerStyle, 1, 7);
+        SpriteSheet texture = state.assetManager.get("entities/player/player_" + style, SpriteSheet.class);
+        int index = getTexIndex() + ((lookDir && MovingEntity.GRAVITY < 0.0f) || (!lookDir && MovingEntity.GRAVITY > 0.0f) ? 0 : 9);
 
-        float yS = r.pos.y + r.size.y;
-        float yE = r.pos.y;
-        if(MovingEntity.GRAVITY > 0.0f){
-            final float temp = yS;
-            yS = yE;
-            yE = temp;
-        }
-
-        batch.draw(texture,
+        batch.draw(texture.getRegions()[index],
             position.x * tileSize, position.y * tileSize,
-            size.x * tileSize, size.y * tileSize,
-            r.pos.x + r.size.x,yS,r.pos.x,yE
+            0.5f * tileSize,0.5f * tileSize,
+            size.x * tileSize, size.y * tileSize,// * (1.0f / (1.0f - (6.0f / 32.0f)))
+            1.0f,1.0f,
+            MovingEntity.GRAVITY < 0.0f ? 0.0f : 180.0f
         );
     }
 }

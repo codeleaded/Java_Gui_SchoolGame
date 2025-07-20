@@ -15,7 +15,7 @@ public class GameState {
     public GameStateType state = GameStateType.MAIN_MENU;
 
     public String username = "Anonym";
-    public int playerStyle = 0;
+    public int playerStyle = 1;
 
     public DebugState debug;
     public ServerConnection server;
