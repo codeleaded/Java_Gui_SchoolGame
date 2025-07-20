@@ -8,6 +8,7 @@ import de.schoolgame.world.entities.EichelsbacherEntity;
 import de.schoolgame.world.entities.Fireflower;
 import de.schoolgame.world.entities.FlashEntity;
 import de.schoolgame.world.entities.FriedrichEntity;
+import de.schoolgame.world.entities.KloEntity;
 import de.schoolgame.world.entities.KoenigEntity;
 import de.schoolgame.world.entities.RoamerEntity;
 import de.schoolgame.world.entities.TeslaEntity;
@@ -29,6 +30,7 @@ public enum WorldObject {
     GRASS(new Grass()),
     COIN(CoinEntity.class),
     TESLA(TeslaEntity.class),
+    KLO(KloEntity.class),
     ROAMER(RoamerEntity.class),
     FRIEDRICH(FriedrichEntity.class),
     KOENIG(KoenigEntity.class),
