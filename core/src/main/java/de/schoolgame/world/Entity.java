@@ -1,6 +1,7 @@
 package de.schoolgame.world;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+
 import de.schoolgame.primitives.Rectf;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.state.GameState;
@@ -21,9 +22,17 @@ public abstract class Entity {
     public Vec2f getPosition() {
         return position;
     }
+    
+    public Vec2f getSize() {
+        return size;
+    }
 
     public Vec2f getPixelPosition() {
         return position.mul(GameState.INSTANCE.world.getTileSize());
+    }
+
+    public Vec2f getPixelSize() {
+        return size.mul(GameState.INSTANCE.world.getTileSize());
     }
 
     public Rectf getRect(){

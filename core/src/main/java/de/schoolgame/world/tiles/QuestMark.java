@@ -1,13 +1,9 @@
 package de.schoolgame.world.tiles;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.Animation;
-import de.schoolgame.render.texture.TileSet;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Tile;
 

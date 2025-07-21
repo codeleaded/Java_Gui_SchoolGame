@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import de.schoolgame.primitives.Rectf;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
@@ -78,8 +79,8 @@ public class WorldRenderer implements IRenderer {
         world.getEntities()
             .stream()
             .filter(e ->
-                e.getPixelPosition().x >= bounds.pos.x - tileSize &&
-                e.getPixelPosition().y >= bounds.pos.y - tileSize &&
+                e.getPixelPosition().x >= bounds.pos.x - e.getPixelSize().x &&
+                e.getPixelPosition().y >= bounds.pos.y - e.getPixelSize().y &&
                 e.getPixelPosition().x <= bounds.pos.x + bounds.size.x &&
                 e.getPixelPosition().y <= bounds.pos.y + bounds.size.y
             )
