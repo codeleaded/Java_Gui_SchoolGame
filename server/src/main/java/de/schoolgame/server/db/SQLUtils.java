@@ -2,10 +2,7 @@ package de.schoolgame.server.db;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import de.schoolgame.network.packet.LoginPacket;
-import de.schoolgame.network.packet.SavePacket;
-import de.schoolgame.network.packet.ScorePacket;
-import de.schoolgame.network.packet.WorldListPacket;
+import de.schoolgame.network.packet.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -99,12 +96,12 @@ public class SQLUtils {
             Gdx.app.error("Database", "SQL Error: " + e);
         }
 
-        WorldListPacket packet = new WorldListPacket(list.toArray(new WorldListPacket.WorldListEntry[0]));
-        return packet;
+        return new WorldListPacket(list.toArray(new WorldListPacket.WorldListEntry[0]));
     }
 
-    public static ScorePacket[] getTopScores() {
-        ScorePacket[] scores = new ScorePacket[10];
+    public static ScoreboardPacket getTopScores() {
+        String[] names = new String[10];
+        int[] scores = new int[10];
 
         try (Connection connection = Database.getConnection()) {
             String s = SQLUtils.getStatement("getTopScores.sql");
@@ -112,16 +109,15 @@ public class SQLUtils {
                 ResultSet res = statement.executeQuery();
 
                 for (int i = 0; i < 10; i++) {
-                    ScorePacket score = new ScorePacket();
-                    score.score = res.getInt("score");
-                    score.creator = res.getString("name");
-                    scores[i] = score;
+                    res.next();
+                    scores[i] = res.getInt("score");
+                    names[i] = res.getString("name");
                 }
             }
         } catch (SQLException e) {
             Gdx.app.error("Database", "SQL Error: " + e);
         }
 
-        return scores;
+        return new ScoreboardPacket(names, scores);
     }
 }

@@ -5,12 +5,9 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import de.schoolgame.network.PacketList;
-import de.schoolgame.network.packet.EchoPacket;
-import de.schoolgame.network.packet.LoginPacket;
-import de.schoolgame.network.packet.SavePacket;
-import de.schoolgame.network.packet.ScorePacket;
+import de.schoolgame.network.packet.*;
 import de.schoolgame.server.db.SQLUtils;
-import org.tomlj.Toml;
+import de.schoolgame.utils.AssetUtils;
 import org.tomlj.TomlParseResult;
 
 import java.io.IOException;
@@ -21,18 +18,17 @@ public class KryoServer {
     Server server;
 
     public KryoServer() {
-        String config = Gdx.files.internal("config/server.toml").readString();
-        TomlParseResult toml = Toml.parse(config);
+        TomlParseResult toml = AssetUtils.getAsset("config/server.toml");
+        int tcp = AssetUtils.getTcpPort(toml);
+        int udp = AssetUtils.getUdpPort(toml);
 
         server = new Server();
 
         Kryo kryo = server.getKryo();
         Arrays.stream(PacketList.packets).forEach(kryo::register);
-        kryo.register(byte[].class);
+        Arrays.stream(PacketList.extraTypes).forEach(kryo::register);
 
         try {
-            int tcp = Math.toIntExact(toml.getLong("tcp"));
-            int udp = Math.toIntExact(toml.getLong("udp"));
             server.bind(tcp, udp);
         } catch (IOException | NullPointerException e) {
             Gdx.app.error("Server", "Could not bind Server Port", e);
@@ -57,8 +53,9 @@ public class KryoServer {
                 SQLUtils.addWorld(packet);
             }
         });
-        typeListener.addTypeHandler(ScorePacket.class, (connection, packet) -> {
-            SQLUtils.addScore(packet);
+        typeListener.addTypeHandler(ScorePacket.class, (connection, packet) -> SQLUtils.addScore(packet));
+        typeListener.addTypeHandler(ScoreboardPacket.class, (connection, packet) -> {
+            connection.sendTCP(SQLUtils.getTopScores());
         });
 
         server.addListener(typeListener);

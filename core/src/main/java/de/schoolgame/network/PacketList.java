@@ -9,5 +9,13 @@ public class PacketList {
         SavePacket.class,
         ScorePacket.class,
         WorldListPacket.class,
+        ScoreboardPacket.class,
+    };
+
+    public static final Class<?>[] extraTypes = {
+        byte[].class,
+        String[].class,
+        int[].class,
+        WorldListPacket.WorldListEntry.class
     };
 }

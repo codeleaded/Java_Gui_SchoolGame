@@ -4,13 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import de.schoolgame.primitives.Recti;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.Animation;
 import de.schoolgame.render.texture.Font;
 import de.schoolgame.render.texture.SpriteSheet;
 import de.schoolgame.render.texture.TileSet;
 import org.tomlj.Toml;
+import org.tomlj.TomlArray;
 import org.tomlj.TomlParseResult;
+
+import java.util.Optional;
 
 public class AssetUtils {
     public static TomlParseResult getAsset(String path) {
@@ -56,9 +60,39 @@ public class AssetUtils {
         throw new GdxRuntimeException("Unknown asset type: " + type.getName());
     }
 
+    public static Optional<Recti[]> getSpriteSizes(TomlParseResult asset) {
+        TomlArray array = asset.getArray("sprite.sprites");
+        if (array == null) return Optional.empty();
+
+        Recti[] res = new Recti[array.size()];
+
+        for (int i = 0; i < array.size(); i++) {
+            TomlArray size = array.getArray(i);
+            Recti rect = new Recti(new Vec2i((int) size.getLong(0), (int) size.getLong(1)),
+                new Vec2i((int) size.getLong(2), (int) size.getLong(3)));
+            res[i] = rect;
+        }
+
+        return Optional.of(res);
+    }
+
     public static Vec2i getSpriteSize(TomlParseResult asset, Vec2i defaultSize) {
         int width = (int) asset.getLong("sprite.width", () -> defaultSize.x);
         int height = (int) asset.getLong("sprite.height", () -> defaultSize.y);
         return new Vec2i(width, height);
+    }
+
+    public static int getUdpPort(TomlParseResult asset) {
+        long port = asset.getLong("udp");
+        return Math.toIntExact(port);
+    }
+
+    public static int getTcpPort(TomlParseResult asset) {
+        long port = asset.getLong("tcp");
+        return Math.toIntExact(port);
+    }
+
+    public static String getServerIP(TomlParseResult asset) {
+        return asset.getString("ip");
     }
 }
