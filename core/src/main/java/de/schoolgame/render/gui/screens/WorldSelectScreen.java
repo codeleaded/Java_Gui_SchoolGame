@@ -39,8 +39,7 @@ public class WorldSelectScreen extends Screen {
                 Save save = state.worldManager.get("world_" + finalI);
                 state.loadSave(save);
                 state.world.summonEntities();
-                state.state = GameState.GameStateType.GAME;
-                state.screen = new HudScreen();
+                state.setState(GameState.GameStateType.GAME);
 
                 Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/tap", Sound.class);
                 sound.play(1.0f);

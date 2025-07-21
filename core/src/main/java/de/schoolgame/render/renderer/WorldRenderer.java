@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
 import de.schoolgame.primitives.Rectf;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
@@ -59,7 +58,7 @@ public class WorldRenderer implements IRenderer {
                 var tile = worldObject.getTile();
 
                 if (tile == null) {
-                    if (worldObject.isEntity() && GameState.INSTANCE.state == GameState.GameStateType.WORLD_EDITOR) {
+                    if (worldObject.isEntity() && GameState.INSTANCE.getState() == GameState.GameStateType.WORLD_EDITOR) {
                         batch.setColor(worldObject.getEntityColor());
                         batch.draw(egg, x, y, tileSize, tileSize);
                         batch.setColor(Color.WHITE);

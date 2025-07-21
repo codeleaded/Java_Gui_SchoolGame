@@ -23,6 +23,7 @@ public class SQLUtils {
                 statement.setString(1, packet.uuid);
                 statement.setString(2, ip);
                 statement.setString(3, packet.name);
+                statement.setInt(4, packet.style);
 
                 statement.execute();
             }

@@ -8,11 +8,20 @@ import de.schoolgame.render.gui.Widget;
 import de.schoolgame.render.texture.Font;
 import de.schoolgame.state.GameState;
 
+import java.util.function.Supplier;
+
 public class ButtonWidget extends Widget {
-    private final String text;
+    private final Supplier<String> text;
     private final Runnable onClick;
+    private final Color highlight = new Color(0xffffffff);
+    private final Color light = new Color(0xb4b4b4ff);
+    private final Color dark = new Color(0x4d4d4dff);
 
     public ButtonWidget(Vec2i pos, Vec2i size, String text, Runnable onClick) {
+        this(pos, size, () -> text, onClick);
+    }
+
+    public ButtonWidget(Vec2i pos, Vec2i size, Supplier<String> text, Runnable onClick) {
         super(pos, size);
         this.text = text;
         this.onClick = onClick;
@@ -20,10 +29,9 @@ public class ButtonWidget extends Widget {
 
     @Override
     public void render(SpriteBatch batch, ShapeRenderer shapeRenderer) {
+        String text = this.text.get();
+
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        Color highlight = new Color(0xffffffff);
-        Color light = new Color(0xb4b4b4ff);
-        Color dark = new Color(0x4d4d4dff);
 
         shapeRenderer.setColor(light);
         shapeRenderer.rect(rect.pos.x, rect.pos.y, rect.size.x, rect.size.y - 3);
@@ -44,10 +52,6 @@ public class ButtonWidget extends Widget {
 
         font.draw(batch, text, rect.pos.cpy().add(textX, 8), 8);
         batch.end();
-    }
-
-    public String getText() {
-        return text;
     }
 
     @Override

@@ -10,23 +10,24 @@ import de.schoolgame.state.GameState;
 
 public class TextureButtonWidget extends Widget {
     private final Runnable onClick;
-    private final int textureIndex;
+    private final TextureRegion texture;
 
     public TextureButtonWidget(Vec2i pos, Vec2i size, int textureIndex, Runnable onClick) {
+        this(pos, size, GameState.INSTANCE.assetManager.get("gui/buttons/buttons", SpriteSheet.class)
+                .getRegions()[textureIndex], onClick);
+    }
+
+    public TextureButtonWidget(Vec2i pos, Vec2i size, TextureRegion texture, Runnable onClick) {
         super(pos, size);
         this.onClick = onClick;
-        this.textureIndex = textureIndex;
+        this.texture = texture;
     }
 
     @Override
     public void render(SpriteBatch batch, ShapeRenderer shapeRenderer) {
-        var state = GameState.INSTANCE;
-        TextureRegion region = state.assetManager.get("gui/buttons/buttons", SpriteSheet.class)
-            .getRegions()[textureIndex];
-
         batch.begin();
 
-        batch.draw(region, rect.pos.x, rect.pos.y, rect.size.x, rect.size.y);
+        batch.draw(texture, rect.pos.x, rect.pos.y, rect.size.x, rect.size.y);
 
         batch.end();
     }
