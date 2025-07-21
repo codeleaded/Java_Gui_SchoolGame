@@ -30,7 +30,7 @@ public enum WorldObject {
     OPENQUESTMARK(new OpenQuestMark()),
     BRICK(new Brick()),
     CHEMIKALIEN(ChemikalienEntity.class),
-    COMPUTER(new Computer())
+    COMPUTER(ComputerEntity.class)
     ;
 
     private final Object object;
