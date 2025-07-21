@@ -42,6 +42,7 @@ public class Main extends ApplicationAdapter {
     public void dispose() {
         renderer.dispose();
         GameState.INSTANCE.assetManager.dispose();
+        GameState.INSTANCE.server.close();
         Gdx.app.log("Main", "Disposed!");
     }
 }

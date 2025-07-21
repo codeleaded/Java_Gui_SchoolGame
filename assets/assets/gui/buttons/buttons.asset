@@ -1,0 +1,12 @@
+type = "spritesheet"
+
+[spritesheet]
+count = 4
+
+[sprite]
+sprites = [
+    [0, 0, 180, 32],
+    [0, 32, 180, 32],
+    [180, 0, 32, 32],
+    [212, 0, 32, 32]
+]

@@ -17,15 +17,24 @@ type = "texture"
 ```
 
 ## sprite section
-controlls the dimensions of a single sprite
+controlls the dimensions of the sprites
 <br/>
 not needed for texture
 
-Example:
+Example for a single size:
 ```
 [sprite]
 width = 32
 height = 32
+```
+
+Example for a multiple sizes:
+```
+[sprite]
+sprites = [
+    [ x, y, w, h ],
+    [ x, y, w, h ]
+]
 ```
 
 ## spritesheet section

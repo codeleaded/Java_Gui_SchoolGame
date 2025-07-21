@@ -7,6 +7,7 @@ import de.schoolgame.network.packet.EchoPacket;
 import de.schoolgame.network.packet.LoginPacket;
 import de.schoolgame.render.AssetManager;
 import de.schoolgame.render.Camera;
+import de.schoolgame.render.gui.screens.MainMenuScreen;
 import de.schoolgame.state.DebugState;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.WorldManager;
@@ -51,6 +52,8 @@ public class LoadingTask {
             GameState.INSTANCE.server.sendPacket(new EchoPacket("Hi!"), true);
             GameState.INSTANCE.server.sendPacket(new LoginPacket("Player1", null, 0), true);
         });
+
+        addTask("GUI", () -> GameState.INSTANCE.screen = new MainMenuScreen());
 
         initialTasks = tasks.size();
     }

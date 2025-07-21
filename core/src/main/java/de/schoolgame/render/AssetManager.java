@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
+import de.schoolgame.primitives.Recti;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.Animation;
 import de.schoolgame.render.texture.Font;
@@ -13,6 +14,7 @@ import de.schoolgame.utils.AssetUtils;
 import org.tomlj.TomlParseResult;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 public class AssetManager {
     private final HashMap<String, Object> assets = new HashMap<>();
@@ -50,10 +52,19 @@ public class AssetManager {
             load(path, "texture");
             Texture texture = get(pathWithoutExtension, Texture.class);
 
-            int count = AssetUtils.getInt(asset, "spritesheet.count", 1);
-            Vec2i size = AssetUtils.getSpriteSize(asset, new Vec2i(32, 32));
+            SpriteSheet spriteSheet;
 
-            SpriteSheet spriteSheet = new SpriteSheet(texture, size, count);
+            Optional<Recti[]> sizes = AssetUtils.getSpriteSizes(asset);
+            if (sizes.isPresent()) {
+                spriteSheet = new SpriteSheet(texture, sizes.get());
+            } else {
+                int count = AssetUtils.getInt(asset, "spritesheet.count", 1);
+                Vec2i size = AssetUtils.getSpriteSize(asset, new Vec2i(32, 32));
+
+                spriteSheet = new SpriteSheet(texture, size, count);
+            }
+
+
             assets.put(name, spriteSheet);
             return;
         } else if (typeClass == Animation.class) {

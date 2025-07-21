@@ -3,7 +3,7 @@ package de.schoolgame.network;
 import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
-import org.tomlj.Toml;
+import de.schoolgame.utils.AssetUtils;
 import org.tomlj.TomlParseResult;
 
 import java.io.IOException;
@@ -21,28 +21,26 @@ public class ServerConnection {
 
         Kryo kryo = client.getKryo();
         Arrays.stream(PacketList.packets).forEach(kryo::register);
-        kryo.register(byte[].class);
+        Arrays.stream(PacketList.extraTypes).forEach(kryo::register);
         client.addListener(new ClientListener());
 
         client.start();
     }
 
-    public boolean connect() {
-        String config = Gdx.files.internal("config/server.toml").readString();
-        TomlParseResult toml = Toml.parse(config);
+    public void connect() {
+        TomlParseResult toml = AssetUtils.getAsset("config/server.toml");
+        String ip = AssetUtils.getServerIP(toml);
+        int tcp = AssetUtils.getTcpPort(toml);
+        int udp = AssetUtils.getUdpPort(toml);
 
         try {
-            String ip = toml.getString("ip");
-            int tcp = Math.toIntExact(toml.getLong("tcp"));
-            int udp = Math.toIntExact(toml.getLong("udp"));
             client.connect(5000, ip, tcp, udp);
         } catch (IOException | NullPointerException e) {
             Gdx.app.error("ServerConnection", "Could not connect to server!", e);
-            return false;
+            return;
         }
 
         connected = true;
-        return true;
     }
 
     public boolean isConnected() {
