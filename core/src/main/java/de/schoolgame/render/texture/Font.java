@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.TextureData;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
 import de.schoolgame.primitives.Rectf;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
@@ -88,6 +89,25 @@ public class Font {
         for (char c : text.toCharArray()) {
             TextureRegion region = getTextureRegion(c);
             b.draw(region, (pos.x + xOffset), pos.y, region.getRegionWidth() * scale, region.getRegionHeight() * scale);
+            xOffset += region.getRegionWidth() * scale;
+            xOffset += scale;
+        }
+    }
+
+    public void draw(Batch b, String text, Vec2i pos, int scale, float angle) {
+        int xOffset = 0;
+        for (char c : text.toCharArray()) {
+            TextureRegion region = getTextureRegion(c);
+
+            b.draw(
+                region,
+                (pos.x + xOffset),pos.y,
+                0.0f,0.0f,
+                region.getRegionWidth() * scale,region.getRegionHeight() * scale,
+                1.0f,1.0f,
+                angle
+            );
+            
             xOffset += region.getRegionWidth() * scale;
             xOffset += scale;
         }

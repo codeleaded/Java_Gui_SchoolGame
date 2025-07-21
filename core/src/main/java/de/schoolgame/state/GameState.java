@@ -27,6 +27,8 @@ public class GameState {
     public Camera camera;
     public PlayerEntity player;
 
+    public int score = 0;
+
     public AssetManager assetManager;
     public WorldManager worldManager;
 

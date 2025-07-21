@@ -16,6 +16,7 @@ import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.SpriteSheet;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
+import de.schoolgame.world.Score;
 import de.schoolgame.world.WorldObject;
 
 public class PlayerEntity extends MovingEntity {
@@ -79,9 +80,19 @@ public class PlayerEntity extends MovingEntity {
 
     public boolean getDead() { return dead; }
     public int getCoins() { return this.coins; }
+    public int getScore() { return GameState.INSTANCE.score; }
     public boolean getStamp() { return this.stamp; }
     public int getPower() { return this.power; }
     public boolean getGodmode() { return this.godmode; }
+
+    public void addScore(int value) {
+        GameState.INSTANCE.score += value;
+
+        var world = GameState.INSTANCE.world;
+        var e = (PointsEntity)WorldObject.POINTS.createEntity(position);
+        e.value = value;
+        world.spawnEntity(position,e);
+    }
 
     public void checkKill() {
         Vec2i worldSize = GameState.INSTANCE.world.getSize();
@@ -97,6 +108,8 @@ public class PlayerEntity extends MovingEntity {
     public void kill() {
         if (godmode) return;
         if(getDead()) return;
+
+        addScore(-Score.MP_DEATH);
 
         this.dead = true;
         velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
@@ -309,12 +322,16 @@ public class PlayerEntity extends MovingEntity {
         if (entity instanceof CoinEntity) {
             coins += 1;
 
+            addScore(Score.MP_COIN);
+
             Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/coin", Sound.class);
             sound.play(1.0f);
             return true;
         }
         if (entity instanceof Fireflower) {
             setPower(2);
+
+            addScore(Score.MP_FIREFLOWER);
 
             Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/power_up", Sound.class);
             sound.play(1.0f);
@@ -342,6 +359,7 @@ public class PlayerEntity extends MovingEntity {
             if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
                 onGround = true;
                 move(Direction.UP);
+                addScore(Score.MP_KILL_ROAMER);
                 return true;
             }
             kill();
@@ -354,7 +372,7 @@ public class PlayerEntity extends MovingEntity {
             if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
                 onGround = true;
                 move(Direction.UP);
-
+                addScore(Score.MP_KILL_FRIEDRICH);
                 fe.kill();
                 return false;
             }
@@ -364,7 +382,7 @@ public class PlayerEntity extends MovingEntity {
             if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
                 onGround = true;
                 move(Direction.UP);
-
+                addScore(Score.MP_KILL_KOENIG);
                 fe.kill();
                 return false;
             }
@@ -374,7 +392,7 @@ public class PlayerEntity extends MovingEntity {
             if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
                 onGround = true;
                 move(Direction.UP);
-
+                addScore(Score.MP_KILL_EICHELSBACHER);
                 fe.kill();
                 return false;
             }

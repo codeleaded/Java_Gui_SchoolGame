@@ -106,6 +106,13 @@ public class World {
         updateConnectionsAt(pos);
     }
 
+    public void spawnEntity(Vec2f pos,Entity e) {
+        if(invalidPos(pos.toVec2i())) return;
+        if (e != null) {
+            entities.add(e);
+        }
+    }
+
     public void removeAt(Vec2i pos) {
         if(invalidPos(pos)) return;
         worldObjects[pos.x][pos.y] = WorldObject.NONE;

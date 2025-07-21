@@ -16,6 +16,7 @@ import de.schoolgame.world.entities.KoenigEntity;
 import de.schoolgame.world.entities.PotionEntity;
 import de.schoolgame.world.entities.RoamerEntity;
 import de.schoolgame.world.entities.TeslaEntity;
+import de.schoolgame.world.entities.PointsEntity;
 import de.schoolgame.world.tiles.Brick;
 import de.schoolgame.world.tiles.Corridor;
 import de.schoolgame.world.tiles.Grass;
@@ -38,6 +39,7 @@ public enum WorldObject {
     KLO(KloEntity.class),
     ROAMER(RoamerEntity.class),
     FRIEDRICH(FriedrichEntity.class),
+    POINTS(PointsEntity.class),
     KOENIG(KoenigEntity.class),
     EICHELSBACHER(EichelsbacherEntity.class),
     FIREFLOWER(Fireflower.class),

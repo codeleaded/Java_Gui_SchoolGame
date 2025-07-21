@@ -13,5 +13,6 @@ public class HudScreen extends Screen {
         int y = camera.viewSize.y - 10 - (7 * font_size);
 
         widgets.add(new TextWidget(new Vec2i(x, y), () -> "Coins: " + GameState.INSTANCE.player.getCoins(), font_size));
+        widgets.add(new TextWidget(new Vec2i(x, y - (7 * font_size)), () -> "Score: " + GameState.INSTANCE.player.getScore(), font_size));
     }
 }

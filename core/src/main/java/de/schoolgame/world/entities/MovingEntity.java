@@ -1,7 +1,7 @@
 package de.schoolgame.world.entities;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 
@@ -117,26 +117,37 @@ public abstract class MovingEntity extends Entity {
     }
 
     private void rayCollisionPlayerEntity(PlayerEntity player,Vec2f target) {
-        Collection<Entity> entities = GameState.INSTANCE.world.getEntities();
-        entities.removeIf(entity -> {
+        List<Entity> entities = GameState.INSTANCE.world.getEntities();
+        
+        for(int i = 0;i<entities.size();i++){
+            Entity entity = entities.get(i);
             Rectf playerRectf = player.getRect();
 
             Vec2f dir = target.sub(player.position);
             if(dir.len()==0.0f){
                 if(playerRectf.overlap(entity.getRect())){
                     Direction collisionDirection = playerRectf.getDirection(entity.getRect());
-                    return player.onEntityCollision(entity, collisionDirection);
+                    
+                    if(player.onEntityCollision(entity,collisionDirection)){
+                        entities.remove(i);
+                        i--;
+                    }
                 }
             }else{
                 ContactWrapper cw = playerRectf.RI_Solver(target,entity.getRect());
                 if (cw != null && cw.d!=Direction.NONE) {
-                    return player.onEntityCollision(entity,cw.d);
+                    if(player.onEntityCollision(entity,cw.d)){
+                        entities.remove(i);
+                        i--;
+                    }
                 }else if(playerRectf.overlap(entity.getRect())){
-                    return player.onEntityCollision(entity, playerRectf.getDirection(entity.getRect()));
+                    if(player.onEntityCollision(entity,playerRectf.getDirection(entity.getRect()))){
+                        entities.remove(i);
+                        i--;
+                    }
                 }
             }
-            return false;
-        });
+        }
     }
 
     private Vec2f rayCollisionFast(Vec2f pos, Vec2f worldSize) {
