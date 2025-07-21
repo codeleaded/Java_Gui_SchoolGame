@@ -1,13 +1,13 @@
 package de.schoolgame.world;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.TileSet;
 import de.schoolgame.state.GameState;
 import de.schoolgame.utils.Save;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class World {
     private WorldObject[][] worldObjects;
@@ -127,10 +127,13 @@ public class World {
 
     private byte connections(Vec2i pos) {
         if(invalidPos(pos)) return TileSet.INVALID;
+        
+        WorldObject wo = at(pos);
         byte result = 0;
         Vec2i[] around = pos.around();
         for (int i = 0; i < 8; i++) {
-            result |= at(around[i]).isTile() ? (byte) (1 << i) : 0;
+            WorldObject woa = at(around[i]);
+            result |= woa.isTile() && wo==woa ? (byte) (1 << i) : 0;
         }
         return result;
     }

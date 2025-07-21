@@ -176,9 +176,9 @@ public class FriedrichEntity extends MovingEntity {
         else       this.acceleration.y = GRAVITY;
 
         if (onGround) {
-            velocity = velocity.clamp(MAX_GROUND_VELOCITY.neg(), MAX_GROUND_VELOCITY);
+            velocity = velocity.clamp(MAX_GROUND_VELOCITY_BOSS.neg(), MAX_GROUND_VELOCITY_BOSS);
         } else {
-            velocity = velocity.clamp(MAX_AIR_VELOCITY.neg(), MAX_AIR_VELOCITY);
+            velocity = velocity.clamp(MAX_AIR_VELOCITY_BOSS.neg(), MAX_AIR_VELOCITY_BOSS);
         }
     }
 

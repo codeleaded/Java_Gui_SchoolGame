@@ -1,14 +1,19 @@
 package de.schoolgame.world.entities;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.badlogic.gdx.Gdx;
-import de.schoolgame.primitives.*;
+
+import de.schoolgame.primitives.ContactWrapper;
+import de.schoolgame.primitives.Direction;
+import de.schoolgame.primitives.Rectf;
+import de.schoolgame.primitives.Vec2f;
+import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.gui.screens.WorldSelectScreen;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public abstract class MovingEntity extends Entity {
     public static final float DEFAULT_GRAVITY = -25.0f;
@@ -21,6 +26,10 @@ public abstract class MovingEntity extends Entity {
 
     public static final Vec2f MAX_GROUND_VELOCITY = new Vec2f(6f, 20f);
     public static final Vec2f MAX_AIR_VELOCITY = new Vec2f(10f, 20f);
+
+    public static final Vec2f MAX_GROUND_VELOCITY_BOSS = new Vec2f(3f, 20f);
+    public static final Vec2f MAX_AIR_VELOCITY_BOSS = new Vec2f(4, 20f);
+    
 
     protected Vec2f velocity;
     protected Vec2f acceleration;
@@ -143,10 +152,14 @@ public abstract class MovingEntity extends Entity {
         );
 	    sortCollisionsByDistance(potentialCollisions,myRect);
 
+        boolean doesntStamp = true;
+        if(this instanceof PlayerEntity pe) doesntStamp = !pe.getStamp();
+
         Vec2f cp = pos.cpy();
         for (CollisionObject co : potentialCollisions) {
             ContactWrapper cw = myRect.RI_Solver(cp, co.rectf);
-            if (cw != null && cw.d!=Direction.NONE) {
+            
+            if (cw != null && cw.d!=Direction.NONE && (co.type != WorldObject.PODEST || (cw.d==Direction.UP && doesntStamp))) {
                 onCollision(cw.d,co.rectf.pos.toVec2i(),co.type);
                 cp = cw.cp.cpy();
             }
@@ -164,8 +177,11 @@ public abstract class MovingEntity extends Entity {
             if(myRect.overlap(co.rectf)){
                 Rectf r = new Rectf(cp.cpy(),size.cpy());
                 Direction d = r.staticCollisionSolver(co.rectf);
-                onCollision(d,co.rectf.pos.toVec2i(),co.type);
-                cp = r.pos.cpy();
+
+                if(d!=Direction.NONE && (co.type != WorldObject.PODEST || (d==Direction.UP && velocity.y<0.0f && doesntStamp))){
+                    onCollision(d,co.rectf.pos.toVec2i(),co.type);
+                    cp = r.pos.cpy();
+                }
             }
         }
 
