@@ -3,8 +3,31 @@ package de.schoolgame.world;
 import com.badlogic.gdx.graphics.Color;
 
 import de.schoolgame.primitives.Vec2f;
-import de.schoolgame.world.entities.*;
-import de.schoolgame.world.tiles.*;
+import de.schoolgame.world.entities.BunsenbrennerEntity;
+import de.schoolgame.world.entities.ChemikalienEntity;
+import de.schoolgame.world.entities.CoinEntity;
+import de.schoolgame.world.entities.ComputerEntity;
+import de.schoolgame.world.entities.EichelsbacherEntity;
+import de.schoolgame.world.entities.Fireflower;
+import de.schoolgame.world.entities.FlashEntity;
+import de.schoolgame.world.entities.FriedrichEntity;
+import de.schoolgame.world.entities.KloEntity;
+import de.schoolgame.world.entities.KoenigEntity;
+import de.schoolgame.world.entities.PotionEntity;
+import de.schoolgame.world.entities.RoamerEntity;
+import de.schoolgame.world.entities.TeslaEntity;
+import de.schoolgame.world.tiles.Brick;
+import de.schoolgame.world.tiles.Corridor;
+import de.schoolgame.world.tiles.Grass;
+import de.schoolgame.world.tiles.Hurde;
+import de.schoolgame.world.tiles.Laboratorytable;
+import de.schoolgame.world.tiles.OpenQuestMark;
+import de.schoolgame.world.tiles.Podest;
+import de.schoolgame.world.tiles.QuestMark;
+import de.schoolgame.world.tiles.Spike;
+import de.schoolgame.world.tiles.Table;
+import de.schoolgame.world.tiles.Test;
+import de.schoolgame.world.tiles.Track;
 
 public enum WorldObject {
     NONE(null),
@@ -28,6 +51,7 @@ public enum WorldObject {
     CORRIDOR(new Corridor()),
     QUESTMARK(new QuestMark()),
     OPENQUESTMARK(new OpenQuestMark()),
+    PODEST(new Podest()),
     BRICK(new Brick()),
     CHEMIKALIEN(ChemikalienEntity.class),
     COMPUTER(ComputerEntity.class),
