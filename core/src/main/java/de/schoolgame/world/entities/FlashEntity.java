@@ -6,10 +6,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
 import de.schoolgame.primitives.Direction;
-import static de.schoolgame.primitives.Direction.DOWN;
-import static de.schoolgame.primitives.Direction.LEFT;
-import static de.schoolgame.primitives.Direction.RIGHT;
-import static de.schoolgame.primitives.Direction.UP;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.SpriteSheet;
@@ -31,7 +27,7 @@ public class FlashEntity extends MovingEntity {
         this.velocity = new Vec2f(-1.0f,new Random().nextFloat(-1.0f,1.0f));
     }
 
-    public static final int[] WALK_LUT = new int[]{0,1,2,3};
+    public static final int[] WALK_LUT = new int[]{0,1,2,3,4};
 
     public int getTexIndex(){
         float speed = velocity.len();
@@ -58,8 +54,10 @@ public class FlashEntity extends MovingEntity {
 
     @Override
     public void onCollision(Direction type,Vec2i pos,WorldObject object) {
-        if (type == LEFT || type == RIGHT)  velocity.x *= -1.0f;
-        if (type == UP || type == DOWN)     velocity.y *= -1.0f;
+        //if (type == LEFT || type == RIGHT)  velocity.x *= -1.0f;
+        //if (type == UP || type == DOWN)     velocity.y *= -1.0f;
+        var world = GameState.INSTANCE.world;
+        world.getEntities().remove(this);
     }
 
     public boolean onEntityCollision(Entity entity, Direction direction) {
@@ -72,14 +70,15 @@ public class FlashEntity extends MovingEntity {
         int tileSize = state.world.getTileSize();
 
         SpriteSheet texture = state.assetManager.get("entities/flash/flash",SpriteSheet.class);
-        int index = getTexIndex() + ((lookDir && MovingEntity.GRAVITY < 0.0f) || (!lookDir && MovingEntity.GRAVITY > 0.0f) ? 0 : 4);
+        int index = getTexIndex();
 
-        batch.draw(texture.getRegions()[index],
+        batch.draw(
+            texture.getRegions()[index],
             position.x * tileSize, position.y * tileSize,
             0.5f * tileSize,0.5f * tileSize,
             size.x * tileSize, size.y * tileSize,// * (1.0f / (1.0f - (6.0f / 32.0f)))
             1.0f,1.0f,
-            MovingEntity.GRAVITY < 0.0f ? 0.0f : 180.0f
+            (float)(Math.atan2(velocity.y,velocity.x) * 180.0f)
         );
     }
 }

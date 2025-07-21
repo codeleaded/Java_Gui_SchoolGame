@@ -13,11 +13,13 @@ import de.schoolgame.world.entities.FlashEntity;
 import de.schoolgame.world.entities.FriedrichEntity;
 import de.schoolgame.world.entities.KloEntity;
 import de.schoolgame.world.entities.KoenigEntity;
+import de.schoolgame.world.entities.PointsEntity;
 import de.schoolgame.world.entities.PotionEntity;
 import de.schoolgame.world.entities.RoamerEntity;
 import de.schoolgame.world.entities.TeslaEntity;
-import de.schoolgame.world.entities.PointsEntity;
+import de.schoolgame.world.tiles.Bath;
 import de.schoolgame.world.tiles.Brick;
+import de.schoolgame.world.tiles.Concrete;
 import de.schoolgame.world.tiles.Corridor;
 import de.schoolgame.world.tiles.Grass;
 import de.schoolgame.world.tiles.Hurde;
@@ -51,6 +53,8 @@ public enum WorldObject {
     TABLE(new Table()),
     HURDE(new Hurde()),
     CORRIDOR(new Corridor()),
+    CONCRETE(new Concrete()),
+    BATH(new Bath()),
     QUESTMARK(new QuestMark()),
     OPENQUESTMARK(new OpenQuestMark()),
     PODEST(new Podest()),

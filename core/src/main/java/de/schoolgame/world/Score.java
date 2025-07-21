@@ -2,6 +2,7 @@ package de.schoolgame.world;
 
 public class Score {
     public static final int MP_FIREFLOWER = 50;
+    public static final int MP_POTION = 100;
     public static final int MP_COIN = 10;
     public static final int MP_DEATH = 50;
 

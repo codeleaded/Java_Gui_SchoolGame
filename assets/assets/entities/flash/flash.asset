@@ -1,7 +1,7 @@
 type = "spritesheet"
 
 [spritesheet]
-count = 8
+count = 5
 
 [sprite]
 width = 32

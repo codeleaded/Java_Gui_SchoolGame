@@ -337,6 +337,13 @@ public class PlayerEntity extends MovingEntity {
             sound.play(1.0f);
             return true;
         }
+        if (entity instanceof PotionEntity) {
+            addScore(Score.MP_POTION);
+
+            Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/power_up", Sound.class);
+            sound.play(1.0f);
+            return true;
+        }
 
         if (entity instanceof TeslaEntity) {
             //Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/coin", Sound.class);

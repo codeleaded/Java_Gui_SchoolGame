@@ -170,7 +170,7 @@ public abstract class MovingEntity extends Entity {
         for (CollisionObject co : potentialCollisions) {
             ContactWrapper cw = myRect.RI_Solver(cp, co.rectf);
             
-            if (cw != null && cw.d!=Direction.NONE && (co.type != WorldObject.PODEST || (cw.d==Direction.UP && doesntStamp))) {
+            if (cw != null && cw.d!=Direction.NONE && ((co.type != WorldObject.PODEST && co.type != WorldObject.TABLE && co.type != WorldObject.LABORATROYTABLE) || (cw.d==Direction.UP && doesntStamp))) {
                 onCollision(cw.d,co.rectf.pos.toVec2i(),co.type);
                 cp = cw.cp.cpy();
             }
@@ -189,7 +189,7 @@ public abstract class MovingEntity extends Entity {
                 Rectf r = new Rectf(cp.cpy(),size.cpy());
                 Direction d = r.staticCollisionSolver(co.rectf);
 
-                if(d!=Direction.NONE && (co.type != WorldObject.PODEST || (d==Direction.UP && velocity.y<0.0f && doesntStamp))){
+                if(d!=Direction.NONE && ((co.type != WorldObject.PODEST && co.type != WorldObject.TABLE && co.type != WorldObject.LABORATROYTABLE) || (d==Direction.UP && velocity.y<0.0f && doesntStamp))){
                     onCollision(d,co.rectf.pos.toVec2i(),co.type);
                     cp = r.pos.cpy();
                 }
