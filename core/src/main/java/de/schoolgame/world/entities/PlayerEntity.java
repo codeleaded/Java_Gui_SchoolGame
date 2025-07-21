@@ -85,6 +85,14 @@ public class PlayerEntity extends MovingEntity {
     public int getPower() { return this.power; }
     public boolean getGodmode() { return this.godmode; }
 
+    public void addScore(Vec2f pos,int value) {
+        GameState.INSTANCE.score += value;
+
+        var world = GameState.INSTANCE.world;
+        var e = (PointsEntity)WorldObject.POINTS.createEntity(pos);
+        e.value = value;
+        world.spawnEntity(pos,e);
+    }
     public void addScore(int value) {
         GameState.INSTANCE.score += value;
 
@@ -276,21 +284,25 @@ public class PlayerEntity extends MovingEntity {
         if (object == WorldObject.BRICK) {
             if (type == DOWN && (GRAVITY < 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
                 var world = GameState.INSTANCE.world;
+                addScore(pos.toVec2f().add(0.0f,1.0f),Score.MP_BRICK);
                 world.addAt(pos,WorldObject.NONE);
             }
             if (type == UP && (GRAVITY > 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
                 var world = GameState.INSTANCE.world;
+                addScore(pos.toVec2f().add(0.0f,1.0f),Score.MP_BRICK);
                 world.addAt(pos,WorldObject.NONE);
             }
         }
         if (object == WorldObject.QUESTMARK) {
             if (type == DOWN && (GRAVITY < 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
                 var world = GameState.INSTANCE.world;
+                addScore(pos.toVec2f().add(0.0f,1.0f),Score.MP_QUESTMARK);
                 world.addAt(pos,WorldObject.OPENQUESTMARK);
                 world.addAt(pos.add(0,1),WorldObject.FIREFLOWER);
             }
             if (type == UP && (GRAVITY > 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
                 var world = GameState.INSTANCE.world;
+                addScore(pos.toVec2f().add(0.0f,1.0f),Score.MP_QUESTMARK);
                 world.addAt(pos,WorldObject.OPENQUESTMARK);
                 world.addAt(pos.add(0,-1),WorldObject.FIREFLOWER);
             }
