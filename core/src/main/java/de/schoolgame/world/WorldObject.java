@@ -31,7 +31,8 @@ public enum WorldObject {
     BRICK(new Brick()),
     CHEMIKALIEN(ChemikalienEntity.class),
     COMPUTER(ComputerEntity.class),
-    BUNSENBRENNER(BunsenbrennerEntity.class)
+    BUNSENBRENNER(BunsenbrennerEntity.class),
+    POTION(PotionEntity.class)
     ;
 
     private final Object object;

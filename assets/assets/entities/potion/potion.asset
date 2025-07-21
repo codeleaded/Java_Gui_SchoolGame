@@ -1,0 +1,9 @@
+type = "animation"
+[sprite]
+width = 32
+height = 32
+[spritesheet]
+count = 4
+[animation]
+frameDuration = 0.2
+mode = "Bounce"
