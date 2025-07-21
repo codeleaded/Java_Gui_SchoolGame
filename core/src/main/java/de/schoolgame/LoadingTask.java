@@ -12,7 +12,6 @@ import de.schoolgame.state.GameState;
 import de.schoolgame.world.WorldManager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class LoadingTask {
     private boolean finished = false;
@@ -29,25 +28,18 @@ public class LoadingTask {
 
         addTask("Camera", () -> GameState.INSTANCE.camera = new Camera());
 
-        ArrayList<FileHandle> paths = new ArrayList<>();
-        paths.add(Gdx.files.internal("assets/"));
+        FileHandle assets = Gdx.files.internal("assets.txt");
 
-        while (!paths.isEmpty()) {
-            FileHandle file = paths.removeFirst();
-            if (file.isDirectory()) {
-                paths.addAll(Arrays.asList(file.list()));
-            } else {
-                String path = file.path();
-                if (path.endsWith(".asset")) {
-                    addTask("Asset: " + path, () ->
-                        GameState.INSTANCE.assetManager.load(path)
-                    );
-                }
-                if (path.endsWith(".world")) {
-                    addTask("World: " + path, () ->
-                        GameState.INSTANCE.worldManager.load(file)
-                    );
-                }
+        for (String path : assets.readString().split("\n")) {
+            if (path.endsWith(".asset")) {
+                addTask("Asset: " + path, () ->
+                    GameState.INSTANCE.assetManager.load(path)
+                );
+            }
+            if (path.endsWith(".world")) {
+                addTask("World: " + path, () ->
+                    GameState.INSTANCE.worldManager.load(Gdx.files.internal(path))
+                );
             }
         }
 
