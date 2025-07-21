@@ -1,19 +1,13 @@
 package de.schoolgame.world.entities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
-
-import de.schoolgame.primitives.ContactWrapper;
-import de.schoolgame.primitives.Direction;
-import de.schoolgame.primitives.Rectf;
-import de.schoolgame.primitives.Vec2f;
-import de.schoolgame.primitives.Vec2i;
-import de.schoolgame.render.gui.screens.WorldSelectScreen;
+import de.schoolgame.primitives.*;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class MovingEntity extends Entity {
     public static final float DEFAULT_GRAVITY = -25.0f;
@@ -29,7 +23,7 @@ public abstract class MovingEntity extends Entity {
 
     public static final Vec2f MAX_GROUND_VELOCITY_BOSS = new Vec2f(3f, 20f);
     public static final Vec2f MAX_AIR_VELOCITY_BOSS = new Vec2f(4, 20f);
-    
+
 
     protected Vec2f velocity;
     protected Vec2f acceleration;
@@ -101,8 +95,7 @@ public abstract class MovingEntity extends Entity {
             onCollision(Direction.LEFT,new Vec2i((int)(worldSize.x - size.x),0),WorldObject.WORLD_BORDER);
 
             if(this instanceof PlayerEntity){
-                GameState.INSTANCE.state = GameState.GameStateType.WORLD_SELECT;
-                GameState.INSTANCE.screen = new WorldSelectScreen();
+                GameState.INSTANCE.setState(GameState.GameStateType.WORLD_SELECT);
                 return;
             }
         }
@@ -118,7 +111,7 @@ public abstract class MovingEntity extends Entity {
 
     private void rayCollisionPlayerEntity(PlayerEntity player,Vec2f target) {
         List<Entity> entities = GameState.INSTANCE.world.getEntities();
-        
+
         for(int i = 0;i<entities.size();i++){
             Entity entity = entities.get(i);
             Rectf playerRectf = player.getRect();
@@ -127,7 +120,7 @@ public abstract class MovingEntity extends Entity {
             if(dir.len()==0.0f){
                 if(playerRectf.overlap(entity.getRect())){
                     Direction collisionDirection = playerRectf.getDirection(entity.getRect());
-                    
+
                     if(player.onEntityCollision(entity,collisionDirection)){
                         entities.remove(i);
                         i--;
@@ -169,7 +162,7 @@ public abstract class MovingEntity extends Entity {
         Vec2f cp = pos.cpy();
         for (CollisionObject co : potentialCollisions) {
             ContactWrapper cw = myRect.RI_Solver(cp, co.rectf);
-            
+
             if (cw != null && cw.d!=Direction.NONE && ((co.type != WorldObject.PODEST && co.type != WorldObject.TABLE && co.type != WorldObject.LABORATROYTABLE) || (cw.d==Direction.UP && doesntStamp))) {
                 onCollision(cw.d,co.rectf.pos.toVec2i(),co.type);
                 cp = cw.cp.cpy();

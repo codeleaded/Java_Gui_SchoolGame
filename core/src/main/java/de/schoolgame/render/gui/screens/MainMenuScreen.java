@@ -20,10 +20,7 @@ public class MainMenuScreen extends Screen {
         int x = (camera.viewSize.x - bigButtonSize.x) / 2;
         int y = buttonSpacing;
 
-        widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 3, () -> {
-            var state = GameState.INSTANCE;
-            state.screen = new ScoreboardScreen();
-        }));
+        widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 3, () -> GameState.INSTANCE.setState(GameState.GameStateType.SCOREBOARD)));
 
         x += bigButtonSize.x - squareButtonSize.x;
 
@@ -37,16 +34,14 @@ public class MainMenuScreen extends Screen {
             state.world = new World();
             state.player = new PlayerEntity(new Vec2f(1.0f,1.0f));
             state.player.setGodmode(true);
-            state.state = GameState.GameStateType.WORLD_EDITOR;
-            state.screen = new HudScreen();
+            state.setState(GameState.GameStateType.WORLD_EDITOR);
         }));
 
         y += bigButtonSize.y + buttonSpacing;
 
         widgets.add(new TextureButtonWidget(new Vec2i(x, y), bigButtonSize, 0, () -> {
             var state = GameState.INSTANCE;
-            state.state = GameState.GameStateType.WORLD_SELECT;
-            state.screen = new WorldSelectScreen();
+            state.setState(GameState.GameStateType.WORLD_SELECT);
         }));
     }
 }

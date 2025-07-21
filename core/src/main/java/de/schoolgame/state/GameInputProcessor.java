@@ -5,13 +5,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Sound;
 import de.schoolgame.primitives.Direction;
-import de.schoolgame.primitives.Rectf;
-import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
-import de.schoolgame.render.gui.screens.HudScreen;
-import de.schoolgame.render.gui.screens.MainMenuScreen;
 import de.schoolgame.utils.CoordinateUtils;
-import de.schoolgame.utils.Save;
 
 import static com.badlogic.gdx.Input.Keys.*;
 
@@ -62,12 +57,12 @@ public class GameInputProcessor implements InputProcessor {
 
         if (state.controllable()) {
             if (keycode == L) {
-                if (state.state == GameState.GameStateType.DEBUG) {
-                    state.state = GameState.GameStateType.GAME;
+                if (state.getState() == GameState.GameStateType.DEBUG) {
+                    state.setState(GameState.GameStateType.GAME);
                     Gdx.app.log("DEBUG", "ImGui disabled");
                     return true;
-                } else if (state.state == GameState.GameStateType.GAME) {
-                    state.state = GameState.GameStateType.DEBUG;
+                } else if (state.getState() == GameState.GameStateType.GAME) {
+                    state.setState(GameState.GameStateType.DEBUG);
                     Gdx.app.log("DEBUG", "ImGui enabled");
                     return true;
                 }
@@ -81,10 +76,9 @@ public class GameInputProcessor implements InputProcessor {
     public boolean keyUp(int keycode) {
         var state = GameState.INSTANCE;
 
-        if (keycode == ESCAPE) {
+        if (keycode == ESCAPE && state.getState() != GameState.GameStateType.CHARACTER_SELECT) {
             if (escape()) {
-                state.state = GameState.GameStateType.MAIN_MENU;
-                state.screen = new MainMenuScreen();
+                state.setState(GameState.GameStateType.MAIN_MENU);
             }
             return true;
         }
@@ -111,6 +105,21 @@ public class GameInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyTyped(char character) {
+        var state = GameState.INSTANCE;
+        if (state.getState() == GameState.GameStateType.CHARACTER_SELECT) {
+            if (character == '\b' && !state.username.isEmpty()) {
+                state.username = state.username.substring(0, state.username.length() - 1);
+                return true;
+            }
+
+            byte c = (byte) character;
+            if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
+                String name = state.username + character;
+                if (name.length() >= 12) name = name.substring(0, 12);
+                state.username = name;
+            }
+            return true;
+        }
         return false;
     }
 
@@ -119,11 +128,12 @@ public class GameInputProcessor implements InputProcessor {
         lastMouseButton = button;
         var state = GameState.INSTANCE;
 
-        return switch (state.state) {
+        return switch (state.getState()) {
             case MAIN_MENU:
-                yield screen(screenX, screenY);
             case WORLD_SELECT:
-                yield worldSelect(screenX, screenY);
+            case SCOREBOARD:
+            case CHARACTER_SELECT:
+                yield screen(screenX, screenY);
             case DEBUG:
                 if (!state.debug.showWorldedit.get()) yield false;
             case WORLD_EDITOR:
@@ -145,7 +155,7 @@ public class GameInputProcessor implements InputProcessor {
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         var state = GameState.INSTANCE;
-        if ((state.state == GameState.GameStateType.DEBUG && state.debug.showWorldedit.get()) || state.state == GameState.GameStateType.WORLD_EDITOR) {
+        if ((state.getState() == GameState.GameStateType.DEBUG && state.debug.showWorldedit.get()) || state.getState() == GameState.GameStateType.WORLD_EDITOR) {
             return worldEdit(screenX, screenY);
         }
         return false;
@@ -159,52 +169,10 @@ public class GameInputProcessor implements InputProcessor {
     @Override
     public boolean scrolled(float amountX, float amountY) {
         var state = GameState.INSTANCE;
-        if (state.state == GameState.GameStateType.DEBUG && amountY != 0) {
+        if (state.getState() == GameState.GameStateType.DEBUG && amountY != 0) {
             state.camera.zoom += amountY * 0.1f;
             return true;
         }
-        return false;
-    }
-
-    private boolean worldSelect(int screenX, int screenY) {
-        var state = GameState.INSTANCE;
-        var camera = state.camera;
-
-        Vec2f pos = CoordinateUtils.getCameraPosFromScreenPos(new Vec2i(screenX, screenY)).toVec2f();
-
-        final int buttonSpacing = 10;
-
-        final Vec2i campaignButtonSize = new Vec2i(64, 64);
-        final int campaignSpacing = campaignButtonSize.x + buttonSpacing;
-
-        final int font_size = 3;
-        final int font_height = font_size * 7;
-
-        int x = buttonSpacing;
-        int y = camera.viewSize.y;
-
-        y -= font_height + buttonSpacing;
-
-        y -= buttonSpacing + campaignButtonSize.y;
-        for (int i = 0; i < 7; i++) {
-            Rectf rectf = new Rectf(new Vec2f(x, y), campaignButtonSize.toVec2f());
-
-            if (rectf.contains(pos)) {
-                Gdx.app.log("WorldSelect", "Selected world: " + i);
-                Save save = state.worldManager.get("world_" + i);
-                state.loadSave(save);
-                state.world.summonEntities();
-                state.state = GameState.GameStateType.GAME;
-                state.screen = new HudScreen();
-
-                Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/tap", Sound.class);
-                sound.play(1.0f);
-                return true;
-            }
-
-            x += campaignSpacing;
-        }
-
         return false;
     }
 

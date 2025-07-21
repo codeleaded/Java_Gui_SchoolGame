@@ -18,9 +18,11 @@ public class Renderer implements IRenderer {
     public void render() {
         var state = GameState.INSTANCE;
 
-        switch (state.state) {
+        switch (state.getState()) {
             case MAIN_MENU:
             case WORLD_SELECT:
+            case CHARACTER_SELECT:
+            case SCOREBOARD:
                 ScreenUtils.clear(0.3f, 0.3f, 0.4f, 1f);
                 break;
             case GAME:

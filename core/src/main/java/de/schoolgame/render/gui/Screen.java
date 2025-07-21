@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.Camera;
-import de.schoolgame.render.gui.widgets.ButtonWidget;
 
 import java.util.ArrayList;
 
@@ -28,7 +27,10 @@ public abstract class Screen {
         batch.setProjectionMatrix(camera.viewProjectionMatrix);
         shapeRenderer.setProjectionMatrix(camera.viewProjectionMatrix);
 
-        widgets.forEach(w -> w.render(batch, shapeRenderer));
+        //DONT TOUCH - Concurrent Modification Exceptions Ahead!
+        for (int i = 0; i < widgets.size(); i++) {
+            widgets.get(i).render(batch, shapeRenderer);
+        }
     }
 
     public boolean onClick(Vec2i clickPos) {
@@ -36,9 +38,6 @@ public abstract class Screen {
         for (Widget widget : widgets) {
             if (widget.getRect().contains(clickPos)) {
                 widget.onClick();
-                if (widget instanceof ButtonWidget b) {
-                    System.out.println(b.getText());
-                }
                 result = true;
             }
         }

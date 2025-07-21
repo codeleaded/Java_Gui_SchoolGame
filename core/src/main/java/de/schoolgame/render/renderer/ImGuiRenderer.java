@@ -57,7 +57,7 @@ public class ImGuiRenderer implements IRenderer {
         start();
         var viewport = ImGui.getMainViewport();
 
-        if (GameState.INSTANCE.state == GameState.GameStateType.DEBUG) {
+        if (GameState.INSTANCE.getState() == GameState.GameStateType.DEBUG) {
             ImGui.setNextWindowPos(viewport.getPos(), ImGuiCond.Once);
             if (ImGui.begin("Debug", null, ImGuiWindowFlags.AlwaysAutoResize)) {
                 ImGui.checkbox("Show Metrics", state.debug.showMetrics);
