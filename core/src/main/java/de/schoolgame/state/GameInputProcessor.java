@@ -5,13 +5,13 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Sound;
 import de.schoolgame.primitives.Direction;
-import de.schoolgame.primitives.Rect;
+import de.schoolgame.primitives.Rectf;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
+import de.schoolgame.render.gui.screens.HudScreen;
+import de.schoolgame.render.gui.screens.MainMenuScreen;
 import de.schoolgame.utils.CoordinateUtils;
 import de.schoolgame.utils.Save;
-import de.schoolgame.world.World;
-import de.schoolgame.world.entities.PlayerEntity;
 
 import static com.badlogic.gdx.Input.Keys.*;
 
@@ -61,21 +61,17 @@ public class GameInputProcessor implements InputProcessor {
         var state = GameState.INSTANCE;
 
         if (state.controllable()) {
-            return switch (keycode) {
-                case L: {
-                    if (state.state == GameState.GameStateType.DEBUG) {
-                        state.state = GameState.GameStateType.GAME;
-                        Gdx.app.log("DEBUG", "ImGui disabled");
-                        yield true;
-                    } else if (state.state == GameState.GameStateType.GAME) {
-                        state.state = GameState.GameStateType.DEBUG;
-                        Gdx.app.log("DEBUG", "ImGui enabled");
-                        yield true;
-                    }
-                    yield false;
+            if (keycode == L) {
+                if (state.state == GameState.GameStateType.DEBUG) {
+                    state.state = GameState.GameStateType.GAME;
+                    Gdx.app.log("DEBUG", "ImGui disabled");
+                    return true;
+                } else if (state.state == GameState.GameStateType.GAME) {
+                    state.state = GameState.GameStateType.DEBUG;
+                    Gdx.app.log("DEBUG", "ImGui enabled");
+                    return true;
                 }
-                default: yield false;
-            };
+            }
         }
 
         return false;
@@ -87,7 +83,8 @@ public class GameInputProcessor implements InputProcessor {
 
         if (keycode == ESCAPE) {
             if (escape()) {
-                GameState.INSTANCE.state = GameState.GameStateType.MAIN_MENU;
+                state.state = GameState.GameStateType.MAIN_MENU;
+                state.screen = new MainMenuScreen();
             }
             return true;
         }
@@ -124,7 +121,7 @@ public class GameInputProcessor implements InputProcessor {
 
         return switch (state.state) {
             case MAIN_MENU:
-                yield mainMenu(screenX, screenY);
+                yield screen(screenX, screenY);
             case WORLD_SELECT:
                 yield worldSelect(screenX, screenY);
             case DEBUG:
@@ -190,14 +187,15 @@ public class GameInputProcessor implements InputProcessor {
 
         y -= buttonSpacing + campaignButtonSize.y;
         for (int i = 0; i < 7; i++) {
-            Rect rect = new Rect(new Vec2f(x, y), campaignButtonSize.toVec2f());
+            Rectf rectf = new Rectf(new Vec2f(x, y), campaignButtonSize.toVec2f());
 
-            if (rect.contains(pos)) {
+            if (rectf.contains(pos)) {
                 Gdx.app.log("WorldSelect", "Selected world: " + i);
                 Save save = state.worldManager.get("world_" + i);
                 state.loadSave(save);
                 state.world.summonEntities();
                 state.state = GameState.GameStateType.GAME;
+                state.screen = new HudScreen();
 
                 Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/tap", Sound.class);
                 sound.play(1.0f);
@@ -210,42 +208,18 @@ public class GameInputProcessor implements InputProcessor {
         return false;
     }
 
-    private boolean mainMenu(int screenX, int screenY) {
+    private boolean screen(int screenX, int screenY) {
         var state = GameState.INSTANCE;
-        var camera = state.camera;
+        Vec2i pos = CoordinateUtils.getCameraPosFromScreenPos(new Vec2i(screenX, screenY));
 
-        Vec2f buttonSize = new Vec2i(300, 64).toVec2f();
-        final int buttonSpacing = 10;
+        boolean result = state.screen.onClick(pos);
 
-        Vec2f pos = CoordinateUtils.getCameraPosFromScreenPos(new Vec2i(screenX, screenY)).toVec2f();
-
-        int travel = (int) (buttonSize.y + buttonSpacing);
-        int x = (int) ((camera.viewSize.x - buttonSize.x) / 2);
-        int y = buttonSpacing;
-
-        Rect exit = new Rect(new Vec2f(x, y), buttonSize);
-        y += travel;
-        Rect create = new Rect(new Vec2f(x, y), buttonSize);
-        y += travel;
-        Rect start = new Rect(new Vec2f(x, y), buttonSize);
-
-        if (exit.contains(pos)) {
-            Gdx.app.exit();
-        } else if (start.contains(pos)) {
-            state.state = GameState.GameStateType.WORLD_SELECT;
-        } else if (create.contains(pos)) {
-            state.world = new World();
-            state.player = new PlayerEntity(new Vec2f(1.0f,1.0f));
-            state.player.setGodmode(true);
-            state.state = GameState.GameStateType.WORLD_EDITOR;
-        } else {
-            return false;
+        if (result) {
+            Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/tap", Sound.class);
+            sound.play(1.0f);
         }
 
-        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/tap", Sound.class);
-        sound.play(1.0f);
-
-        return true;
+        return result;
     }
 
     private boolean worldEdit(int screenX, int screenY) {

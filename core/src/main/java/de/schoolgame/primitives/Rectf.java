@@ -1,26 +1,23 @@
 package de.schoolgame.primitives;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.io.Serial;
-import static java.lang.Math.abs;
+import java.io.*;
 import java.util.Objects;
 
+import static java.lang.Math.abs;
+
 @SuppressWarnings("unused")
-public class Rect implements Externalizable {
+public class Rectf implements Externalizable {
     @Serial
     private static final long serialVersionUID = 1L;
     public Vec2f pos;
     public Vec2f size;
 
-    public Rect(){
+    public Rectf(){
         this.pos = new Vec2f(0.0f, 0.0f);
         this.size = new Vec2f(0.0f, 0.0f);
     }
 
-    public Rect(Vec2f pos, Vec2f size) {
+    public Rectf(Vec2f pos, Vec2f size) {
         this.pos = pos;
         this.size = size;
     }
@@ -33,7 +30,7 @@ public class Rect implements Externalizable {
         return pos.add(new Vec2f(this.size.x * 0.5f, this.size.y * 0.5f));
 	}
 
-    public boolean overlap(Rect r){
+    public boolean overlap(Rectf r){
         if (this.pos.x < r.pos.x - this.size.x) return false;
         if (this.pos.x > r.pos.x + r.size.x)    return false;
         if (this.pos.y < r.pos.y - this.size.y) return false;
@@ -45,7 +42,7 @@ public class Rect implements Externalizable {
             v.y >= pos.y && v.y <= pos.y + size.y;
     }
 
-    public Vec2f GetDelta(Rect r){
+    public Vec2f GetDelta(Rectf r){
         final Vec2f d = r.mid().sub(this.mid());
         final Vec2f newl = r.size.add(this.size);
         d.x /= newl.x;
@@ -53,9 +50,9 @@ public class Rect implements Externalizable {
         return d;
     }
 
-    public Direction getDirection(Rect r){
+    public Direction getDirection(Rectf r){
         if(overlap(r)) {
-            Rect ex = new Rect(r.pos.sub(new Vec2f(this.size.x * 0.5f, this.size.y * 0.5f)), r.size.add(this.size));
+            Rectf ex = new Rectf(r.pos.sub(new Vec2f(this.size.x * 0.5f, this.size.y * 0.5f)), r.size.add(this.size));
             Vec2f delta = GetDelta(r);
 
             if(abs(delta.x) > abs(delta.y)) {
@@ -75,9 +72,9 @@ public class Rect implements Externalizable {
         return Direction.NONE;
     }
 
-	public Direction staticCollisionSolver(Rect r) {
+	public Direction staticCollisionSolver(Rectf r) {
         Direction d = getDirection(r);
-        Rect ex = new Rect(r.pos.sub(new Vec2f(this.size.x * 0.5f, this.size.y * 0.5f)), r.size.add(this.size));
+        Rectf ex = new Rectf(r.pos.sub(new Vec2f(this.size.x * 0.5f, this.size.y * 0.5f)), r.size.add(this.size));
         Vec2f delta = GetDelta(r);
 
         switch (d) {
@@ -195,7 +192,7 @@ public class Rect implements Externalizable {
     	return cw;
     }
 
-    public ContactWrapper RI_Solver(Vec2f target, Rect collisionObject){
+    public ContactWrapper RI_Solver(Vec2f target, Rectf collisionObject){
         final Vec2f middlePos = pos.add(size.mul(0.5f));
         final Vec2f vector = target.sub(pos);
 
@@ -216,11 +213,11 @@ public class Rect implements Externalizable {
         return null;
     }
 
-    public Rect cpy(){
-        return new Rect(pos.cpy(),size.cpy());
+    public Rectf cpy(){
+        return new Rectf(pos.cpy(),size.cpy());
     }
 
-    public boolean compareInt(Rect r) {
+    public boolean compareInt(Rectf r) {
         return (int)pos.x == (int)r.pos.x &&
                (int)pos.y == (int)r.pos.y &&
                (int)size.x == (int)r.size.x &&
@@ -230,8 +227,8 @@ public class Rect implements Externalizable {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Rect rect = (Rect) o;
-        return Objects.equals(pos, rect.pos) && Objects.equals(size, rect.size);
+        Rectf rectf = (Rectf) o;
+        return Objects.equals(pos, rectf.pos) && Objects.equals(size, rectf.size);
     }
 
     @Override

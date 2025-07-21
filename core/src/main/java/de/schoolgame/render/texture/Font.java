@@ -4,8 +4,9 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.TextureData;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import de.schoolgame.primitives.Rect;
+import de.schoolgame.primitives.Rectf;
 import de.schoolgame.primitives.Vec2f;
+import de.schoolgame.primitives.Vec2i;
 
 public class Font {
     TextureRegion[] regions;
@@ -18,12 +19,12 @@ public class Font {
         Pixmap p = data.consumePixmap();
 
         for (TextureRegion region : regions) {
-            Rect b = calculateBoundary(p, region);
+            Rectf b = calculateBoundary(p, region);
             region.setRegion((int) b.pos.x, (int) b.pos.y, (int) b.size.x, (int) b.size.y);
         }
     }
 
-    private static Rect calculateBoundary(Pixmap p, TextureRegion region) {
+    private static Rectf calculateBoundary(Pixmap p, TextureRegion region) {
         int sx = region.getRegionX();
         int sy = region.getRegionY();
         int xw = sx + region.getRegionWidth();
@@ -48,7 +49,7 @@ public class Font {
             }
         }
 
-        return new Rect(new Vec2f(fx, fy), new Vec2f(lx - fx, ly - fy));
+        return new Rectf(new Vec2f(fx, fy), new Vec2f(lx - fx, ly - fy));
     }
 
     private int getIndex(char c) {
@@ -78,11 +79,15 @@ public class Font {
         return width - scale;
     }
 
-    public void draw(Batch b, String text, float x, float y, int scale) {
+    public int getHeight(int scale) {
+        return scale * 7;
+    }
+
+    public void draw(Batch b, String text, Vec2i pos, int scale) {
         int xOffset = 0;
         for (char c : text.toCharArray()) {
             TextureRegion region = getTextureRegion(c);
-            b.draw(region, (x + xOffset), y, region.getRegionWidth() * scale, region.getRegionHeight() * scale);
+            b.draw(region, (pos.x + xOffset), pos.y, region.getRegionWidth() * scale, region.getRegionHeight() * scale);
             xOffset += region.getRegionWidth() * scale;
             xOffset += scale;
         }

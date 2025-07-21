@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import de.schoolgame.primitives.Rect;
+import de.schoolgame.primitives.Rectf;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.Camera;
@@ -13,17 +13,17 @@ import de.schoolgame.world.World;
 
 public class WorldRenderer implements IRenderer {
     private final Batch batch;
-    private Rect bounds;
+    private Rectf bounds;
 
     public WorldRenderer() {
         this.batch = new SpriteBatch();
-        this.bounds = new Rect();
+        this.bounds = new Rectf();
     }
 
     public void setView(Camera camera) {
         var viewSize = camera.viewSize.toVec2f().mul(camera.zoom);
         var pos = camera.position.toVec2f().sub(viewSize.div(2));
-        this.bounds = new Rect(pos, viewSize);
+        this.bounds = new Rectf(pos, viewSize);
 
         batch.setProjectionMatrix(camera.viewProjectionMatrix);
     }

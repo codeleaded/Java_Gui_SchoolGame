@@ -1,25 +1,21 @@
 package de.schoolgame.world.entities;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import com.badlogic.gdx.Gdx;
-
-import de.schoolgame.primitives.ContactWrapper;
-import de.schoolgame.primitives.Direction;
-import de.schoolgame.primitives.Rect;
-import de.schoolgame.primitives.Vec2f;
-import de.schoolgame.primitives.Vec2i;
+import de.schoolgame.primitives.*;
+import de.schoolgame.render.gui.screens.WorldSelectScreen;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public abstract class MovingEntity extends Entity {
     public static final float DEFAULT_GRAVITY = -25.0f;
     public static final float GROUND_FRICTION = 2f;
     public static final float AIR_FRICTION = 2f;
 
-    public ArrayList<Rect> list = new ArrayList<>();
+    public ArrayList<Rectf> list = new ArrayList<>();
 
     public static float GRAVITY = DEFAULT_GRAVITY;
 
@@ -95,8 +91,9 @@ public abstract class MovingEntity extends Entity {
             position.x = worldSize.x - size.x;
             onCollision(Direction.LEFT,new Vec2i((int)(worldSize.x - size.x),0),WorldObject.WORLD_BORDER);
 
-            if(this instanceof PlayerEntity pe){
+            if(this instanceof PlayerEntity){
                 GameState.INSTANCE.state = GameState.GameStateType.WORLD_SELECT;
+                GameState.INSTANCE.screen = new WorldSelectScreen();
                 return;
             }
         }
@@ -113,20 +110,20 @@ public abstract class MovingEntity extends Entity {
     private void rayCollisionPlayerEntity(PlayerEntity player,Vec2f target) {
         Collection<Entity> entities = GameState.INSTANCE.world.getEntities();
         entities.removeIf(entity -> {
-            Rect playerRect = player.getRect();
+            Rectf playerRectf = player.getRect();
 
             Vec2f dir = target.sub(player.position);
             if(dir.len()==0.0f){
-                if(playerRect.overlap(entity.getRect())){
-                    Direction collisionDirection = playerRect.getDirection(entity.getRect());
+                if(playerRectf.overlap(entity.getRect())){
+                    Direction collisionDirection = playerRectf.getDirection(entity.getRect());
                     return player.onEntityCollision(entity, collisionDirection);
                 }
             }else{
-                ContactWrapper cw = playerRect.RI_Solver(target,entity.getRect());
+                ContactWrapper cw = playerRectf.RI_Solver(target,entity.getRect());
                 if (cw != null && cw.d!=Direction.NONE) {
                     return player.onEntityCollision(entity,cw.d);
-                }else if(playerRect.overlap(entity.getRect())){
-                    return player.onEntityCollision(entity,playerRect.getDirection(entity.getRect()));
+                }else if(playerRectf.overlap(entity.getRect())){
+                    return player.onEntityCollision(entity, playerRectf.getDirection(entity.getRect()));
                 }
             }
             return false;
@@ -136,7 +133,7 @@ public abstract class MovingEntity extends Entity {
     private Vec2f rayCollisionFast(Vec2f pos, Vec2f worldSize) {
         list.clear();
 
-        var myRect = new Rect(position.cpy(),size.cpy());
+        var myRect = new Rectf(position.cpy(),size.cpy());
 
         ArrayList<CollisionObject> potentialCollisions = findTileCollisions(
             position,
@@ -148,9 +145,9 @@ public abstract class MovingEntity extends Entity {
 
         Vec2f cp = pos.cpy();
         for (CollisionObject co : potentialCollisions) {
-            ContactWrapper cw = myRect.RI_Solver(cp, co.rect);
+            ContactWrapper cw = myRect.RI_Solver(cp, co.rectf);
             if (cw != null && cw.d!=Direction.NONE) {
-                onCollision(cw.d,co.rect.pos.toVec2i(),co.type);
+                onCollision(cw.d,co.rectf.pos.toVec2i(),co.type);
                 cp = cw.cp.cpy();
             }
         }
@@ -164,10 +161,10 @@ public abstract class MovingEntity extends Entity {
 	    sortCollisionsByDistance(potentialCollisions,myRect);
 
         for (CollisionObject co : potentialCollisions) {
-            if(myRect.overlap(co.rect)){
-                Rect r = new Rect(cp.cpy(),size.cpy());
-                Direction d = r.staticCollisionSolver(co.rect);
-                onCollision(d,co.rect.pos.toVec2i(),co.type);
+            if(myRect.overlap(co.rectf)){
+                Rectf r = new Rectf(cp.cpy(),size.cpy());
+                Direction d = r.staticCollisionSolver(co.rectf);
+                onCollision(d,co.rectf.pos.toVec2i(),co.type);
                 cp = r.pos.cpy();
             }
         }
@@ -188,23 +185,23 @@ public abstract class MovingEntity extends Entity {
 
         for (int x = n_start.x; x < n_end.x; x++) {
             for (int y = n_start.y; y < n_end.y; y++) {
-                Rect tileRect = new Rect(new Vec2f(x,y),new Vec2f(1.0f,1.0f));
+                Rectf tileRectf = new Rectf(new Vec2f(x,y),new Vec2f(1.0f,1.0f));
 
                 WorldObject worldObject = GameState.INSTANCE.world.at(new Vec2i(x,y));
                 if (worldObject != WorldObject.NONE && worldObject.isTile()) {
                     //if (sweptRect.overlap(tileRect))
-                    collisions.add(new CollisionObject(tileRect, Direction.NONE, worldObject));
+                    collisions.add(new CollisionObject(tileRectf, Direction.NONE, worldObject));
                 }
             }
         }
         return collisions;
     }
 
-    private void sortCollisionsByDistance(ArrayList<CollisionObject> collisions, Rect entityRect) {
+    private void sortCollisionsByDistance(ArrayList<CollisionObject> collisions, Rectf entityRectf) {
         collisions.sort((r1,r2) -> {
-            Vec2f me = entityRect.mid();
-            float d1 = r1.rect.mid().sub(me).len();
-            float d2 = r2.rect.mid().sub(me).len();
+            Vec2f me = entityRectf.mid();
+            float d1 = r1.rectf.mid().sub(me).len();
+            float d2 = r2.rectf.mid().sub(me).len();
             return Float.compare(d1,d2);
         });
     }
@@ -213,12 +210,12 @@ public abstract class MovingEntity extends Entity {
     abstract void onCollision(Direction direction,Vec2i pos,WorldObject object);
 
     private static class CollisionObject {
-        public final Rect rect;
+        public final Rectf rectf;
         public Direction direction;
         public final WorldObject type;
 
-        public CollisionObject(Rect rect, Direction direction, WorldObject type) {
-            this.rect = rect;
+        public CollisionObject(Rectf rectf, Direction direction, WorldObject type) {
+            this.rectf = rectf;
             this.direction = direction;
             this.type = type;
         }

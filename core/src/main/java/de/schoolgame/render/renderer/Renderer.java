@@ -1,17 +1,18 @@
 package de.schoolgame.render.renderer;
 
 import com.badlogic.gdx.utils.ScreenUtils;
+import de.schoolgame.render.gui.screens.EscapeScreen;
 import de.schoolgame.state.GameState;
 
 public class Renderer implements IRenderer {
     private final WorldRenderer worldRenderer;
     private final ImGuiRenderer imGuiRenderer;
-    private final GuiRenderer guiRenderer;
+
+    private final static EscapeScreen escapeScreen = new EscapeScreen();
 
     public Renderer() {
         imGuiRenderer = new ImGuiRenderer();
         worldRenderer = new WorldRenderer();
-        guiRenderer = new GuiRenderer();
     }
 
     public void render() {
@@ -34,7 +35,12 @@ public class Renderer implements IRenderer {
                 break;
         }
 
-        guiRenderer.render();
+        if (GameState.INSTANCE.escapeFlag) {
+            escapeScreen.render();
+            return;
+        }
+
+        GameState.INSTANCE.screen.render();
     }
 
     public void dispose() {

@@ -4,6 +4,8 @@ import de.schoolgame.network.ServerConnection;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.render.AssetManager;
 import de.schoolgame.render.Camera;
+import de.schoolgame.render.gui.Screen;
+import de.schoolgame.render.gui.screens.MainMenuScreen;
 import de.schoolgame.utils.Save;
 import de.schoolgame.world.World;
 import de.schoolgame.world.WorldManager;
@@ -13,6 +15,8 @@ public class GameState {
     public static GameState INSTANCE = new GameState();
 
     public GameStateType state = GameStateType.MAIN_MENU;
+
+    public Screen screen = new MainMenuScreen();
 
     public String username = "Anonym";
     public int playerStyle = 1;

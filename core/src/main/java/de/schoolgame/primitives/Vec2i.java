@@ -118,6 +118,10 @@ public class Vec2i implements Externalizable {
         };
     }
 
+    public Vec2i cpy() {
+        return new Vec2i(x,y);
+    }
+
     @Override
     public String toString() {
         return "Vec2i [x=" + x + ", y=" + y + "]";
