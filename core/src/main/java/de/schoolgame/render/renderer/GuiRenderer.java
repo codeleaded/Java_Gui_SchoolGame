@@ -1,8 +1,12 @@
 package de.schoolgame.render.renderer;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+
+import de.schoolgame.primitives.Rect;
+import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.Camera;
 import de.schoolgame.render.texture.Font;
@@ -64,6 +68,17 @@ public class GuiRenderer implements IRenderer {
         int y = camera.viewSize.y - 10 - (7 * font_size);
 
         batch.begin();
+
+        Texture texture = state.assetManager.get("gui/guibg/guibg", Texture.class);
+
+        final float sw = 1.0f / (float)GuiComponent.COUNT_X;
+        final float sh = 1.0f / (float)GuiComponent.COUNT_Y;
+
+        Rect r = GuiComponent.getRect(GuiComponent.ID_SQUAREBOX,GuiComponent.TYPE_YELLOW);
+        r.pos = r.pos.mul(new Vec2f(sw,sh));
+        r.size = r.size.mul(new Vec2f(sw,sh));
+        batch.draw(texture,x - 8,y - 10,100.0f,30.0f,r.pos.x,r.pos.y,r.pos.x + r.size.x,r.pos.y + r.size.y);
+        
         font.draw(batch, "Coins: " + state.player.getCoins(), x, y, font_size);
         batch.end();
     }
@@ -124,6 +139,7 @@ public class GuiRenderer implements IRenderer {
     }
 
     public void renderButton(int x, int y, String text, Vec2i size) {
+        /*
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         Color highlight = new Color(0xffffffff);
         Color light = new Color(0xb4b4b4ff);
@@ -139,8 +155,21 @@ public class GuiRenderer implements IRenderer {
         shapeRenderer.setColor(dark);
         shapeRenderer.rect(x + 3, y + 6, size.x - 6, size.y - 12);
         shapeRenderer.end();
-
+        */
         batch.begin();
+        
+        var state = GameState.INSTANCE;
+        Texture texture = state.assetManager.get("gui/guibg/guibg", Texture.class);
+        final float sw = 1.0f / (float)GuiComponent.COUNT_X;
+        final float sh = 1.0f / (float)GuiComponent.COUNT_Y;
+
+        Rect r = GuiComponent.getRect(GuiComponent.ID_SQUAREBOX,GuiComponent.TYPE_GREEN);
+        r.pos = r.pos.mul(new Vec2f(sw,sh));
+        r.size = r.size.mul(new Vec2f(sw,sh));
+
+        batch.draw(texture,x,y,size.x,size.y,r.pos.x,r.pos.y,r.pos.x + r.size.x,r.pos.y + r.size.y);
+
+
         Font font = GameState.INSTANCE.assetManager.get("gui/font/aseprite_font", Font.class);
         int textX = size.x - font.getWidth(text, 8);
         textX /= 2;

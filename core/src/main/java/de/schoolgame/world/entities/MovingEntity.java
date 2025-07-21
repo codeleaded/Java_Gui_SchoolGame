@@ -1,13 +1,18 @@
 package de.schoolgame.world.entities;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.badlogic.gdx.Gdx;
-import de.schoolgame.primitives.*;
+
+import de.schoolgame.primitives.ContactWrapper;
+import de.schoolgame.primitives.Direction;
+import de.schoolgame.primitives.Rect;
+import de.schoolgame.primitives.Vec2f;
+import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public abstract class MovingEntity extends Entity {
     public static final float DEFAULT_GRAVITY = -25.0f;
@@ -89,6 +94,11 @@ public abstract class MovingEntity extends Entity {
         if (position.x >= worldSize.x - size.x) {
             position.x = worldSize.x - size.x;
             onCollision(Direction.LEFT,new Vec2i((int)(worldSize.x - size.x),0),WorldObject.WORLD_BORDER);
+
+            if(this instanceof PlayerEntity pe){
+                GameState.INSTANCE.state = GameState.GameStateType.WORLD_SELECT;
+                return;
+            }
         }
         if (position.y <= 0.0f && GRAVITY > 0.0f) {
             position.y = 0.0f;

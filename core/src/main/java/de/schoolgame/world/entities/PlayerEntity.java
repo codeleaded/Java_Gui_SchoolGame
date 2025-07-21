@@ -156,7 +156,7 @@ public class PlayerEntity extends MovingEntity {
                     sound.play(1.0f);
                 }
                 if (onGround || stateTime - coyote < COYOTE_TIME) {
-                    velocity.y = 12.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
+                    velocity.y = 14.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
                     this.coyote = 0.0f;
                     Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump", Sound.class);
                     sound.play(1.0f);
@@ -260,7 +260,11 @@ public class PlayerEntity extends MovingEntity {
         }
 
         if (object == WorldObject.BRICK) {
-            if ((type == UP && velocity.y < 0.0f) || (type == DOWN && velocity.y > 0.0f)){
+            if (type == DOWN && (GRAVITY < 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
+                var world = GameState.INSTANCE.world;
+                world.addAt(pos,WorldObject.NONE);
+            }
+            if (type == UP && (GRAVITY > 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
                 var world = GameState.INSTANCE.world;
                 world.addAt(pos,WorldObject.NONE);
             }
