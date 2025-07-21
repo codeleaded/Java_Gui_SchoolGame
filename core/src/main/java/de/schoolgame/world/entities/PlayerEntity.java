@@ -333,6 +333,9 @@ public class PlayerEntity extends MovingEntity {
         if (entity instanceof ChemikalienEntity) {
             this.kill();
         }
+        if (entity instanceof BunsenbrennerEntity) {
+            this.kill();
+        }
 
         if (entity instanceof RoamerEntity) {
             if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
