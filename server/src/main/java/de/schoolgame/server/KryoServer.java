@@ -21,7 +21,7 @@ public class KryoServer {
     Server server;
 
     public KryoServer() {
-        String config = Gdx.files.internal("./config/server.toml").readString();
+        String config = Gdx.files.internal("config/server.toml").readString();
         TomlParseResult toml = Toml.parse(config);
 
         server = new Server();

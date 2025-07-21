@@ -14,7 +14,7 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
 public class WorldManager {
-    public static String WORLD_FOLDER = "./worlds/";
+    public static String WORLD_FOLDER = "assets/worlds/";
 
     private final HashMap<String, Save> worlds = new HashMap<>();
 

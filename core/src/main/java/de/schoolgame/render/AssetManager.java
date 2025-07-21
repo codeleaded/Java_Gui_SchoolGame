@@ -19,13 +19,14 @@ public class AssetManager {
 
     public <T> T get(String path, Class<T> type) {
         path = path + "." + AssetUtils.getType(type);
-        if (!path.startsWith("./")) path = "./" + path;
+        if (!path.startsWith("assets/")) path = "assets/" + path;
         if (!assets.containsKey(path)) throw new IllegalArgumentException("Asset not loaded: " + path);
         return type.cast(assets.get(path));
     }
 
     public void load(String path) throws IllegalStateException, NullPointerException {
         if (path == null) throw new IllegalArgumentException("Path must not be null");
+        if (!path.startsWith("assets/")) path = "assets/" + path;
 
         TomlParseResult asset = AssetUtils.getAsset(path);
         String type = AssetUtils.getTypeString(asset);

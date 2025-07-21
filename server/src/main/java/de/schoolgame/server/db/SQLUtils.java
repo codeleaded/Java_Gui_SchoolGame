@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class SQLUtils {
     public static String getStatement(String filename) {
-        FileHandle file = Gdx.files.internal("./sql/" + filename);
+        FileHandle file = Gdx.files.internal("sql/" + filename);
         return file.readString();
     }
 

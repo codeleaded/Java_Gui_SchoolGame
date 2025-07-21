@@ -44,7 +44,7 @@ public class SplashScreen extends ApplicationAdapter {
 
     @Override
     public void create() {
-        loadingTexture = new Texture("entities/coin/coin.png");
+        loadingTexture = new Texture("assets/entities/coin/coin.png");
         var spriteSheet = new SpriteSheet(loadingTexture, new Vec2i(32, 32), 50);
         loadingAnimation = new Animation(0.03f, spriteSheet.getRegions());
         shapeRenderer = new ShapeRenderer();

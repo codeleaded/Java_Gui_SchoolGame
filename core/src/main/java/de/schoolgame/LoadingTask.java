@@ -30,7 +30,7 @@ public class LoadingTask {
         addTask("Camera", () -> GameState.INSTANCE.camera = new Camera());
 
         ArrayList<FileHandle> paths = new ArrayList<>();
-        paths.add(Gdx.files.internal("."));
+        paths.add(Gdx.files.internal("assets/"));
 
         while (!paths.isEmpty()) {
             FileHandle file = paths.removeFirst();

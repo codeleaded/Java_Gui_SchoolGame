@@ -28,7 +28,7 @@ public class ServerConnection {
     }
 
     public boolean connect() {
-        String config = Gdx.files.internal("./config/server.toml").readString();
+        String config = Gdx.files.internal("config/server.toml").readString();
         TomlParseResult toml = Toml.parse(config);
 
         try {
