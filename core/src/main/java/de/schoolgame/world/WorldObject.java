@@ -3,15 +3,7 @@ package de.schoolgame.world;
 import com.badlogic.gdx.graphics.Color;
 
 import de.schoolgame.primitives.Vec2f;
-import de.schoolgame.world.entities.CoinEntity;
-import de.schoolgame.world.entities.EichelsbacherEntity;
-import de.schoolgame.world.entities.Fireflower;
-import de.schoolgame.world.entities.FlashEntity;
-import de.schoolgame.world.entities.FriedrichEntity;
-import de.schoolgame.world.entities.KloEntity;
-import de.schoolgame.world.entities.KoenigEntity;
-import de.schoolgame.world.entities.RoamerEntity;
-import de.schoolgame.world.entities.TeslaEntity;
+import de.schoolgame.world.entities.*;
 import de.schoolgame.world.tiles.Brick;
 import de.schoolgame.world.tiles.Corridor;
 import de.schoolgame.world.tiles.Grass;
@@ -46,7 +38,8 @@ public enum WorldObject {
     CORRIDOR(new Corridor()),
     QUESTMARK(new QuestMark()),
     OPENQUESTMARK(new OpenQuestMark()),
-    BRICK(new Brick())
+    BRICK(new Brick()),
+    CHEMIKALIEN(ChemikalienEntity.class)
     ;
 
     private final Object object;

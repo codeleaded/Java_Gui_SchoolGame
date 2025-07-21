@@ -330,6 +330,9 @@ public class PlayerEntity extends MovingEntity {
             //sound.play(1.0f);
             kill();
         }
+        if (entity instanceof ChemikalienEntity) {
+            this.kill();
+        }
 
         if (entity instanceof RoamerEntity) {
             if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
