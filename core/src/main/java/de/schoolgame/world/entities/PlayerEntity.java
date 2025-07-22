@@ -4,7 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Affine2;
+
 import de.schoolgame.primitives.Direction;
+import static de.schoolgame.primitives.Direction.DOWN;
+import static de.schoolgame.primitives.Direction.LEFT;
+import static de.schoolgame.primitives.Direction.NONE;
+import static de.schoolgame.primitives.Direction.RIGHT;
+import static de.schoolgame.primitives.Direction.UP;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.SpriteSheet;
@@ -12,8 +18,6 @@ import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.Score;
 import de.schoolgame.world.WorldObject;
-
-import static de.schoolgame.primitives.Direction.*;
 
 public class PlayerEntity extends MovingEntity {
     public static float COYOTE_TIME = 0.2f;
@@ -41,7 +45,7 @@ public class PlayerEntity extends MovingEntity {
 
         this.coins = 0;
 	    this.power = 0;
-	    this.lookDir = false;
+	    this.lookDir = true;
 	    this.stamp = false;
 	    this.reverse = false;
         this.onGround = false;
@@ -114,6 +118,8 @@ public class PlayerEntity extends MovingEntity {
         if(getDead()) return;
 
         addScore(-Score.MP_DEATH);
+        velocity.x = 0;
+        acceleration.x = 0;
 
         this.dead = true;
         velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
@@ -166,32 +172,40 @@ public class PlayerEntity extends MovingEntity {
         }
         switch (direction) {
             case UP -> {
-                setJump(true);
-                if (onWall) {
-                    velocity.x = 4.0f * (slideDir ? 1.0f : -1.0f);
-                    velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
-                    Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump", Sound.class);
-                    sound.play(1.0f);
-                }
-                if (onGround || stateTime - coyote < COYOTE_TIME) {
-                    velocity.y = 14.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
-                    this.coyote = 0.0f;
-                    Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump", Sound.class);
-                    sound.play(1.0f);
+                if(!dead){
+                    setJump(true);
+                    if (onWall) {
+                        velocity.x = 4.0f * (slideDir ? 1.0f : -1.0f);
+                        velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
+                        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump", Sound.class);
+                        sound.play(1.0f);
+                    }
+                    if (onGround || stateTime - coyote < COYOTE_TIME) {
+                        velocity.y = 14.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
+                        this.coyote = 0.0f;
+                        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump", Sound.class);
+                        sound.play(1.0f);
+                    }
                 }
             }
             case DOWN -> {
-                setStamp(true);
-                if (velocity.y * (GRAVITY > 0.0f ? -1.0f : 1.0f)>0)
-                    velocity.y = 8.0f * (GRAVITY > 0.0f ? 1.0f : -1.0f);
+                if(!dead){
+                    setStamp(true);
+                    if (velocity.y * (GRAVITY > 0.0f ? -1.0f : 1.0f)>0)
+                        velocity.y = 8.0f * (GRAVITY > 0.0f ? 1.0f : -1.0f);
+                }
             }
             case LEFT -> {
-                acceleration.x = -10;
-                lookDir = false;
+                if(!dead){
+                    acceleration.x = -10;
+                    lookDir = false;
+                }
             }
             case RIGHT -> {
-                acceleration.x = 10;
-                lookDir = true;
+                if(!dead){
+                    acceleration.x = 10;
+                    lookDir = true;
+                }
             }
         }
         return true;
