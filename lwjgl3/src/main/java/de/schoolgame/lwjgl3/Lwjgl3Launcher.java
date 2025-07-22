@@ -2,15 +2,13 @@ package de.schoolgame.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import de.schoolgame.primitives.Vec2i;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
+import de.schoolgame.primitives.Vec2i;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
     public static void main(String[] args) {
+        /*
         try {
             File folder = new File("./logs/");
             folder.mkdirs();
@@ -31,6 +29,7 @@ public class Lwjgl3Launcher {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        */
 
         if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
         var displayMode = Lwjgl3ApplicationConfiguration.getDisplayMode();

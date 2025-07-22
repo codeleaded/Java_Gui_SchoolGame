@@ -1,11 +1,19 @@
 package de.schoolgame.world.entities;
 
+import java.util.Random;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Affine2;
+
 import de.schoolgame.network.packet.ScorePacket;
 import de.schoolgame.primitives.Direction;
+import static de.schoolgame.primitives.Direction.DOWN;
+import static de.schoolgame.primitives.Direction.LEFT;
+import static de.schoolgame.primitives.Direction.NONE;
+import static de.schoolgame.primitives.Direction.RIGHT;
+import static de.schoolgame.primitives.Direction.UP;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.SpriteSheet;
@@ -13,8 +21,6 @@ import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.Score;
 import de.schoolgame.world.WorldObject;
-
-import static de.schoolgame.primitives.Direction.*;
 
 public class PlayerEntity extends MovingEntity {
     public static float COYOTE_TIME = 0.2f;
@@ -129,8 +135,15 @@ public class PlayerEntity extends MovingEntity {
         this.dead = true;
         velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
 
-        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/explosion", Sound.class);
-        sound.play(2.0f);
+        Sound[] sounds = {
+            GameState.INSTANCE.assetManager.get("audio/brackeys/explosion/explosion", Sound.class),
+            GameState.INSTANCE.assetManager.get("audio/dead1/dead1", Sound.class),
+            GameState.INSTANCE.assetManager.get("audio/dead2/dead2", Sound.class),
+            GameState.INSTANCE.assetManager.get("audio/dead3/dead3", Sound.class),
+            GameState.INSTANCE.assetManager.get("audio/dead4/dead4", Sound.class)
+        };
+
+        sounds[new Random().nextInt(0,sounds.length)].play(2.0f);
     }
 
     public void cancelMovement(Direction direction) {
@@ -182,13 +195,13 @@ public class PlayerEntity extends MovingEntity {
                     if (onWall) {
                         velocity.x = 4.0f * (slideDir ? 1.0f : -1.0f);
                         velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
-                        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump", Sound.class);
+                        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump/jump", Sound.class);
                         sound.play(1.0f);
                     }
                     if (onGround || stateTime - coyote < COYOTE_TIME) {
                         velocity.y = 14.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
                         this.coyote = 0.0f;
-                        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump", Sound.class);
+                        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump/jump", Sound.class);
                         sound.play(1.0f);
                     }
                 }
@@ -353,7 +366,7 @@ public class PlayerEntity extends MovingEntity {
             addCoins(1);
             addScore(Score.MP_COIN);
 
-            Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/coin", Sound.class);
+            Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/coin/coin", Sound.class);
             sound.play(1.0f);
             return true;
         }
@@ -362,36 +375,32 @@ public class PlayerEntity extends MovingEntity {
 
             addScore(Score.MP_FIREFLOWER);
 
-            Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/power_up", Sound.class);
+            Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/powerup/powerup", Sound.class);
             sound.play(1.0f);
             return true;
         }
         if (entity instanceof PotionEntity) {
             addScore(Score.MP_POTION);
 
-            Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/power_up", Sound.class);
+            Sound sound = GameState.INSTANCE.assetManager.get("audio/upgrade/upgrade", Sound.class);
             sound.play(1.0f);
             return true;
         }
 
         if (entity instanceof TeslaEntity) {
-            //Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/coin", Sound.class);
-            //sound.play(1.0f);
             kill();
         }
         if (entity instanceof KloEntity) {
-            //Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/coin", Sound.class);
-            //sound.play(1.0f);
             kill();
         }
         if (entity instanceof ChemikalienEntity) {
-            this.kill();
+            kill();
         }
         if (entity instanceof BunsenbrennerEntity) {
-            this.kill();
+            kill();
         }
         if (entity instanceof CableEntity) {
-            this.kill();
+            kill();
         }
 
         if (entity instanceof RoamerEntity) {
@@ -433,6 +442,10 @@ public class PlayerEntity extends MovingEntity {
                 onGround = true;
                 move(Direction.UP);
                 addScore(Score.MP_KILL_EICHELSBACHER);
+
+                Sound sound = GameState.INSTANCE.assetManager.get("audio/endleveldone/endleveldone", Sound.class);
+                sound.play(1.0f);
+
                 fe.kill();
                 return false;
             }
