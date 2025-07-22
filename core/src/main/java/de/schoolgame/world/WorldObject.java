@@ -4,20 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.world.entities.*;
-import de.schoolgame.world.tiles.Bath;
-import de.schoolgame.world.tiles.Brick;
-import de.schoolgame.world.tiles.Concrete;
-import de.schoolgame.world.tiles.Corridor;
-import de.schoolgame.world.tiles.Grass;
-import de.schoolgame.world.tiles.Hurde;
-import de.schoolgame.world.tiles.Laboratorytable;
-import de.schoolgame.world.tiles.OpenQuestMark;
-import de.schoolgame.world.tiles.Podest;
-import de.schoolgame.world.tiles.QuestMark;
-import de.schoolgame.world.tiles.Spike;
-import de.schoolgame.world.tiles.Table;
-import de.schoolgame.world.tiles.Test;
-import de.schoolgame.world.tiles.Track;
+import de.schoolgame.world.tiles.*;
 
 public enum WorldObject {
     NONE(null),
@@ -34,6 +21,7 @@ public enum WorldObject {
     FIREFLOWER(Fireflower.class),
     FLASH(FlashEntity.class),
     SPIKE(new Spike()),
+    REDSPIKE(new Redspike()),
     WORLD_BORDER(null),
     TRACK(new Track()),
     LABORATROYTABLE(new Laboratorytable()),
