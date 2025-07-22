@@ -28,6 +28,7 @@ public enum WorldObject {
     TABLE(new Table()),
     HURDE(new Hurde()),
     CORRIDOR(new Corridor()),
+    RECORRIDOR(new Redcorridor()),
     CONCRETE(new Concrete()),
     BATH(new Bath()),
     QUESTMARK(new QuestMark()),
