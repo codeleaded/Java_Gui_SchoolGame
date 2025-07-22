@@ -55,6 +55,13 @@ public class ServerConnection {
     }
 
     public void sendPacket(Packet packet, boolean reliable) {
+        if (!client.isConnected()) {
+            connect();
+            if (!connected) {
+                return;
+            }
+        }
+
         if (reliable) client.sendTCP(packet);
         else client.sendUDP(packet);
     }
