@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Affine2;
 
+import de.schoolgame.network.packet.ScorePacket;
 import de.schoolgame.primitives.Direction;
 import static de.schoolgame.primitives.Direction.DOWN;
 import static de.schoolgame.primitives.Direction.LEFT;
@@ -18,7 +19,6 @@ import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.Score;
 import de.schoolgame.world.WorldObject;
-import de.schoolgame.world.tiles.Redspike;
 
 public class PlayerEntity extends MovingEntity {
     public static float COYOTE_TIME = 0.2f;
@@ -86,21 +86,26 @@ public class PlayerEntity extends MovingEntity {
     public int getPower() { return this.power; }
     public boolean getGodmode() { return this.godmode; }
 
+    public void addCoins(int coins) {
+        if(GameState.INSTANCE.getState() == GameState.GameStateType.GAME){
+            this.coins += coins;
+        }
+    }
     public void addScore(Vec2f pos,int value) {
-        GameState.INSTANCE.score += value;
+        if(GameState.INSTANCE.getState() == GameState.GameStateType.GAME){
+            GameState.INSTANCE.score += value;
 
-        var world = GameState.INSTANCE.world;
-        var e = (PointsEntity)WorldObject.POINTS.createEntity(pos);
-        e.value = value;
-        world.spawnEntity(pos,e);
+            var world = GameState.INSTANCE.world;
+            var e = (PointsEntity)WorldObject.POINTS.createEntity(pos);
+            e.value = value;
+            world.spawnEntity(pos,e);
+
+            var s = GameState.INSTANCE.server;
+            s.sendPacket(new ScorePacket(s.getUUID(),value),true);
+        }
     }
     public void addScore(int value) {
-        GameState.INSTANCE.score += value;
-
-        var world = GameState.INSTANCE.world;
-        var e = (PointsEntity)WorldObject.POINTS.createEntity(position);
-        e.value = value;
-        world.spawnEntity(position,e);
+        addScore(position,value);
     }
 
     public void checkKill() {
@@ -109,6 +114,8 @@ public class PlayerEntity extends MovingEntity {
         if(getDead() && (position.y < -1.0f || position.y > worldSize.y || position.x < -1.0f || position.x > worldSize.x)) {
             position = GameState.INSTANCE.world.getSpawn().toVec2f().add(new Vec2f(0.0f,0.001f));
             velocity = new Vec2f(0.0f,0.0f);
+            MovingEntity.GRAVITY *= (MovingEntity.GRAVITY < 0.0f ? 1.0f : -1.0f);
+            
             dead = false;
             setPower(0);
         }
@@ -291,6 +298,9 @@ public class PlayerEntity extends MovingEntity {
         if (object == WorldObject.SPIKE) {
             kill();
         }
+        if (object == WorldObject.REDSPIKE) {
+            kill();
+        }
 
         if (object == WorldObject.BRICK) {
             if (type == DOWN && (GRAVITY < 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
@@ -343,8 +353,7 @@ public class PlayerEntity extends MovingEntity {
         if (getDead()) return false;
 
         if (entity instanceof CoinEntity) {
-            coins += 1;
-
+            addCoins(1);
             addScore(Score.MP_COIN);
 
             Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/coin", Sound.class);
@@ -398,7 +407,8 @@ public class PlayerEntity extends MovingEntity {
             kill();
         }
         if (entity instanceof FlashEntity) {
-            kill();
+            MovingEntity.GRAVITY *= -1;
+            return true;
         }
 
         if (entity instanceof FriedrichEntity fe && !fe.getDead()) {
