@@ -3,20 +3,7 @@ package de.schoolgame.world;
 import com.badlogic.gdx.graphics.Color;
 
 import de.schoolgame.primitives.Vec2f;
-import de.schoolgame.world.entities.BunsenbrennerEntity;
-import de.schoolgame.world.entities.ChemikalienEntity;
-import de.schoolgame.world.entities.CoinEntity;
-import de.schoolgame.world.entities.ComputerEntity;
-import de.schoolgame.world.entities.EichelsbacherEntity;
-import de.schoolgame.world.entities.Fireflower;
-import de.schoolgame.world.entities.FlashEntity;
-import de.schoolgame.world.entities.FriedrichEntity;
-import de.schoolgame.world.entities.KloEntity;
-import de.schoolgame.world.entities.KoenigEntity;
-import de.schoolgame.world.entities.PointsEntity;
-import de.schoolgame.world.entities.PotionEntity;
-import de.schoolgame.world.entities.RoamerEntity;
-import de.schoolgame.world.entities.TeslaEntity;
+import de.schoolgame.world.entities.*;
 import de.schoolgame.world.tiles.Bath;
 import de.schoolgame.world.tiles.Brick;
 import de.schoolgame.world.tiles.Concrete;
@@ -62,7 +49,8 @@ public enum WorldObject {
     CHEMIKALIEN(ChemikalienEntity.class),
     COMPUTER(ComputerEntity.class),
     BUNSENBRENNER(BunsenbrennerEntity.class),
-    POTION(PotionEntity.class)
+    POTION(PotionEntity.class),
+    CABLE(CableEntity.class)
     ;
 
     private final Object object;
