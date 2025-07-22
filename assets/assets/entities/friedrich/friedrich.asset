@@ -4,5 +4,5 @@ type = "spritesheet"
 count = 18
 
 [sprite]
-width = 64
-height = 116
+width = 60
+height = 114
