@@ -22,8 +22,11 @@ public class AssetManager {
     public <T> T get(String path, Class<T> type) {
         path = path + "." + AssetUtils.getType(type);
         if (!path.startsWith("assets/")) path = "assets/" + path;
-        if (!assets.containsKey(path)) throw new IllegalArgumentException("Asset not loaded: " + path);
-        return type.cast(assets.get(path));
+        T asset = type.cast(assets.get(path));
+        if (asset == null) {
+            throw new IllegalArgumentException("Asset not loaded: " + path);
+        }
+        return asset;
     }
 
     public void load(String path) throws IllegalStateException, NullPointerException {

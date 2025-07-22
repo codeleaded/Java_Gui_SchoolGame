@@ -4,14 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Affine2;
-
 import de.schoolgame.network.packet.ScorePacket;
 import de.schoolgame.primitives.Direction;
-import static de.schoolgame.primitives.Direction.DOWN;
-import static de.schoolgame.primitives.Direction.LEFT;
-import static de.schoolgame.primitives.Direction.NONE;
-import static de.schoolgame.primitives.Direction.RIGHT;
-import static de.schoolgame.primitives.Direction.UP;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.SpriteSheet;
@@ -19,6 +13,8 @@ import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.Score;
 import de.schoolgame.world.WorldObject;
+
+import static de.schoolgame.primitives.Direction.*;
 
 public class PlayerEntity extends MovingEntity {
     public static float COYOTE_TIME = 0.2f;
@@ -96,12 +92,13 @@ public class PlayerEntity extends MovingEntity {
             GameState.INSTANCE.score += value;
 
             var world = GameState.INSTANCE.world;
-            var e = (PointsEntity)WorldObject.POINTS.createEntity(pos);
+            var e = (PointsEntity) WorldObject.POINTS.createEntity(pos);
+            assert e != null;
             e.value = value;
             world.spawnEntity(pos,e);
 
             var s = GameState.INSTANCE.server;
-            s.sendPacket(new ScorePacket(s.getUUID(),value),true);
+            s.sendPacket(new ScorePacket(s.getUUID(), getScore()),true);
         }
     }
     public void addScore(int value) {
@@ -115,7 +112,7 @@ public class PlayerEntity extends MovingEntity {
             position = GameState.INSTANCE.world.getSpawn().toVec2f().add(new Vec2f(0.0f,0.001f));
             velocity = new Vec2f(0.0f,0.0f);
             MovingEntity.GRAVITY *= (MovingEntity.GRAVITY < 0.0f ? 1.0f : -1.0f);
-            
+
             dead = false;
             setPower(0);
         }

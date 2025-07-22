@@ -14,7 +14,6 @@ CREATE TABLE IF NOT EXISTS worlds(
 );
 
 CREATE TABLE IF NOT EXISTS scores(
-    id serial PRIMARY KEY NOT NULL,
-    client uuid NOT NULL REFERENCES clients(id),
+    client uuid PRIMARY KEY NOT NULL REFERENCES clients(id),
     score integer NOT NULL
 );
