@@ -16,7 +16,7 @@ public class Concrete extends Tile {
 
         int tileSize = state.world.getTileSize();
         byte connections = state.world.connectionsAt(worldPosition);
-        TileSet tileSet = state.assetManager.get("tiles/concrete/concrete", TileSet.class);
+        TileSet tileSet = state.assetManager.get("tiles/concrete/concrete.png", TileSet.class);
         TextureRegion textureRegion = tileSet.getTextureRegion(connections);
 
         batch.draw(textureRegion, drawPosition.x, drawPosition.y, tileSize, tileSize);
