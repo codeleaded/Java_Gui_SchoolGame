@@ -11,7 +11,7 @@ public class CableEntity extends Entity {
     private float stateTime;
 
     public CableEntity(Vec2f position) {
-        super(position, new Vec2f(1.0f, 0.9f));
+        super(position, new Vec2f(1.0f, 0.8f));
         stateTime = 0f;
     }
 
