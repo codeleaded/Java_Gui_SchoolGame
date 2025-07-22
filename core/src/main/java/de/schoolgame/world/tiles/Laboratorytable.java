@@ -16,7 +16,7 @@ public class Laboratorytable extends Tile {
 
         int tileSize = state.world.getTileSize();
         byte connections = state.world.connectionsAt(worldPosition);
-        TileSet tileSet = state.assetManager.get("tiles/table/table", TileSet.class);
+        TileSet tileSet = state.assetManager.get("tiles/laboratorytable/laboratorytable", TileSet.class);
         TextureRegion textureRegion = tileSet.getTextureRegion(connections);
 
         batch.draw(textureRegion, drawPosition.x, drawPosition.y, tileSize, tileSize);
