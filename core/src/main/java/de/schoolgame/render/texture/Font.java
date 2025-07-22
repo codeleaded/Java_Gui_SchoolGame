@@ -1,60 +1,78 @@
 package de.schoolgame.render.texture;
 
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.TextureData;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
-import de.schoolgame.primitives.Rectf;
-import de.schoolgame.primitives.Vec2f;
+import de.schoolgame.primitives.Recti;
 import de.schoolgame.primitives.Vec2i;
+
+import java.util.ArrayList;
+import java.util.Optional;
 
 public class Font {
     TextureRegion[] regions;
 
-    public Font(TextureRegion[] regions) {
-        this.regions = regions;
-
-        TextureData data = regions[0].getTexture().getTextureData();
+    public Font(Texture texture) {
+        TextureData data = texture.getTextureData();
         data.prepare();
         Pixmap p = data.consumePixmap();
 
-        for (TextureRegion region : regions) {
-            Rectf b = calculateBoundary(p, region);
-            region.setRegion((int) b.pos.x, (int) b.pos.y, (int) b.size.x, (int) b.size.y);
+        ArrayList<TextureRegion> regions = new ArrayList<>();
+        regions.add(new TextureRegion(texture, 0, 0, 0, 0));
+        regions.add(new TextureRegion(texture, 0, 0, 0, 0));
+
+        Recti rect = new Recti();
+        while (true) {
+            Optional<Recti> opt = findGlyph(p, rect);
+            if (opt.isEmpty()) break;
+            Recti bounds = opt.get();
+            regions.add(new TextureRegion(texture, bounds.pos.x, bounds.pos.y, bounds.size.x, bounds.size.y));
         }
+        this.regions = regions.toArray(new TextureRegion[0]);
     }
 
-    private static Rectf calculateBoundary(Pixmap p, TextureRegion region) {
-        int sx = region.getRegionX();
-        int sy = region.getRegionY();
-        int xw = sx + region.getRegionWidth();
-        int yh = sy + region.getRegionHeight();
+    private Optional<Recti> findGlyph(Pixmap p, Recti rect) {
+        int key = p.getPixel(0, 0);
 
-        boolean first = false;
-        int fx = 0, fy = 0;
-        int lx = 0, ly = 0;
+        while (p.getPixel(rect.pos.x, rect.pos.y) == key) {
+            rect.pos.x++;
+            if (rect.pos.x >= p.getWidth()) {
+                rect.pos.x = 0;
+                rect.pos.y += rect.size.y;
+                rect.size.y = 1;
 
-        for (int x = sx; x < xw; x++) {
-            for (int y = sy; y < yh; y++) {
-                if (p.getPixel(x, y) != -1) {
-                    lx = x;
-                    ly = y;
-
-                    if (!first) {
-                        first = true;
-                        fx = x;
-                        fy = y;
-                    }
+                if (rect.pos.y >= p.getHeight()) {
+                    return Optional.empty();
                 }
             }
         }
 
-        return new Rectf(new Vec2f(fx, fy), new Vec2f(lx - fx, ly - fy));
+        int pixel = p.getPixel(rect.pos.x, rect.pos.y);
+
+        rect.size.x = 0;
+        while ((rect.pos.x + rect.size.x < p.getWidth()) && (p.getPixel(rect.pos.x + rect.size.x, rect.pos.y) != key)) {
+            rect.size.x++;
+        }
+
+        rect.size.y = 0;
+        while ((rect.pos.y + rect.size.y < p.getHeight()) && (p.getPixel(rect.pos.x, rect.pos.y + rect.size.y) != key)) {
+            rect.size.y++;
+        }
+
+        Recti res;
+        if (pixel != 0xff0000ff)
+            res = new Recti(rect.pos.cpy(), rect.size);
+        else
+            res = new Recti();
+
+        rect.pos.x += rect.size.x;
+        return Optional.of(res);
     }
 
     private int getIndex(char c) {
-        int index = c - ' ';
+        int index = c - ' ' + 2;
         if (index >= 0 && index < regions.length) {
             return index;
         } else {
@@ -107,7 +125,7 @@ public class Font {
                 1.0f,1.0f,
                 angle
             );
-            
+
             xOffset += region.getRegionWidth() * scale;
             xOffset += scale;
         }

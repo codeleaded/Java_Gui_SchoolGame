@@ -17,7 +17,7 @@ public class CharacterSelectScreen extends Screen {
     public CharacterSelectScreen() {
         int spacing = 10;
 
-        TextWidget text = new TextWidget(new Vec2i(spacing, spacing), "Wähle deinen Character und Benutzernamen", 3);
+        TextWidget text = new TextWidget(new Vec2i(spacing, spacing), "Wähle deinen Skin und Namen", 3);
         text.setPos(new Vec2i(spacing, camera.viewSize.y - text.getSize().y - spacing));
         widgets.add(text);
 
