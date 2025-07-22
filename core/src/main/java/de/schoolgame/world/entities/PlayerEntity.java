@@ -298,6 +298,9 @@ public class PlayerEntity extends MovingEntity {
         if (object == WorldObject.SPIKE) {
             kill();
         }
+        if (object == WorldObject.REDSPIKE) {
+            kill();
+        }
 
         if (object == WorldObject.BRICK) {
             if (type == DOWN && (GRAVITY < 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){

@@ -110,9 +110,13 @@ public class SQLUtils {
                 ResultSet res = statement.executeQuery();
 
                 for (int i = 0; i < 10; i++) {
-                    res.next();
-                    scores[i] = res.getInt("score");
-                    names[i] = res.getString("name");
+                    if (res.next()) {
+                        scores[i] = res.getInt("score");
+                        names[i] = res.getString("name");
+                    } else {
+                        scores[i] = 0;
+                        names[i] = "";
+                    }
                 }
             }
         } catch (SQLException e) {
