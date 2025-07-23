@@ -5,7 +5,12 @@ import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.render.AssetManager;
 import de.schoolgame.render.Camera;
 import de.schoolgame.render.gui.Screen;
-import de.schoolgame.render.gui.screens.*;
+import de.schoolgame.render.gui.screens.CharacterSelectScreen;
+import de.schoolgame.render.gui.screens.CreditScreen;
+import de.schoolgame.render.gui.screens.HudScreen;
+import de.schoolgame.render.gui.screens.MainMenuScreen;
+import de.schoolgame.render.gui.screens.ScoreboardScreen;
+import de.schoolgame.render.gui.screens.WorldSelectScreen;
 import de.schoolgame.utils.Save;
 import de.schoolgame.world.World;
 import de.schoolgame.world.WorldManager;
@@ -61,6 +66,10 @@ public class GameState {
 
     public void setState(GameStateType state) {
         this.state = state;
+            
+        if(GameState.INSTANCE.player!=null)
+            GameState.INSTANCE.player.setDead(false);
+
         switch (state) {
             case CHARACTER_SELECT:
                 this.screen = new CharacterSelectScreen();
@@ -76,11 +85,12 @@ public class GameState {
                 break;
             case WORLD_EDITOR:
             case DEBUG:
-                GameState.INSTANCE.player.setGodmode(true);
-                GameState.INSTANCE.player.setDead(false);
-            case GAME:
-                GameState.INSTANCE.player.setGodmode(false);
                 this.screen = new HudScreen();
+                GameState.INSTANCE.player.setGodmode(true);
+                break;
+            case GAME:
+                this.screen = new HudScreen();
+                GameState.INSTANCE.player.setGodmode(false);
                 break;
             case CREDITS:
                 this.screen = new CreditScreen();

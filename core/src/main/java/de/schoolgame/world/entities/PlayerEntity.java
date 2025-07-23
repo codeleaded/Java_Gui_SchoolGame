@@ -79,6 +79,8 @@ public class PlayerEntity extends MovingEntity {
     }
     public void setGodmode(boolean godmode) {
         this.godmode = godmode;
+        GameState.INSTANCE.debug.inputGodmode.set(godmode);
+        
         if(godmode){
             velocity.x = 0.0f;
             velocity.y = 0.0f;
