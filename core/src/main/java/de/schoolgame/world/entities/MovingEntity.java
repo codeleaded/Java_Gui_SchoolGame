@@ -41,8 +41,8 @@ public abstract class MovingEntity extends Entity {
     }
 
     public Rectf getHitbox(){
-        //return new Rectf(position.cpy(),size.cpy());
-        return new Rectf(position.add(size.mul(0.05f,0.0f)),size.mul(0.9f,0.9f));
+        return new Rectf(position.cpy(),size.cpy());
+        //return new Rectf(position.add(size.mul(0.05f,0.0f)),size.mul(0.9f,0.9f));
     }
 
     @Override
@@ -177,7 +177,7 @@ public abstract class MovingEntity extends Entity {
         for (CollisionObject co : potentialCollisions) {
             ContactWrapper cw = myRect.RI_Solver(cp, co.rectf);
 
-            if (cw != null && cw.d!=Direction.NONE && (cw.d==Direction.UP && doesntStamp) && co.type.getTile().collisiontype == cw.d){
+            if (cw != null && cw.d!=Direction.NONE && (co.type.getTile().collisiontype!=Direction.UP || (co.type.getTile().collisiontype==Direction.UP && cw.d==Direction.UP && doesntStamp)) && (co.type.getTile().collisiontype == Direction.ALL || co.type.getTile().collisiontype == cw.d)){
                 onCollision(cw.d,co.rectf.pos.toVec2i(),co.type);
                 cp = cw.cp.cpy();
             }
@@ -196,7 +196,7 @@ public abstract class MovingEntity extends Entity {
                 Rectf r = new Rectf(cp.cpy(),myRect.size.cpy());
                 Direction d = r.staticCollisionSolver(co.rectf);
 
-                if(d!=Direction.NONE && ((co.type != WorldObject.PODEST && co.type != WorldObject.TABLE && co.type != WorldObject.LABORATROYTABLE) || (d==Direction.UP && velocity.y<0.0f && doesntStamp))){
+                if(d!=Direction.NONE && (d!=Direction.UP || (co.type.getTile().collisiontype==Direction.UP && d==Direction.UP && doesntStamp)) && (co.type.getTile().collisiontype == Direction.ALL || co.type.getTile().collisiontype == d)){
                     onCollision(d,co.rectf.pos.toVec2i(),co.type);
                     cp = r.pos.cpy();
                 }

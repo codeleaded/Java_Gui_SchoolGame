@@ -477,15 +477,17 @@ public class PlayerEntity extends MovingEntity {
         SpriteSheet texture = state.assetManager.get("entities/player/player_" + style, SpriteSheet.class);
         int index = getTexIndex() + ((lookDir && MovingEntity.GRAVITY < 0.0f) || (!lookDir && MovingEntity.GRAVITY > 0.0f) ? 0 : 9);
 
+        Vec2f rendersize = size;//.mul(1.1f,1.1f);
+
         Affine2 tf = new Affine2();
         tf.translate(position.x * tileSize, position.y * tileSize);
-        tf.translate(0.5f * size.x * tileSize,0.5f * size.y * tileSize);
+        tf.translate(0.5f * rendersize.x * tileSize,0.5f * rendersize.y * tileSize);
         tf.rotate(MovingEntity.GRAVITY < 0.0f ? 0.0f : 180.0f);
-        tf.translate(-0.5f * size.x * tileSize,-0.5f * size.y * tileSize);
+        tf.translate(-0.5f * rendersize.x * tileSize,-0.5f * rendersize.y * tileSize);
 
         batch.draw(
             texture.getRegions()[index],
-            size.x * tileSize, size.y * tileSize,// * (1.0f / (1.0f - (6.0f / 32.0f)))
+            rendersize.x * tileSize, rendersize.y * tileSize,// * (1.0f / (1.0f - (6.0f / 32.0f)))
             tf
         );
     }
