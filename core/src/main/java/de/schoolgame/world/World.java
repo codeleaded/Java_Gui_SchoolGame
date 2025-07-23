@@ -1,13 +1,13 @@
 package de.schoolgame.world;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.TileSet;
 import de.schoolgame.state.GameState;
 import de.schoolgame.utils.Save;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class World {
     private WorldObject[][] worldObjects;
@@ -37,20 +37,35 @@ public class World {
     }
 
     public World(Save s) {
-        WorldObject[][] original = s.worldObjects();
+        WorldObject[][] original = null;
+
+        if(s!=null){
+            original = s.worldObjects();
+            this.tileSize = s.tileSize();
+            this.spawn = s.spawn().cpy();
+        }else{
+            original = new WorldObject[10][10];
+            for(int i = 0;i<original.length;i++){
+                for(int j = 0;j<original[i].length;j++){
+                    original[i][j] = WorldObject.NONE;
+                }
+            }
+
+            this.tileSize = 32;
+            this.spawn = new Vec2i(0,0);
+        }
+
         WorldObject[][] copy = new WorldObject[original.length][];
+        
         for (int i = 0; i < original.length; i++) {
             copy[i] = original[i].clone(); // deep copy each row
         }
 
         this.worldObjects = copy;
         this.size = new Vec2i(copy.length, copy[0].length);
-        this.tileSize = s.tileSize();
         this.entities = new ArrayList<>();
-        this.spawn = s.spawn().cpy();
-
         connectionsCache = new byte[size.x][size.y];
-        updateConnections();
+        updateConnections(); 
     }
 
     public void summonEntities() {

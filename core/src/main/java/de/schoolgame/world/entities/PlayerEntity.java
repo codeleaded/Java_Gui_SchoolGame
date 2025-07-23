@@ -139,6 +139,7 @@ public class PlayerEntity extends MovingEntity {
             velocity = new Vec2f(0.0f,0.0f);
             MovingEntity.GRAVITY *= (MovingEntity.GRAVITY < 0.0f ? 1.0f : -1.0f);
 
+            lookDir = true;
             dead = false;
             setPower(0);
         }
