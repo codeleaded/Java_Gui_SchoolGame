@@ -21,6 +21,17 @@ public class MainMenuScreen extends Screen {
         if (GameState.INSTANCE.server.isConnected()) {
             widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 3, () -> GameState.INSTANCE.setState(GameState.GameStateType.SCOREBOARD)));
             x += squareButtonSize.x + buttonSpacing;
+
+            widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 8, () -> {}));
+            x += squareButtonSize.x + buttonSpacing;
+        } else {
+            widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 7, () -> {
+                var state = GameState.INSTANCE;
+                state.server.connect();
+                state.server.initiallyConnected = state.server.isConnected();
+                state.setState(GameState.GameStateType.MAIN_MENU);
+            }));
+            x += squareButtonSize.x + buttonSpacing;
         }
 
         widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 5, () -> GameState.INSTANCE.setState(GameState.GameStateType.CREDITS)));
@@ -28,7 +39,6 @@ public class MainMenuScreen extends Screen {
         x = ((camera.viewSize.x - bigButtonSize.x) / 2) + (bigButtonSize.x - squareButtonSize.x);
 
         widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 2, () -> Gdx.app.exit()));
-
         y += squareButtonSize.y + buttonSpacing;
         x = (camera.viewSize.x - bigButtonSize.x) / 2;
 
@@ -38,7 +48,6 @@ public class MainMenuScreen extends Screen {
             state.player = new PlayerEntity(new Vec2f(1.0f,1.0f));
             state.setState(GameState.GameStateType.WORLD_EDITOR);
         }));
-
         y += bigButtonSize.y + buttonSpacing;
 
         widgets.add(new TextureButtonWidget(new Vec2i(x, y), bigButtonSize, 0, () -> {
