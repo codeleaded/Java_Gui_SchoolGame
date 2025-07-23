@@ -1,6 +1,7 @@
 package de.schoolgame.render.gui.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.gui.Screen;
@@ -10,13 +11,17 @@ import de.schoolgame.world.World;
 import de.schoolgame.world.entities.PlayerEntity;
 
 public class MainMenuScreen extends Screen {
+    protected float stateTime;
+
     public MainMenuScreen() {
+        stateTime = 0f;
+
         Vec2i bigButtonSize = new Vec2i(180, 32).mul(2);
         Vec2i squareButtonSize = new Vec2i(32, 32).mul(2);
         final int buttonSpacing = 10;
 
         int x = (camera.viewSize.x - bigButtonSize.x) / 2;
-        int y = buttonSpacing;
+        int y = buttonSpacing + 22;
 
         if (GameState.INSTANCE.server.isConnected()) {
             widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 3, () -> GameState.INSTANCE.setState(GameState.GameStateType.SCOREBOARD)));
@@ -54,5 +59,15 @@ public class MainMenuScreen extends Screen {
             var state = GameState.INSTANCE;
             state.setState(GameState.GameStateType.WORLD_SELECT);
         }));
+    }
+
+    @Override
+    public void render() {
+        stateTime += Gdx.graphics.getDeltaTime();
+        Texture bg = GameState.INSTANCE.assetManager.get("gui/titlescreen/titlescreen", Texture.class);
+        batch.begin();
+        batch.draw(bg, 0, 0);
+        batch.end();
+        super.render();
     }
 }
