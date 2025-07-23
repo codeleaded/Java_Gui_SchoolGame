@@ -1,18 +1,19 @@
 package de.schoolgame.world;
 
 import com.badlogic.gdx.graphics.Color;
-
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.world.entities.*;
-import de.schoolgame.world.tiles.*;
+import de.schoolgame.world.tiles.AnimatedTile;
+import de.schoolgame.world.tiles.SimpleTile;
+import de.schoolgame.world.tiles.TileSetTile;
 
 public enum WorldObject {
     NONE(null),
-    TEST_TILE(new Test()),
-    GRASS(new Grass()),
+    TEST_TILE(new SimpleTile("tiles/test/test")),
+    GRASS(new TileSetTile("tiles/patrikarts/tileset-grass")),
     COIN(CoinEntity.class),
-    TESLA(TeslaEntity.class),
-    KLO(KloEntity.class),
+    TESLA(new AnimatedTile("tiles/tesla/tesla")),
+    KLO(new AnimatedTile("tiles/klo/klo")),
     ROAMER(RoamerEntity.class),
     FRIEDRICH(FriedrichEntity.class),
     POINTS(PointsEntity.class),
@@ -20,26 +21,26 @@ public enum WorldObject {
     EICHELSBACHER(EichelsbacherEntity.class),
     FIREFLOWER(Fireflower.class),
     FLASH(FlashEntity.class),
-    SPIKE(new Spike()),
-    REDSPIKE(new Redspike()),
+    SPIKE(new TileSetTile("tiles/spikes/spikes")),
+    REDSPIKE(new TileSetTile("tiles/redspikes/redspikes")),
     WORLD_BORDER(null),
-    TRACK(new Track()),
-    LABORATROYTABLE(new Laboratorytable()),
-    TABLE(new Table()),
-    HURDE(new Hurde()),
-    CORRIDOR(new Corridor()),
-    RECORRIDOR(new Redcorridor()),
-    CONCRETE(new Concrete()),
-    BATH(new Bath()),
-    QUESTMARK(new QuestMark()),
-    OPENQUESTMARK(new OpenQuestMark()),
-    PODEST(new Podest()),
-    BRICK(new Brick()),
-    CHEMIKALIEN(ChemikalienEntity.class),
+    TRACK(new TileSetTile("tiles/track/track")),
+    LABORATROYTABLE(new TileSetTile("tiles/laboratorytable/laboratorytable")),
+    TABLE(new TileSetTile("tiles/table/table")),
+    HURDE(new SimpleTile("tiles/hurde/hurde")),
+    CORRIDOR(new TileSetTile("tiles/corridor/corridor")),
+    RECORRIDOR(new TileSetTile("tiles/redcorridor/redcorridor")),
+    CONCRETE(new TileSetTile("tiles/concrete/concrete")),
+    BATH(new TileSetTile("tiles/bath/bath")),
+    QUESTMARK(new AnimatedTile("tiles/questmark/questmark")),
+    OPENQUESTMARK(new SimpleTile("tiles/openquestmark/openquestmark")),
+    PODEST(new SimpleTile("tiles/podest/podest")),
+    BRICK(new SimpleTile("tiles/brick/brick")),
+    CHEMIKALIEN(new AnimatedTile("tiles/chemikalien/chemikalien")),
     COMPUTER(ComputerEntity.class),
-    BUNSENBRENNER(BunsenbrennerEntity.class),
+    BUNSENBRENNER(new AnimatedTile("tiles/bunsenbrenner/bunsenbrenner")),
     POTION(PotionEntity.class),
-    CABLE(CableEntity.class)
+    CABLE(new AnimatedTile("tiles/cable/cable"))
     ;
 
     private final Object object;

@@ -299,7 +299,7 @@ public class PlayerEntity extends MovingEntity {
         if (getDead()) return;
 
         switch (object) {
-            case SPIKE, REDSPIKE -> kill();
+            case SPIKE, REDSPIKE, CABLE, CHEMIKALIEN, BUNSENBRENNER, KLO, TESLA -> kill();
             case BRICK -> {
                 if (type == DOWN && (GRAVITY < 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
                     var world = GameState.INSTANCE.world;
@@ -377,11 +377,6 @@ public class PlayerEntity extends MovingEntity {
                 sound.play();
                 return true;
             }
-            case TeslaEntity ignored -> kill();
-            case KloEntity ignored -> kill();
-            case ChemikalienEntity ignored -> kill();
-            case BunsenbrennerEntity ignored -> kill();
-            case CableEntity ignored -> kill();
             case RoamerEntity ignored -> {
                 if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
                     onGround = true;
