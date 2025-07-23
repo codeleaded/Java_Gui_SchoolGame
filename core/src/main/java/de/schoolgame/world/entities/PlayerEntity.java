@@ -79,6 +79,12 @@ public class PlayerEntity extends MovingEntity {
     }
     public void setGodmode(boolean godmode) {
         this.godmode = godmode;
+        if(godmode){
+            velocity.x = 0.0f;
+            velocity.y = 0.0f;
+            acceleration.x = 0.0f;
+            acceleration.y = 0.0f;
+        }
     }
     public void setDead(boolean dead) {
         this.dead = dead;

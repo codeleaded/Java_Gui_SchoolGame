@@ -61,7 +61,6 @@ public class GameState {
         }
     }
 
-
     public void setState(GameStateType state) {
         this.state = state;
         switch (state) {
