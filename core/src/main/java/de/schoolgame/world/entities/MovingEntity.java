@@ -1,19 +1,14 @@
 package de.schoolgame.world.entities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
-
-import de.schoolgame.primitives.ContactWrapper;
-import de.schoolgame.primitives.Direction;
-import de.schoolgame.primitives.Rectf;
-import de.schoolgame.primitives.Vec2f;
-import de.schoolgame.primitives.Vec2i;
+import de.schoolgame.primitives.*;
+import de.schoolgame.render.Sound;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class MovingEntity extends Entity {
     public static final float DEFAULT_GRAVITY = -25.0f;
@@ -102,7 +97,7 @@ public abstract class MovingEntity extends Entity {
 
             if(this instanceof PlayerEntity){
                 Sound sound = GameState.INSTANCE.assetManager.get("audio/complete/complete", Sound.class);
-                sound.play(1.0f);
+                sound.play();
 
                 GameState.INSTANCE.setState(GameState.GameStateType.WORLD_SELECT);
                 return;

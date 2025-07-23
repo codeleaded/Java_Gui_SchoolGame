@@ -1,13 +1,13 @@
 package de.schoolgame.world.entities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Affine2;
 import de.schoolgame.network.packet.ScorePacket;
 import de.schoolgame.primitives.Direction;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
+import de.schoolgame.render.Sound;
 import de.schoolgame.render.texture.SpriteSheet;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
@@ -190,13 +190,13 @@ public class PlayerEntity extends MovingEntity {
                         velocity.x = 4.0f * (slideDir ? 1.0f : -1.0f);
                         velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
                         Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump/jump", Sound.class);
-                        sound.play(1.0f);
+                        sound.play();
                     }
                     if (onGround || stateTime - coyote < COYOTE_TIME) {
                         velocity.y = 14.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
                         this.coyote = 0.0f;
                         Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump/jump", Sound.class);
-                        sound.play(1.0f);
+                        sound.play();
                     }
                 }
             }
@@ -358,7 +358,7 @@ public class PlayerEntity extends MovingEntity {
                 addScore(Score.MP_COIN);
 
                 Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/coin/coin", Sound.class);
-                sound.play(1.0f);
+                sound.play();
                 return true;
             }
             case Fireflower ignored -> {
@@ -367,14 +367,14 @@ public class PlayerEntity extends MovingEntity {
                 addScore(Score.MP_FIREFLOWER);
 
                 Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/powerup/powerup", Sound.class);
-                sound.play(1.0f);
+                sound.play();
                 return true;
             }
             case PotionEntity ignored -> {
                 addScore(Score.MP_POTION);
 
                 Sound sound = GameState.INSTANCE.assetManager.get("audio/upgrade/upgrade", Sound.class);
-                sound.play(1.0f);
+                sound.play();
                 return true;
             }
             case TeslaEntity ignored -> kill();
@@ -404,7 +404,7 @@ public class PlayerEntity extends MovingEntity {
                     fe.kill();
 
                     Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/explosion/explosion", Sound.class);
-                    sound.play(1.0f);
+                    sound.play();
                 } else {
                     kill();
                 }
@@ -417,7 +417,7 @@ public class PlayerEntity extends MovingEntity {
                     addScore(Score.MP_KILL_KOENIG);
 
                     Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/explosion/explosion", Sound.class);
-                    sound.play(1.0f);
+                    sound.play();
 
                     koenigEntity.kill();
                 } else {
@@ -431,7 +431,7 @@ public class PlayerEntity extends MovingEntity {
                     addScore(Score.MP_KILL_EICHELSBACHER);
 
                     Sound sound = GameState.INSTANCE.assetManager.get("audio/endleveldone/endleveldone", Sound.class);
-                    sound.play(1.0f);
+                    sound.play();
 
                     eichelsbacherEntity.kill();
                 } else {

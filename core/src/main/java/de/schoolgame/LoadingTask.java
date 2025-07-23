@@ -46,8 +46,10 @@ public class LoadingTask {
         addTask("ServerConnection", () -> GameState.INSTANCE.server = new ServerConnection());
 
         addTask("Networking", () -> {
-            GameState.INSTANCE.server.connect();
-            GameState.INSTANCE.server.sendPacket(new EchoPacket("Hi!"), true);
+            var state = GameState.INSTANCE;
+            state.server.connect();
+            state.server.sendPacket(new EchoPacket("Hi!"), true);
+            state.server.initiallyConnected = state.server.isConnected();
         });
 
         addTask("GUI", () -> GameState.INSTANCE.setState(GameState.GameStateType.CHARACTER_SELECT));

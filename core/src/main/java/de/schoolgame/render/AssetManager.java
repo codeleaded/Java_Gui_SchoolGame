@@ -1,10 +1,10 @@
 package de.schoolgame.render;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import de.schoolgame.primitives.Recti;
+import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.Animation;
 import de.schoolgame.render.texture.Font;
@@ -97,7 +97,9 @@ public class AssetManager {
             return;
         } else if (typeClass == Sound.class) {
             FileHandle handle = Gdx.files.internal(pathWithoutExtension + ".wav");
-            Sound sound = Gdx.audio.newSound(handle);
+
+            Vec2f pitch = AssetUtils.getSoundPitch(asset);
+            Sound sound = new Sound(Gdx.audio.newSound(handle), pitch);
             assets.put(name, sound);
             return;
         }

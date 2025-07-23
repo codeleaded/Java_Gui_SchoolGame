@@ -59,3 +59,13 @@ Example:
 frameDuration = 0.03
 mode = "Loop"
 ```
+
+## audio section
+Randomize pitches of a sound
+
+Example:
+```
+[audio]
+minPitch = 0.5
+maxPitch = 2.0
+```

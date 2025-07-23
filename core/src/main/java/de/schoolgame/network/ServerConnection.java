@@ -12,6 +12,8 @@ import java.util.Arrays;
 public class ServerConnection {
     private final Client client;
     private String uuid;
+
+    public boolean initiallyConnected = false;
     private boolean connected;
 
     public ServerConnection() {
@@ -55,6 +57,8 @@ public class ServerConnection {
     }
 
     public void sendPacket(Packet packet, boolean reliable) {
+        if (!initiallyConnected) return;
+
         if (!client.isConnected()) {
             connect();
             if (!connected) {
