@@ -1,2 +1,2 @@
-SELECT id, creator, name
+SELECT creator, name
 FROM worlds

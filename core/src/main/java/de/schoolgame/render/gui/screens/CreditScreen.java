@@ -11,7 +11,7 @@ public class CreditScreen extends Screen {
         "Programmierer",
         "David", "Alex",
         "Grafik",
-        "Michael", "Lara", "Yannis"
+        "Michael", "Lara", "Yanis"
     };
 
     private static final String[] subtitles = {

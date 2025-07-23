@@ -2,6 +2,7 @@ package de.schoolgame.network.packet;
 
 import com.esotericsoftware.kryonet.Connection;
 import de.schoolgame.network.Packet;
+import de.schoolgame.render.gui.screens.WorldSelectScreen;
 import de.schoolgame.state.GameState;
 import de.schoolgame.utils.Save;
 
@@ -27,7 +28,11 @@ public class SavePacket implements Packet {
         Save s = state.worldManager.get(this.name);
         state.loadSave(s);
 
-        if (state.getState() == GameState.GameStateType.DEBUG) {
+        if (state.screen instanceof WorldSelectScreen) {
+            state.worldReady = true;
+        }
+
+        if (state.getState() == GameState.GameStateType.DEBUG || state.getState() == GameState.GameStateType.GAME) {
             state.world.summonEntities();
         }
     }

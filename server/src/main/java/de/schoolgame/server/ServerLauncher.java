@@ -1,32 +1,18 @@
 package de.schoolgame.server;
 
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.backends.headless.HeadlessApplication;
+import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 
 public class ServerLauncher {
     public static void main(String[] args) {
         createApplication();
     }
 
-    private static Lwjgl3Application createApplication() {
-        return new Lwjgl3Application(new Server(), getDefaultConfiguration());
+    private static void createApplication() {
+        new HeadlessApplication(new Server(), getDefaultConfiguration());
     }
 
-    private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
-        var displayMode = Lwjgl3ApplicationConfiguration.getDisplayMode();
-
-        Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
-
-        configuration.setTitle("SchoolGame - Server");
-        configuration.useVsync(true);
-
-        configuration.setForegroundFPS(displayMode.refreshRate + 1);
-        configuration.setResizable(true);
-        configuration.setDecorated(true);
-
-        //// You can change these files; they are in lwjgl3/src/main/resources/ .
-        configuration.setWindowIcon("logox128.png", "logox64.png", "logox32.png", "logox16.png");
-
-        return configuration;
+    private static HeadlessApplicationConfiguration getDefaultConfiguration() {
+        return new HeadlessApplicationConfiguration();
     }
 }

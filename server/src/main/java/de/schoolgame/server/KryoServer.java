@@ -48,15 +48,18 @@ public class KryoServer {
         typeListener.addTypeHandler(SavePacket.class, (connection, packet) -> {
             if (packet.save == null) {
                 packet.save = SQLUtils.getWorld(packet.name);
-                connection.sendTCP(packet);
+                connection.sendTCP(packet.save == null ? new MessagePacket(packet.name + " existiert nicht!") : packet);
             } else {
-                SQLUtils.addWorld(packet);
+                if (!SQLUtils.addWorld(packet)) {
+                    connection.sendTCP(new MessagePacket("Welt mit dem Namen \"" + packet.name + "\" existiert schon!"));
+                }
             }
         });
         typeListener.addTypeHandler(ScorePacket.class, (connection, packet) -> SQLUtils.addScore(packet));
-        typeListener.addTypeHandler(ScoreboardPacket.class, (connection, packet) -> {
-            connection.sendTCP(SQLUtils.getTopScores());
-        });
+        typeListener.addTypeHandler(ScoreboardPacket.class,
+            (connection, packet) -> connection.sendTCP(SQLUtils.getTopScores()));
+        typeListener.addTypeHandler(WorldListPacket.class,
+            (connection, packet) -> connection.sendTCP(SQLUtils.getWorldList()));
 
         server.addListener(typeListener);
 

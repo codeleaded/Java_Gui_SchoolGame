@@ -5,12 +5,7 @@ import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.render.AssetManager;
 import de.schoolgame.render.Camera;
 import de.schoolgame.render.gui.Screen;
-import de.schoolgame.render.gui.screens.CharacterSelectScreen;
-import de.schoolgame.render.gui.screens.CreditScreen;
-import de.schoolgame.render.gui.screens.HudScreen;
-import de.schoolgame.render.gui.screens.MainMenuScreen;
-import de.schoolgame.render.gui.screens.ScoreboardScreen;
-import de.schoolgame.render.gui.screens.WorldSelectScreen;
+import de.schoolgame.render.gui.screens.*;
 import de.schoolgame.utils.Save;
 import de.schoolgame.world.World;
 import de.schoolgame.world.WorldManager;
@@ -22,6 +17,9 @@ public class GameState {
     private GameStateType state = GameStateType.MAIN_MENU;
 
     public Screen screen;
+
+    public float messageRemaining = 0;
+    public String message = "";
 
     public String username = "Anonym";
     public int playerStyle = 1;
@@ -38,7 +36,7 @@ public class GameState {
     public AssetManager assetManager;
     public WorldManager worldManager;
 
-    public boolean escapeFlag = false;
+    public boolean worldReady = false;
     public boolean controllable = true;
 
     public void loadSave(Save s) {

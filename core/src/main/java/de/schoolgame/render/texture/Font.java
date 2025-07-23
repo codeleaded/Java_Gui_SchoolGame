@@ -93,7 +93,6 @@ public class Font {
         int width = 0;
         for (char c : text.toCharArray()) {
             width += getWidth(c, scale);
-            width += scale;
         }
         return width - scale;
     }
@@ -108,7 +107,6 @@ public class Font {
             TextureRegion region = getTextureRegion(c);
             b.draw(region, (pos.x + xOffset), pos.y, region.getRegionWidth() * scale, region.getRegionHeight() * scale);
             xOffset += region.getRegionWidth() * scale;
-            xOffset += scale;
         }
     }
 
@@ -119,15 +117,14 @@ public class Font {
 
             b.draw(
                 region,
-                (pos.x + xOffset),pos.y,
-                0.0f,0.0f,
-                region.getRegionWidth() * scale,region.getRegionHeight() * scale,
-                1.0f,1.0f,
+                (pos.x + xOffset), pos.y,
+                0.0f, 0.0f,
+                region.getRegionWidth() * scale, region.getRegionHeight() * scale,
+                1.0f, 1.0f,
                 angle
             );
 
             xOffset += region.getRegionWidth() * scale;
-            xOffset += scale;
         }
     }
 }

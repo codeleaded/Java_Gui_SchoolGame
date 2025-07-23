@@ -32,7 +32,7 @@ public class SQLUtils {
         }
     }
 
-    public static void addWorld(SavePacket packet) {
+    public static boolean addWorld(SavePacket packet) {
         try (Connection connection = Database.getConnection()) {
             String s = SQLUtils.getStatement("addWorld.sql");
             try (PreparedStatement statement = connection.prepareStatement(s)) {
@@ -41,9 +41,11 @@ public class SQLUtils {
                 statement.setBytes(3, packet.save);
 
                 statement.execute();
+                return statement.getUpdateCount() != 0;
             }
         } catch (SQLException e) {
             Gdx.app.error("Database", "SQL Error: " + e);
+            return false;
         }
     }
 
@@ -54,8 +56,8 @@ public class SQLUtils {
                 statement.setString(1, name);
 
                 ResultSet res = statement.executeQuery();
-                res.next();
-                return res.getBytes("data");
+                if (res.next()) return res.getBytes("data");
+                return null;
             }
         } catch (SQLException e) {
             Gdx.app.error("Database", "SQL Error: " + e);
@@ -86,11 +88,10 @@ public class SQLUtils {
                 ResultSet res = statement.executeQuery();
 
                 while (res.next()) {
-                    int id = res.getInt("id");
                     String creator = res.getString("creator");
                     String name = res.getString("name");
 
-                    list.add(new WorldListPacket.WorldListEntry(id, name, creator));
+                    list.add(new WorldListPacket.WorldListEntry(name, creator));
                 }
             }
         } catch (SQLException e) {

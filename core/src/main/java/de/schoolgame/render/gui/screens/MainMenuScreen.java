@@ -1,7 +1,6 @@
 package de.schoolgame.render.gui.screens;
 
 import com.badlogic.gdx.Gdx;
-
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.gui.Screen;
@@ -19,9 +18,10 @@ public class MainMenuScreen extends Screen {
         int x = (camera.viewSize.x - bigButtonSize.x) / 2;
         int y = buttonSpacing;
 
-        widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 3, () -> GameState.INSTANCE.setState(GameState.GameStateType.SCOREBOARD)));
-
-        x += squareButtonSize.x + buttonSpacing;
+        if (GameState.INSTANCE.server.isConnected()) {
+            widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 3, () -> GameState.INSTANCE.setState(GameState.GameStateType.SCOREBOARD)));
+            x += squareButtonSize.x + buttonSpacing;
+        }
 
         widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 5, () -> GameState.INSTANCE.setState(GameState.GameStateType.CREDITS)));
 

@@ -20,6 +20,10 @@ public class Main extends ApplicationAdapter {
     @Override
     public void render() {
         var state = GameState.INSTANCE;
+        if (state.worldReady) {
+            state.setState(GameState.GameStateType.GAME);
+            state.worldReady = false;
+        }
 
         inputProcessor.update();
 

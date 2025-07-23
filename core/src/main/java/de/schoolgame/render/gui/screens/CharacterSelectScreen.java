@@ -13,8 +13,11 @@ import de.schoolgame.state.GameState;
 
 public class CharacterSelectScreen extends Screen {
     public RectangleWidget indicator;
+    public final float startTime;
 
     public CharacterSelectScreen() {
+        startTime = (float) System.currentTimeMillis() / 1000f;
+
         int spacing = 10;
 
         TextWidget text = new TextWidget(new Vec2i(spacing, spacing), "Wähle deinen Skin und Namen", 3);
@@ -50,6 +53,13 @@ public class CharacterSelectScreen extends Screen {
 
         widgets.add(new TextureButtonWidget(pos.add(size.x + spacing, 0), new Vec2i(64, 64), 4, () -> {
             var state = GameState.INSTANCE;
+
+            if (state.username.isEmpty() || state.username.equals("Anonym")) {
+                state.message = "Bitte gebe einen Namen ein!";
+                state.messageRemaining = 2;
+                return;
+            }
+
             state.server.sendPacket(new LoginPacket(state.username, null, state.playerStyle), true);
 
             state.setState(GameState.GameStateType.MAIN_MENU);

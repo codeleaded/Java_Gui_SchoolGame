@@ -29,15 +29,16 @@ public class ScoreboardScreen extends Screen {
     private void refresh() {
         int font_scale = 3;
         int spacing = 7;
+        int sideSpacing = 40;
 
         widgets.clear();
 
         Font font = GameState.INSTANCE.assetManager.get("gui/font/aseprite_font", Font.class);
-        Vec2i size = new Vec2i(camera.viewSize.x - (spacing * 2), font.getHeight(font_scale) + spacing);
+        Vec2i size = new Vec2i(camera.viewSize.x - (sideSpacing * 2), font.getHeight(font_scale) + spacing);
 
         int y = camera.viewSize.y - (spacing * 2) - (7 * 3);
         for (int i = 0; i < 10; i++) {
-            Vec2i pos = new Vec2i(spacing, y);
+            Vec2i pos = new Vec2i(sideSpacing, y);
 
             Color color = switch (i) {
                 case 0 -> Color.GOLD;
@@ -55,7 +56,7 @@ public class ScoreboardScreen extends Screen {
 
             String score = "" + scores[i];
             int score_width = font.getWidth(score, font_scale);
-            pos.x = camera.viewSize.x - (spacing * 2) - score_width;
+            pos.x = camera.viewSize.x - spacing - sideSpacing - score_width;
             widgets.add(new TextWidget(pos, score, 3));
             y -= (spacing + size.y);
         }

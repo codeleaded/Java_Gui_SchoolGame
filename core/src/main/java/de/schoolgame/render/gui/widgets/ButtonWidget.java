@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 public class ButtonWidget extends Widget {
     private final Supplier<String> text;
     private final Runnable onClick;
+    private final int fontSize;
     private final Color highlight = new Color(0xffffffff);
     private final Color light = new Color(0xb4b4b4ff);
     private final Color dark = new Color(0x4d4d4dff);
@@ -22,9 +23,14 @@ public class ButtonWidget extends Widget {
     }
 
     public ButtonWidget(Vec2i pos, Vec2i size, Supplier<String> text, Runnable onClick) {
+        this(pos, size, text, onClick, 8);
+    }
+
+    public ButtonWidget(Vec2i pos, Vec2i size, Supplier<String> text, Runnable onClick, int fontSize) {
         super(pos, size);
         this.text = text;
         this.onClick = onClick;
+        this.fontSize = fontSize;
     }
 
     @Override
@@ -47,10 +53,10 @@ public class ButtonWidget extends Widget {
         batch.begin();
 
         Font font = GameState.INSTANCE.assetManager.get("gui/font/aseprite_font", Font.class);
-        int textX = rect.size.x - font.getWidth(text, 8);
+        int textX = rect.size.x - font.getWidth(text, fontSize);
         textX /= 2;
 
-        font.draw(batch, text, rect.pos.sub(0, 8).cpy().add(textX, 8), 8);
+        font.draw(batch, text, rect.pos.add(textX, 0), fontSize);
         batch.end();
     }
 

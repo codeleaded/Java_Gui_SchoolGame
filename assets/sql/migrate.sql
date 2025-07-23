@@ -7,9 +7,8 @@ CREATE TABLE IF NOT EXISTS clients(
 );
 
 CREATE TABLE IF NOT EXISTS worlds(
-    id serial PRIMARY KEY NOT NULL,
+    name text PRIMARY KEY NOT NULL,
     creator uuid NOT NULL REFERENCES clients(id),
-    name text UNIQUE NOT NULL,
     data bytea NOT NULL
 );
 

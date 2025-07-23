@@ -2,23 +2,14 @@ package de.schoolgame.state;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import static com.badlogic.gdx.Input.Keys.A;
-import static com.badlogic.gdx.Input.Keys.D;
-import static com.badlogic.gdx.Input.Keys.DOWN;
-import static com.badlogic.gdx.Input.Keys.ESCAPE;
-import static com.badlogic.gdx.Input.Keys.L;
-import static com.badlogic.gdx.Input.Keys.LEFT;
-import static com.badlogic.gdx.Input.Keys.RIGHT;
-import static com.badlogic.gdx.Input.Keys.S;
-import static com.badlogic.gdx.Input.Keys.SPACE;
-import static com.badlogic.gdx.Input.Keys.UP;
-import static com.badlogic.gdx.Input.Keys.W;
 import com.badlogic.gdx.InputProcessor;
-
 import de.schoolgame.primitives.Direction;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.Sound;
+import de.schoolgame.render.gui.screens.WorldSelectScreen;
 import de.schoolgame.utils.CoordinateUtils;
+
+import static com.badlogic.gdx.Input.Keys.*;
 
 public class GameInputProcessor implements InputProcessor {
     private int lastMouseButton = Input.Buttons.LEFT;
@@ -142,7 +133,7 @@ public class GameInputProcessor implements InputProcessor {
             byte c = (byte) character;
             if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
                 String name = state.username + character;
-                if (name.length() >= 12) name = name.substring(0, 12);
+                if (name.length() >= 10) name = name.substring(0, 10);
                 state.username = name;
             }
             return true;
@@ -197,6 +188,10 @@ public class GameInputProcessor implements InputProcessor {
     @Override
     public boolean scrolled(float amountX, float amountY) {
         var state = GameState.INSTANCE;
+        if (state.screen instanceof WorldSelectScreen s) {
+            s.scroll += amountY;
+            s.refresh();
+        }
         if (state.getState() == GameState.GameStateType.DEBUG && amountY != 0) {
             state.camera.zoom += amountY * 0.1f;
             return true;
@@ -236,23 +231,20 @@ public class GameInputProcessor implements InputProcessor {
         return false;
     }
 
+    public static final String ESC_STR = "Fürs Menü nochmal drücken";
+
     public boolean escape() {
         var state = GameState.INSTANCE;
 
-        if (state.escapeFlag) {
-            state.escapeFlag = false;
+        if (ESC_STR.equals(state.message)) {
+            state.message = "";
+            state.messageRemaining = 0;
             return true;
         }
-        state.escapeFlag = true;
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Gdx.app.log("ERROR", "Escape thread interrupted", e);
-            }
-            state.escapeFlag = false;
-        }).start();
+        state.message = ESC_STR;
+        state.messageRemaining = 2;
+
         return false;
     }
 }
