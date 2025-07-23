@@ -11,24 +11,22 @@ import de.schoolgame.world.World;
 import de.schoolgame.world.entities.PlayerEntity;
 
 public class MainMenuScreen extends Screen {
-    protected float stateTime;
-
     public MainMenuScreen() {
-        stateTime = 0f;
-
         Vec2i bigButtonSize = new Vec2i(180, 32).mul(2);
         Vec2i squareButtonSize = new Vec2i(32, 32).mul(2);
         final int buttonSpacing = 10;
 
         int x = (camera.viewSize.x - bigButtonSize.x) / 2;
-        int y = buttonSpacing + 22;
+        int y = buttonSpacing + 32;
+
+        widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 5, () -> GameState.INSTANCE.setState(GameState.GameStateType.CREDITS)));
+        x += squareButtonSize.x + buttonSpacing;
 
         if (GameState.INSTANCE.server.isConnected()) {
-            widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 3, () -> GameState.INSTANCE.setState(GameState.GameStateType.SCOREBOARD)));
+            widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 8, null));
             x += squareButtonSize.x + buttonSpacing;
 
-            widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 8, () -> {}));
-            x += squareButtonSize.x + buttonSpacing;
+            widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 3, () -> GameState.INSTANCE.setState(GameState.GameStateType.SCOREBOARD)));
         } else {
             widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 7, () -> {
                 var state = GameState.INSTANCE;
@@ -36,10 +34,7 @@ public class MainMenuScreen extends Screen {
                 state.server.initiallyConnected = state.server.isConnected();
                 state.setState(GameState.GameStateType.MAIN_MENU);
             }));
-            x += squareButtonSize.x + buttonSpacing;
         }
-
-        widgets.add(new TextureButtonWidget(new Vec2i(x, y), squareButtonSize, 5, () -> GameState.INSTANCE.setState(GameState.GameStateType.CREDITS)));
 
         x = ((camera.viewSize.x - bigButtonSize.x) / 2) + (bigButtonSize.x - squareButtonSize.x);
 
@@ -63,7 +58,6 @@ public class MainMenuScreen extends Screen {
 
     @Override
     public void render() {
-        stateTime += Gdx.graphics.getDeltaTime();
         Texture bg = GameState.INSTANCE.assetManager.get("gui/titlescreen/titlescreen", Texture.class);
         batch.begin();
         batch.draw(bg, 0, 0);

@@ -10,8 +10,9 @@ import de.schoolgame.render.texture.Font;
 import de.schoolgame.state.GameState;
 
 public class ScoreboardScreen extends Screen {
-    public String[] names;
-    public int[] scores;
+    private long stateTime = System.currentTimeMillis();
+    private String[] names;
+    private int[] scores;
 
     public ScoreboardScreen() {
         var state = GameState.INSTANCE;
@@ -64,7 +65,20 @@ public class ScoreboardScreen extends Screen {
         addBackButton();
     }
 
+    @Override
+    public void render() {
+        super.render();
+
+        long diff = System.currentTimeMillis() - stateTime;
+        if (diff > 1000) {
+            GameState.INSTANCE.server.sendPacket(new ScoreboardPacket(new String[0], new int[0]), true);
+            stateTime = System.currentTimeMillis();
+        }
+    }
+
     public void setData(String[] names, int[] scores) {
+        System.out.println("refresh");
+
         this.names = names;
         this.scores = scores;
 
