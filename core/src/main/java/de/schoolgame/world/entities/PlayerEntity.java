@@ -42,7 +42,7 @@ public class PlayerEntity extends MovingEntity {
     private boolean godmode;
 
     public PlayerEntity(Vec2f pos) {
-        super(pos, new Vec2f(0.95f, 0.95f * (58f / 32f)));
+        super(pos, new Vec2f(0.9f, 0.9f * (58f / 32f)));
         this.stateTime = 0.0f;
         this.coyote = 0.0f;
 
