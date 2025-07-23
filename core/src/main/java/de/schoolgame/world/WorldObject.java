@@ -18,6 +18,7 @@ public enum WorldObject {
     ROAMER(RoamerEntity.class),
     FRIEDRICH(FriedrichEntity.class),
     POINTS(PointsEntity.class),
+    BRICKANIMATION(BrickAnimationEntity.class),
     KOENIG(KoenigEntity.class),
     EICHELSBACHER(EichelsbacherEntity.class),
     FIREFLOWER(Fireflower.class),

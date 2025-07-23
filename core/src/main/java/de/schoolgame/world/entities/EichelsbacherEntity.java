@@ -19,6 +19,7 @@ import de.schoolgame.world.WorldObject;
 
 public class EichelsbacherEntity extends MovingEntity {
     private float stateTime;
+    private int lifes;
 
 	private boolean lookDir;
     private boolean slideDir;
@@ -39,6 +40,8 @@ public class EichelsbacherEntity extends MovingEntity {
         this.onGround = false;
         this.onJump = false;
         this.slideDir = false;
+
+        this.lifes = 5;
 
         move(Direction.LEFT);
     }
