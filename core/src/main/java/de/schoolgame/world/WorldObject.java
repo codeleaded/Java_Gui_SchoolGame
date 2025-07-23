@@ -1,8 +1,19 @@
 package de.schoolgame.world;
 
 import com.badlogic.gdx.graphics.Color;
+
+import de.schoolgame.primitives.Direction;
 import de.schoolgame.primitives.Vec2f;
-import de.schoolgame.world.entities.*;
+import de.schoolgame.world.entities.CoinEntity;
+import de.schoolgame.world.entities.ComputerEntity;
+import de.schoolgame.world.entities.EichelsbacherEntity;
+import de.schoolgame.world.entities.Fireflower;
+import de.schoolgame.world.entities.FlashEntity;
+import de.schoolgame.world.entities.FriedrichEntity;
+import de.schoolgame.world.entities.KoenigEntity;
+import de.schoolgame.world.entities.PointsEntity;
+import de.schoolgame.world.entities.PotionEntity;
+import de.schoolgame.world.entities.RoamerEntity;
 import de.schoolgame.world.tiles.AnimatedTile;
 import de.schoolgame.world.tiles.SimpleTile;
 import de.schoolgame.world.tiles.TileSetTile;
@@ -25,8 +36,8 @@ public enum WorldObject {
     REDSPIKE(new TileSetTile("tiles/redspikes/redspikes")),
     WORLD_BORDER(null),
     TRACK(new TileSetTile("tiles/track/track")),
-    LABORATROYTABLE(new TileSetTile("tiles/laboratorytable/laboratorytable")),
-    TABLE(new TileSetTile("tiles/table/table")),
+    LABORATROYTABLE(new TileSetTile(Direction.UP,"tiles/laboratorytable/laboratorytable")),
+    TABLE(new TileSetTile(Direction.UP,"tiles/table/table")),
     HURDE(new SimpleTile("tiles/hurde/hurde")),
     CORRIDOR(new TileSetTile("tiles/corridor/corridor")),
     RECORRIDOR(new TileSetTile("tiles/redcorridor/redcorridor")),
@@ -34,7 +45,7 @@ public enum WorldObject {
     BATH(new TileSetTile("tiles/bath/bath")),
     QUESTMARK(new AnimatedTile("tiles/questmark/questmark")),
     OPENQUESTMARK(new SimpleTile("tiles/openquestmark/openquestmark")),
-    PODEST(new SimpleTile("tiles/podest/podest")),
+    PODEST(new SimpleTile(Direction.UP,"tiles/podest/podest")),
     BRICK(new SimpleTile("tiles/brick/brick")),
     CHEMIKALIEN(new AnimatedTile("tiles/chemikalien/chemikalien")),
     COMPUTER(ComputerEntity.class),

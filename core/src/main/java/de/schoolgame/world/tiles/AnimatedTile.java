@@ -1,6 +1,8 @@
 package de.schoolgame.world.tiles;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+
+import de.schoolgame.primitives.Direction;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.Animation;
@@ -12,6 +14,13 @@ public class AnimatedTile extends Tile {
     private final long startTime;
 
     public AnimatedTile(String asset) {
+        super();
+        
+        this.asset = asset;
+        startTime = System.nanoTime();
+    }
+    public AnimatedTile(Direction collisiontype,String asset) {
+        super(collisiontype);
         this.asset = asset;
         startTime = System.nanoTime();
     }
