@@ -17,20 +17,11 @@ import imgui.flag.ImGuiInputTextFlags;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
-import imgui.type.ImBoolean;
-import imgui.type.ImString;
 
 public class ImGuiRenderer implements IRenderer {
     private ImGuiImplGlfw imGuiGlfw;
     private ImGuiImplGl3 imGuiGl3;
     private InputProcessor tmpProcessor;
-
-    private final int[] inputWorldSize;
-    private final ImString inputCoins;
-    private final ImString inputPower;
-    private final ImString inputWorldName;
-    private final ImBoolean inputGodmode;
-    private final ImString inputStyle;
 
     public ImGuiRenderer() {
         imGuiGlfw = new ImGuiImplGlfw();
@@ -43,17 +34,11 @@ public class ImGuiRenderer implements IRenderer {
         io.getFonts().build();
         imGuiGlfw.init(windowHandle, true);
         imGuiGl3.init("#version 300 es");
-
-        inputWorldSize = new int[2];
-        inputCoins = new ImString("" + Integer.MAX_VALUE);
-        inputPower = new ImString("0");
-        inputStyle = new ImString("1");
-        inputWorldName = new ImString();
-        inputGodmode = new ImBoolean(false);
     }
 
     public void render() {
         var state = GameState.INSTANCE;
+        var debug = GameState.INSTANCE.debug;
 
         start();
         var viewport = ImGui.getMainViewport();
@@ -125,10 +110,10 @@ public class ImGuiRenderer implements IRenderer {
 
                 ImGui.separatorText("Settings");
 
-                ImGui.inputInt2("Size", inputWorldSize);
+                ImGui.inputInt2("Size", debug.inputWorldSize);
                 ImGui.sameLine();
                 if (ImGui.button("Set")) {
-                    state.world.setSize(new Vec2i(inputWorldSize).max(new Vec2i(1, 1)));
+                    state.world.setSize(new Vec2i(debug.inputWorldSize).max(new Vec2i(1, 1)));
                 }
 
                 ImGui.inputInt2("Spawn", state.world.getSpawn().toArray(), ImGuiInputTextFlags.ReadOnly);
@@ -141,23 +126,23 @@ public class ImGuiRenderer implements IRenderer {
 
                 ImGui.separatorText("Save/Load");
 
-                ImGui.inputText("World Name", inputWorldName);
+                ImGui.inputText("World Name", debug.inputWorldName);
 
                 if (state.server.isConnected()) {
                     if (ImGui.button("Upload")) {
-                        state.worldManager.upload(inputWorldName.get());
+                        state.worldManager.upload(debug.inputWorldName.get());
                     }
                     if (ImGui.button("Download")) {
-                        state.worldManager.download(inputWorldName.get());
+                        state.worldManager.download(debug.inputWorldName.get());
                     }
                 } else {
                     if (ImGui.button("Save")) {
-                        state.worldManager.save(inputWorldName.get());
-                        state.worldManager.load(inputWorldName.get());
+                        state.worldManager.save(debug.inputWorldName.get());
+                        state.worldManager.load(debug.inputWorldName.get());
                     }
                     ImGui.sameLine();
                     if (ImGui.button("Load")) {
-                        Save s = state.worldManager.get(inputWorldName.get());
+                        Save s = state.worldManager.get(debug.inputWorldName.get());
                         if (state.getState() == GameState.GameStateType.DEBUG) {
                             state.world.summonEntities();
                         }
@@ -174,15 +159,15 @@ public class ImGuiRenderer implements IRenderer {
             ImGui.setNextWindowPos(new ImVec2(viewport.getPosX() + viewport.getWorkSizeX() - 293 - 407, viewport.getPosY()), ImGuiCond.Once);
             if (ImGui.begin("Player", null, ImGuiWindowFlags.AlwaysAutoResize)) {
 
-                inputCoins.set("" + state.player.getCoins());
-                ImGui.inputText("Coins", inputCoins, ImGuiInputTextFlags.ReadOnly);
+                debug.inputCoins.set("" + state.player.getCoins());
+                ImGui.inputText("Coins", debug.inputCoins, ImGuiInputTextFlags.ReadOnly);
                 ImGui.sameLine();
                 if (ImGui.button("+")) {
                     state.player.setCoins(state.player.getCoins() + 1);
                 }
 
-                inputPower.set("" + state.player.getPower());
-                ImGui.inputText("Power", inputPower, ImGuiInputTextFlags.ReadOnly);
+                debug.inputPower.set("" + state.player.getPower());
+                ImGui.inputText("Power", debug.inputPower, ImGuiInputTextFlags.ReadOnly);
                 if (state.player.getPower() != 2) {
                     ImGui.sameLine();
                     if (ImGui.button("+##2")) {
@@ -196,8 +181,8 @@ public class ImGuiRenderer implements IRenderer {
                     }
                 }
 
-                inputStyle.set("" + state.playerStyle);
-                ImGui.inputText("Style", inputStyle, ImGuiInputTextFlags.ReadOnly);
+                debug.inputStyle.set("" + state.playerStyle);
+                ImGui.inputText("Style", debug.inputStyle, ImGuiInputTextFlags.ReadOnly);
                 if (state.playerStyle != 7) {
                     ImGui.sameLine();
                     if (ImGui.button("+##3")) {
@@ -214,8 +199,8 @@ public class ImGuiRenderer implements IRenderer {
                 ImGui.inputFloat2("Pos", state.player.getPosition().toArray(), ImGuiInputTextFlags.ReadOnly);
                 ImGui.checkbox("Dead", state.player.getDead());
 
-                ImGui.checkbox("Godmode", inputGodmode);
-                state.player.setGodmode(inputGodmode.get());
+                ImGui.checkbox("Godmode", debug.inputGodmode);
+                state.player.setGodmode(debug.inputGodmode.get());
 
                 ImGui.checkbox("onGround",state.player.getGround());
                 ImGui.checkbox("onWall",state.player.getWall());

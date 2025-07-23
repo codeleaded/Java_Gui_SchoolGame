@@ -3,6 +3,7 @@ package de.schoolgame.render.renderer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.ScreenUtils;
+
 import de.schoolgame.render.gui.screens.MessageScreen;
 import de.schoolgame.state.GameState;
 
@@ -16,7 +17,8 @@ public class Renderer implements IRenderer {
 
     public Renderer() {
         imGuiRenderer = new ImGuiRenderer();
-        worldRenderer = new WorldRenderer();}
+        worldRenderer = new WorldRenderer();
+    }
 
     public void render() {
         var state = GameState.INSTANCE;
