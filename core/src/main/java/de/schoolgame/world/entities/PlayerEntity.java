@@ -337,11 +337,21 @@ public class PlayerEntity extends MovingEntity {
                     var world = GameState.INSTANCE.world;
                     addScore(pos.toVec2f().add(0.0f,1.0f),Score.MP_BRICK);
                     world.addAt(pos,WorldObject.NONE);
+
+                    for(int i = 0;i<11;i++){
+                        var e = new BrickAnimationEntity(i,pos.toVec2f(),velocity);
+                        world.spawnEntity(pos.toVec2f(),e);
+                    }
                 }
                 if (type == UP && (GRAVITY > 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
                     var world = GameState.INSTANCE.world;
                     addScore(pos.toVec2f().add(0.0f,1.0f),Score.MP_BRICK);
                     world.addAt(pos,WorldObject.NONE);
+
+                    for(int i = 0;i<11;i++){
+                        var e = new BrickAnimationEntity(i,pos.toVec2f(),velocity);
+                        world.spawnEntity(pos.toVec2f(),e);
+                    }
                 }
             }
             case QUESTMARK -> {
@@ -422,44 +432,61 @@ public class PlayerEntity extends MovingEntity {
                 MovingEntity.GRAVITY *= -1;
                 return true;
             }
-            case FriedrichEntity fe when !fe.getDead() -> {
+            case FriedrichEntity fe -> {
                 if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
-                    onGround = true;
+                    onWall = true;
+                    slideDir = false;
                     move(UP);
-                    addScore(Score.MP_KILL_FRIEDRICH);
-                    fe.kill();
 
-                    Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/explosion/explosion", Sound.class);
-                    sound.play();
+                    fe.lifes -= Math.sqrt(Math.abs(velocity.y));
+                    
+                    if(fe.lifes<=0.0f){
+                        addScore(Score.MP_KILL_FRIEDRICH);
+                        fe.kill();
+
+                        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/explosion/explosion", Sound.class);
+                        sound.play();
+                    }
                 } else {
                     kill();
                 }
             }
-            case KoenigEntity koenigEntity -> {
-                if (koenigEntity.getDead()) return false;
+            case KoenigEntity ke -> {
+                if (ke.getDead()) return false;
                 if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
-                    onGround = true;
+                    onWall = true;
+                    slideDir = false;
                     move(UP);
-                    addScore(Score.MP_KILL_KOENIG);
 
-                    Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/explosion/explosion", Sound.class);
-                    sound.play();
+                    ke.lifes -= Math.sqrt(Math.abs(velocity.y));
+                    
+                    if(ke.lifes<=0.0f){
+                        addScore(Score.MP_KILL_FRIEDRICH);
+                        ke.kill();
 
-                    koenigEntity.kill();
+                        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/explosion/explosion", Sound.class);
+                        sound.play();
+                    }
                 } else {
                     kill();
                 }
             }
-            case EichelsbacherEntity eichelsbacherEntity -> {
+            case EichelsbacherEntity ee -> {
                 if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
-                    onGround = true;
+                    onWall = true;
+                    slideDir = false;
                     move(UP);
-                    addScore(Score.MP_KILL_EICHELSBACHER);
 
-                    Sound sound = GameState.INSTANCE.assetManager.get("audio/endleveldone/endleveldone", Sound.class);
-                    sound.play();
+                    ee.lifes -= Math.sqrt(Math.abs(velocity.y));
+                    
+                    if(ee.lifes<=0.0f){
+                        addScore(Score.MP_KILL_FRIEDRICH);
+                        ee.kill();
 
-                    eichelsbacherEntity.kill();
+                        Sound sound = GameState.INSTANCE.assetManager.get("audio/endleveldone/endleveldone", Sound.class);
+                        sound.play();
+                    }
+
                 } else {
                     kill();
                 }
