@@ -19,7 +19,7 @@ import de.schoolgame.world.WorldObject;
 
 public class KoenigEntity extends MovingEntity {
     private float stateTime;
-    private int lifes;
+    public float lifes;
 
 	private boolean lookDir;
     private boolean slideDir;
@@ -41,7 +41,7 @@ public class KoenigEntity extends MovingEntity {
         this.onJump = false;
         this.slideDir = false;
 
-        this.lifes = 3;
+        this.lifes = 40.0f;
 
         move(Direction.LEFT);
     }

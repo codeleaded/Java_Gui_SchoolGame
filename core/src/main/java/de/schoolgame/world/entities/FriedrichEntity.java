@@ -41,7 +41,7 @@ public class FriedrichEntity extends MovingEntity {
         this.onJump = false;
         this.slideDir = false;
 
-        this.lifes = 2.0f;
+        this.lifes = 20.0f;
 
         move(Direction.LEFT);
     }
