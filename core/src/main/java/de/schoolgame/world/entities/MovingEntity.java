@@ -177,7 +177,11 @@ public abstract class MovingEntity extends Entity {
         for (CollisionObject co : potentialCollisions) {
             ContactWrapper cw = myRect.RI_Solver(cp, co.rectf);
 
-            if (cw != null && cw.d!=Direction.NONE && (co.type.getTile().collisiontype!=Direction.UP || (co.type.getTile().collisiontype==Direction.UP && cw.d==Direction.UP && doesntStamp)) && (co.type.getTile().collisiontype == Direction.ALL || co.type.getTile().collisiontype == cw.d)){
+            if (cw != null && cw.d!=Direction.NONE &&
+               (co.type.getTile().collisiontype!=Direction.UP ||
+               (co.type.getTile().collisiontype==Direction.UP && cw.d==Direction.UP && doesntStamp)) &&
+               (co.type.getTile().collisiontype == Direction.ALL ||
+                co.type.getTile().collisiontype == cw.d)){
                 onCollision(cw.d,co.rectf.pos.toVec2i(),co.type);
                 cp = cw.cp.cpy();
             }
@@ -196,7 +200,10 @@ public abstract class MovingEntity extends Entity {
                 Rectf r = new Rectf(cp.cpy(),myRect.size.cpy());
                 Direction d = r.staticCollisionSolver(co.rectf);
 
-                if(d!=Direction.NONE && (d!=Direction.UP || (co.type.getTile().collisiontype==Direction.UP && d==Direction.UP && doesntStamp)) && (co.type.getTile().collisiontype == Direction.ALL || co.type.getTile().collisiontype == d)){
+                if(d!=Direction.NONE && (d!=Direction.UP ||
+                  (co.type.getTile().collisiontype==Direction.UP && d==Direction.UP && doesntStamp && velocity.y<0)) &&
+                  (co.type.getTile().collisiontype == Direction.ALL ||
+                   co.type.getTile().collisiontype == d)){
                     onCollision(d,co.rectf.pos.toVec2i(),co.type);
                     cp = r.pos.cpy();
                 }
