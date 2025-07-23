@@ -50,7 +50,7 @@ public class ButtonWidget extends Widget {
         int textX = rect.size.x - font.getWidth(text, 8);
         textX /= 2;
 
-        font.draw(batch, text, rect.pos.cpy().add(textX, 8), 8);
+        font.draw(batch, text, rect.pos.sub(0, 8).cpy().add(textX, 8), 8);
         batch.end();
     }
 

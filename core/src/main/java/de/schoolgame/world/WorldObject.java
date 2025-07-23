@@ -3,34 +3,8 @@ package de.schoolgame.world;
 import com.badlogic.gdx.graphics.Color;
 
 import de.schoolgame.primitives.Vec2f;
-import de.schoolgame.world.entities.BunsenbrennerEntity;
-import de.schoolgame.world.entities.ChemikalienEntity;
-import de.schoolgame.world.entities.CoinEntity;
-import de.schoolgame.world.entities.ComputerEntity;
-import de.schoolgame.world.entities.EichelsbacherEntity;
-import de.schoolgame.world.entities.Fireflower;
-import de.schoolgame.world.entities.FlashEntity;
-import de.schoolgame.world.entities.FriedrichEntity;
-import de.schoolgame.world.entities.KloEntity;
-import de.schoolgame.world.entities.KoenigEntity;
-import de.schoolgame.world.entities.PointsEntity;
-import de.schoolgame.world.entities.PotionEntity;
-import de.schoolgame.world.entities.RoamerEntity;
-import de.schoolgame.world.entities.TeslaEntity;
-import de.schoolgame.world.tiles.Bath;
-import de.schoolgame.world.tiles.Brick;
-import de.schoolgame.world.tiles.Concrete;
-import de.schoolgame.world.tiles.Corridor;
-import de.schoolgame.world.tiles.Grass;
-import de.schoolgame.world.tiles.Hurde;
-import de.schoolgame.world.tiles.Laboratorytable;
-import de.schoolgame.world.tiles.OpenQuestMark;
-import de.schoolgame.world.tiles.Podest;
-import de.schoolgame.world.tiles.QuestMark;
-import de.schoolgame.world.tiles.Spike;
-import de.schoolgame.world.tiles.Table;
-import de.schoolgame.world.tiles.Test;
-import de.schoolgame.world.tiles.Track;
+import de.schoolgame.world.entities.*;
+import de.schoolgame.world.tiles.*;
 
 public enum WorldObject {
     NONE(null),
@@ -47,12 +21,14 @@ public enum WorldObject {
     FIREFLOWER(Fireflower.class),
     FLASH(FlashEntity.class),
     SPIKE(new Spike()),
+    REDSPIKE(new Redspike()),
     WORLD_BORDER(null),
     TRACK(new Track()),
     LABORATROYTABLE(new Laboratorytable()),
     TABLE(new Table()),
     HURDE(new Hurde()),
     CORRIDOR(new Corridor()),
+    RECORRIDOR(new Redcorridor()),
     CONCRETE(new Concrete()),
     BATH(new Bath()),
     QUESTMARK(new QuestMark()),
@@ -62,7 +38,8 @@ public enum WorldObject {
     CHEMIKALIEN(ChemikalienEntity.class),
     COMPUTER(ComputerEntity.class),
     BUNSENBRENNER(BunsenbrennerEntity.class),
-    POTION(PotionEntity.class)
+    POTION(PotionEntity.class),
+    CABLE(CableEntity.class)
     ;
 
     private final Object object;

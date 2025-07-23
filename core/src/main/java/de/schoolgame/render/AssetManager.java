@@ -22,8 +22,11 @@ public class AssetManager {
     public <T> T get(String path, Class<T> type) {
         path = path + "." + AssetUtils.getType(type);
         if (!path.startsWith("assets/")) path = "assets/" + path;
-        if (!assets.containsKey(path)) throw new IllegalArgumentException("Asset not loaded: " + path);
-        return type.cast(assets.get(path));
+        T asset = type.cast(assets.get(path));
+        if (asset == null) {
+            throw new IllegalArgumentException("Asset not loaded: " + path);
+        }
+        return asset;
     }
 
     public void load(String path) throws IllegalStateException, NullPointerException {
@@ -64,7 +67,6 @@ public class AssetManager {
                 spriteSheet = new SpriteSheet(texture, size, count);
             }
 
-
             assets.put(name, spriteSheet);
             return;
         } else if (typeClass == Animation.class) {
@@ -87,10 +89,10 @@ public class AssetManager {
             assets.put(name, tileSet);
             return;
         } else if (typeClass == Font.class) {
-            load(path, "spritesheet");
-            SpriteSheet spriteSheet = get(pathWithoutExtension, SpriteSheet.class);
+            load(path, "texture");
+            Texture texture = get(pathWithoutExtension, Texture.class);
 
-            Font font = new Font(spriteSheet.getRegions());
+            Font font = new Font(texture);
             assets.put(name, font);
             return;
         } else if (typeClass == Sound.class) {
