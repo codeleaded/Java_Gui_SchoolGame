@@ -1,19 +1,9 @@
 package de.schoolgame.world;
 
 import com.badlogic.gdx.graphics.Color;
-
 import de.schoolgame.primitives.Direction;
 import de.schoolgame.primitives.Vec2f;
-import de.schoolgame.world.entities.CoinEntity;
-import de.schoolgame.world.entities.ComputerEntity;
-import de.schoolgame.world.entities.EichelsbacherEntity;
-import de.schoolgame.world.entities.Fireflower;
-import de.schoolgame.world.entities.FlashEntity;
-import de.schoolgame.world.entities.FriedrichEntity;
-import de.schoolgame.world.entities.KoenigEntity;
-import de.schoolgame.world.entities.PointsEntity;
-import de.schoolgame.world.entities.PotionEntity;
-import de.schoolgame.world.entities.RoamerEntity;
+import de.schoolgame.world.entities.*;
 import de.schoolgame.world.tiles.AnimatedTile;
 import de.schoolgame.world.tiles.SimpleTile;
 import de.schoolgame.world.tiles.TileSetTile;
@@ -21,7 +11,7 @@ import de.schoolgame.world.tiles.TileSetTile;
 public enum WorldObject {
     NONE(null),
     TEST_TILE(new SimpleTile("tiles/test/test")),
-    GRASS(new TileSetTile("tiles/patrikarts/tileset-grass")),
+    GRASS(new TileSetTile("tiles/grass/grass")),
     COIN(CoinEntity.class),
     TESLA(new AnimatedTile("tiles/tesla/tesla")),
     KLO(new AnimatedTile("tiles/klo/klo")),
