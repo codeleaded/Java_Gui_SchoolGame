@@ -1,6 +1,7 @@
 package de.schoolgame.render.gui.screens;
 
 import com.badlogic.gdx.Gdx;
+
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.gui.Screen;
@@ -35,7 +36,6 @@ public class MainMenuScreen extends Screen {
             var state = GameState.INSTANCE;
             state.world = new World();
             state.player = new PlayerEntity(new Vec2f(1.0f,1.0f));
-            state.player.setGodmode(true);
             state.setState(GameState.GameStateType.WORLD_EDITOR);
         }));
 

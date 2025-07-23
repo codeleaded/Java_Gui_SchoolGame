@@ -1,10 +1,18 @@
 package de.schoolgame.world.entities;
 
+import java.util.Random;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Affine2;
+
 import de.schoolgame.network.packet.ScorePacket;
 import de.schoolgame.primitives.Direction;
+import static de.schoolgame.primitives.Direction.DOWN;
+import static de.schoolgame.primitives.Direction.LEFT;
+import static de.schoolgame.primitives.Direction.NONE;
+import static de.schoolgame.primitives.Direction.RIGHT;
+import static de.schoolgame.primitives.Direction.UP;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.Sound;
@@ -13,10 +21,6 @@ import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.Score;
 import de.schoolgame.world.WorldObject;
-
-import java.util.Random;
-
-import static de.schoolgame.primitives.Direction.*;
 
 public class PlayerEntity extends MovingEntity {
     public static float COYOTE_TIME = 0.2f;
@@ -76,6 +80,9 @@ public class PlayerEntity extends MovingEntity {
     public void setGodmode(boolean godmode) {
         this.godmode = godmode;
     }
+    public void setDead(boolean dead) {
+        this.dead = dead;
+    }
 
     public boolean getDead() { return dead; }
     public int getCoins() { return this.coins; }
@@ -83,6 +90,15 @@ public class PlayerEntity extends MovingEntity {
     public boolean getStamp() { return this.stamp; }
     public int getPower() { return this.power; }
     public boolean getGodmode() { return this.godmode; }
+    public boolean getGround() { return this.onGround; }
+    public boolean getWall() { return this.onWall; }
+
+    public void setVelocityX(float vx){
+        velocity.x = vx;
+    }
+    public void setAccelerationX(float ax){
+        acceleration.x = ax;
+    }
 
     public void addCoins(int coins) {
         if(GameState.INSTANCE.getState() == GameState.GameStateType.GAME){
@@ -186,15 +202,23 @@ public class PlayerEntity extends MovingEntity {
             case UP -> {
                 if(!dead){
                     setJump(true);
-                    if (onWall) {
-                        velocity.x = 4.0f * (slideDir ? 1.0f : -1.0f);
-                        velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
-                        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump/jump", Sound.class);
-                        sound.play();
-                    }
-                    if (onGround || stateTime - coyote < COYOTE_TIME) {
+                    if (onGround) {
                         velocity.y = 14.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
                         this.coyote = 0.0f;
+                        
+                        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump/jump", Sound.class);
+                        sound.play();
+                    }else if (onWall) {
+                        velocity.x = 4.0f * (slideDir ? 1.0f : -1.0f);
+                        velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
+                        this.coyote = 0.0f;
+                        
+                        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump/jump", Sound.class);
+                        sound.play();
+                    }else if (stateTime - coyote < COYOTE_TIME) {
+                        velocity.y = 14.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
+                        this.coyote = 0.0f;
+                        
                         Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump/jump", Sound.class);
                         sound.play();
                     }
@@ -228,7 +252,7 @@ public class PlayerEntity extends MovingEntity {
         reverse = (velocity.x<0.0f && acceleration.x>0.0f) || (velocity.x>0.0f && acceleration.x<0.0f);
 
         if(getDead())				return 2;
-        else if(!onGround){
+        else if(!onGround && !onWall){
             if(!stamp)		        return 3;
             else 				    return 1;
         }else if(stamp){
@@ -329,15 +353,14 @@ public class PlayerEntity extends MovingEntity {
 
         }
 
-        if (type == UP && velocity.y < 0.0f) velocity.y = 0.0f;
-        if (type == DOWN && velocity.y > 0.0f) velocity.y = 0.0f;
+        if (type == UP && velocity.y < 0.0f)    velocity.y = 0.0f;
+        if (type == DOWN && velocity.y > 0.0f)  velocity.y = 0.0f;
 
         if (type == LEFT || type == RIGHT){
             if(object==WorldObject.WORLD_BORDER)
                 velocity.x = 0.0f;
             else {
                 onWall = true;
-                onGround = true;
                 velocity.x = 0.0f;
                 slideDir = type == RIGHT;
                 coyote = stateTime;

@@ -2,13 +2,23 @@ package de.schoolgame.state;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import static com.badlogic.gdx.Input.Keys.A;
+import static com.badlogic.gdx.Input.Keys.D;
+import static com.badlogic.gdx.Input.Keys.DOWN;
+import static com.badlogic.gdx.Input.Keys.ESCAPE;
+import static com.badlogic.gdx.Input.Keys.L;
+import static com.badlogic.gdx.Input.Keys.LEFT;
+import static com.badlogic.gdx.Input.Keys.RIGHT;
+import static com.badlogic.gdx.Input.Keys.S;
+import static com.badlogic.gdx.Input.Keys.SPACE;
+import static com.badlogic.gdx.Input.Keys.UP;
+import static com.badlogic.gdx.Input.Keys.W;
 import com.badlogic.gdx.InputProcessor;
+
 import de.schoolgame.primitives.Direction;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.Sound;
 import de.schoolgame.utils.CoordinateUtils;
-
-import static com.badlogic.gdx.Input.Keys.*;
 
 public class GameInputProcessor implements InputProcessor {
     private int lastMouseButton = Input.Buttons.LEFT;
@@ -16,7 +26,7 @@ public class GameInputProcessor implements InputProcessor {
     public void update() {
         var state = GameState.INSTANCE;
 
-        if (state.controllable()) {
+        if (state.controllableInput()) {
             var leftPressed = isKeyPressed(A) || isKeyPressed(LEFT);
             var rightPressed = isKeyPressed(D) || isKeyPressed(RIGHT);
             if (leftPressed != rightPressed) {
@@ -30,19 +40,21 @@ public class GameInputProcessor implements InputProcessor {
                 state.player.cancelMovement(Direction.RIGHT);
             }
 
-            var upPressed = isKeyPressed(W) || isKeyPressed(UP) || isKeyPressed(SPACE);
-            var downPressed = isKeyPressed(S) || isKeyPressed(DOWN);
-            if (upPressed != downPressed) {
-                if (upPressed) {
-                    state.player.cancelMovement(Direction.DOWN);
-                    state.player.move(Direction.UP);
+            if(state.player.getGodmode()){
+                var upPressed = isKeyPressed(W) || isKeyPressed(UP);
+                var downPressed = isKeyPressed(S) || isKeyPressed(DOWN);
+                if (upPressed != downPressed) {
+                    if (upPressed) {
+                        state.player.cancelMovement(Direction.DOWN);
+                        state.player.move(Direction.UP);
+                    } else {
+                        state.player.cancelMovement(Direction.UP);
+                        state.player.move(Direction.DOWN);
+                    }
                 } else {
+                    state.player.cancelMovement(Direction.DOWN);
                     state.player.cancelMovement(Direction.UP);
-                    state.player.move(Direction.DOWN);
                 }
-            } else {
-                state.player.cancelMovement(Direction.DOWN);
-                state.player.cancelMovement(Direction.UP);
             }
         }
     }
@@ -55,7 +67,22 @@ public class GameInputProcessor implements InputProcessor {
     public boolean keyDown(int keycode) {
         var state = GameState.INSTANCE;
 
-        if (state.controllable()) {
+        if (state.controllableInput()) {
+            var upPressed = keycode==W || keycode==UP || keycode==SPACE;
+            var downPressed = keycode==S || keycode==DOWN;
+            if (upPressed != downPressed) {
+                if (upPressed) {
+                    state.player.cancelMovement(Direction.DOWN);
+                    state.player.move(Direction.UP);
+                } else {
+                    state.player.cancelMovement(Direction.UP);
+                    state.player.move(Direction.DOWN);
+                }
+            } else {
+                state.player.cancelMovement(Direction.DOWN);
+                state.player.cancelMovement(Direction.UP);
+            }
+
             if (keycode == L) {
                 if (state.getState() == GameState.GameStateType.DEBUG) {
                     state.setState(GameState.GameStateType.GAME);
@@ -83,7 +110,7 @@ public class GameInputProcessor implements InputProcessor {
             return true;
         }
 
-        if (state.controllable()) {
+        if (state.controllableInput()) {
             return switch (keycode) {
                 case SPACE:
                 case UP:

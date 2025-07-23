@@ -3,6 +3,7 @@ package de.schoolgame.render.renderer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics;
+
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
 import de.schoolgame.utils.Save;
@@ -215,6 +216,9 @@ public class ImGuiRenderer implements IRenderer {
 
                 ImGui.checkbox("Godmode", inputGodmode);
                 state.player.setGodmode(inputGodmode.get());
+
+                ImGui.checkbox("onGround",state.player.getGround());
+                ImGui.checkbox("onWall",state.player.getWall());
             }
             ImGui.end();
         }
@@ -226,6 +230,7 @@ public class ImGuiRenderer implements IRenderer {
         if (tmpProcessor != null) { // Restore the input processor after ImGui caught all inputs, see #end()
             Gdx.input.setInputProcessor(tmpProcessor);
             tmpProcessor = null;
+            GameState.INSTANCE.SetControllable(true);
         }
 
         imGuiGl3.newFrame();
@@ -241,6 +246,7 @@ public class ImGuiRenderer implements IRenderer {
         if (ImGui.getIO().getWantCaptureKeyboard() || ImGui.getIO().getWantCaptureMouse()) {
             tmpProcessor = Gdx.input.getInputProcessor();
             Gdx.input.setInputProcessor(null);
+            GameState.INSTANCE.SetControllable(false);
         }
     }
 

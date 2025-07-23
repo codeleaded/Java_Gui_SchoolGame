@@ -1,14 +1,19 @@
 package de.schoolgame.world.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
-import de.schoolgame.primitives.*;
+
+import de.schoolgame.primitives.ContactWrapper;
+import de.schoolgame.primitives.Direction;
+import de.schoolgame.primitives.Rectf;
+import de.schoolgame.primitives.Vec2f;
+import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.Sound;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class MovingEntity extends Entity {
     public static final float DEFAULT_GRAVITY = -25.0f;
@@ -33,6 +38,11 @@ public abstract class MovingEntity extends Entity {
         super(position, size);
         this.velocity = new Vec2f(0.0f, 0.0f);
         this.acceleration = new Vec2f(0.0f, GRAVITY);
+    }
+
+    public Rectf getHitbox(){
+        return new Rectf(position.cpy(),size.cpy());
+        //return new Rectf(position.add(size.mul(0.05f,0.0f)),size.mul(0.9f,0.9f));
     }
 
     @Override
@@ -150,12 +160,12 @@ public abstract class MovingEntity extends Entity {
     private Vec2f rayCollisionFast(Vec2f pos, Vec2f worldSize) {
         list.clear();
 
-        var myRect = new Rectf(position.cpy(),size.cpy());
+        var myRect = getHitbox();
 
         ArrayList<CollisionObject> potentialCollisions = findTileCollisions(
-            position,
+            myRect.pos,
             pos,
-            size,
+            myRect.size,
             worldSize
         );
 	    sortCollisionsByDistance(potentialCollisions,myRect);
@@ -174,16 +184,16 @@ public abstract class MovingEntity extends Entity {
         }
 
         potentialCollisions = findTileCollisions(
-            position,
+            myRect.pos,
             pos,
-            size,
+            myRect.size,
             worldSize
         );
 	    sortCollisionsByDistance(potentialCollisions,myRect);
 
         for (CollisionObject co : potentialCollisions) {
             if(myRect.overlap(co.rectf)){
-                Rectf r = new Rectf(cp.cpy(),size.cpy());
+                Rectf r = new Rectf(cp.cpy(),myRect.size.cpy());
                 Direction d = r.staticCollisionSolver(co.rectf);
 
                 if(d!=Direction.NONE && ((co.type != WorldObject.PODEST && co.type != WorldObject.TABLE && co.type != WorldObject.LABORATROYTABLE) || (d==Direction.UP && velocity.y<0.0f && doesntStamp))){
