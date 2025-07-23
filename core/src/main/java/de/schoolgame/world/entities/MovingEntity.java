@@ -1,14 +1,19 @@
 package de.schoolgame.world.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
-import de.schoolgame.primitives.*;
+
+import de.schoolgame.primitives.ContactWrapper;
+import de.schoolgame.primitives.Direction;
+import de.schoolgame.primitives.Rectf;
+import de.schoolgame.primitives.Vec2f;
+import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.Sound;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.WorldObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class MovingEntity extends Entity {
     public static final float DEFAULT_GRAVITY = -25.0f;
@@ -196,7 +201,7 @@ public abstract class MovingEntity extends Entity {
 
                 assert co.type.getTile() != null;
                 if(d != Direction.NONE &&
-                    (d != Direction.UP || co.type.getTile().collisiontype == Direction.UP && doesntStamp) &&
+                    (d != Direction.UP || co.type.getTile().collisiontype == Direction.UP && doesntStamp && velocity.y<0.0f) &&
                     (co.type.getTile().collisiontype == Direction.ALL || co.type.getTile().collisiontype == d)){
                     onCollision(d,co.rectf.pos.toVec2i(),co.type);
                     cp = r.pos.cpy();
