@@ -339,7 +339,7 @@ public class PlayerEntity extends MovingEntity {
                     world.addAt(pos,WorldObject.NONE);
 
                     for(int i = 0;i<11;i++){
-                        var e = new BrickAnimationEntity(i,pos.toVec2f());
+                        var e = new BrickAnimationEntity(i,pos.toVec2f(),velocity);
                         world.spawnEntity(pos.toVec2f(),e);
                     }
                 }
@@ -349,7 +349,7 @@ public class PlayerEntity extends MovingEntity {
                     world.addAt(pos,WorldObject.NONE);
 
                     for(int i = 0;i<11;i++){
-                        var e = new BrickAnimationEntity(i,pos.toVec2f());
+                        var e = new BrickAnimationEntity(i,pos.toVec2f(),velocity);
                         world.spawnEntity(pos.toVec2f(),e);
                     }
                 }

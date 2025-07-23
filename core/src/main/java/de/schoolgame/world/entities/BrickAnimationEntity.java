@@ -27,10 +27,17 @@ public class BrickAnimationEntity extends MovingEntity {
         stateTime = 0f;
         id = 0;
     }
-    public BrickAnimationEntity(int id,Vec2f position) {
+    public BrickAnimationEntity(int id,Vec2f position,Vec2f velocity) {
         super(position, new Vec2f(1.0f, 1.0f));
-        this.velocity.x = new Random().nextFloat(-3.0f,3.0f);
-        this.velocity.y = new Random().nextFloat(3.0f,8.0f);
+        //this.velocity.x = new Random().nextFloat(-3.0f,3.0f);
+        //this.velocity.y = new Random().nextFloat(3.0f,8.0f);
+        
+        this.velocity = velocity.cpy();
+        this.velocity = this.velocity.add(
+            new Random().nextFloat(-3.0f,3.0f),
+            new Random().nextFloat(-3.0f,3.0f)
+        );
+        
         this.value = 0;
         this.angle = 0.0f;
         this.stateTime = 0f;
