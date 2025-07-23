@@ -148,9 +148,6 @@ public class ImGuiRenderer implements IRenderer {
                     }
                     if (ImGui.button("Download")) {
                         state.worldManager.download(inputWorldName.get());
-                        if (state.getState() == GameState.GameStateType.DEBUG) {
-                            state.world.summonEntities();
-                        }
                     }
                 } else {
                     if (ImGui.button("Save")) {
