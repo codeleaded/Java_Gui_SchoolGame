@@ -201,8 +201,8 @@ public abstract class MovingEntity extends Entity {
 
                 assert co.type.getTile() != null;
                 if(d != Direction.NONE &&
-                    (d != Direction.UP || co.type.getTile().collisiontype == Direction.UP && doesntStamp && velocity.y<0.0f) &&
-                    (co.type.getTile().collisiontype == Direction.ALL || co.type.getTile().collisiontype == d)){
+                  (co.type.getTile().collisiontype != Direction.UP || d == Direction.UP && doesntStamp && velocity.y<0.0f) &&
+                  (co.type.getTile().collisiontype == Direction.ALL || co.type.getTile().collisiontype == d)){
                     onCollision(d,co.rectf.pos.toVec2i(),co.type);
                     cp = r.pos.cpy();
                 }
