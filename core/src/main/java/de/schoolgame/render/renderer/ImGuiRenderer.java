@@ -148,6 +148,9 @@ public class ImGuiRenderer implements IRenderer {
                     }
                     if (ImGui.button("Download")) {
                         state.worldManager.download(inputWorldName.get());
+                        if (state.getState() == GameState.GameStateType.DEBUG) {
+                            state.world.summonEntities();
+                        }
                     }
                 } else {
                     if (ImGui.button("Save")) {
@@ -157,6 +160,9 @@ public class ImGuiRenderer implements IRenderer {
                     ImGui.sameLine();
                     if (ImGui.button("Load")) {
                         Save s = state.worldManager.get(inputWorldName.get());
+                        if (state.getState() == GameState.GameStateType.DEBUG) {
+                            state.world.summonEntities();
+                        }
                         state.loadSave(s);
                     }
                 }
