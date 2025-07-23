@@ -37,15 +37,17 @@ public class World {
     }
 
     public World(Save s) {
-        this(s.worldObjects(), new Vec2i(s.worldObjects().length, s.worldObjects()[0].length), s.tileSize(), s.spawn());
-    }
+        WorldObject[][] original = s.worldObjects();
+        WorldObject[][] copy = new WorldObject[original.length][];
+        for (int i = 0; i < original.length; i++) {
+            copy[i] = original[i].clone(); // deep copy each row
+        }
 
-    public World(WorldObject[][] worldObjects, Vec2i size, int tileSize, Vec2i spawn) {
-        this.worldObjects = worldObjects;
-        this.size = size;
-        this.tileSize = tileSize;
+        this.worldObjects = copy;
+        this.size = new Vec2i(copy.length, copy[0].length);
+        this.tileSize = s.tileSize();
         this.entities = new ArrayList<>();
-        this.spawn = spawn;
+        this.spawn = s.spawn().cpy();
 
         connectionsCache = new byte[size.x][size.y];
         updateConnections();
