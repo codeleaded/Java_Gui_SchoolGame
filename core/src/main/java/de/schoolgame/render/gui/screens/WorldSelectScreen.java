@@ -1,8 +1,8 @@
 package de.schoolgame.render.gui.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import de.schoolgame.primitives.Vec2i;
+import de.schoolgame.render.Sound;
 import de.schoolgame.render.gui.Screen;
 import de.schoolgame.render.gui.widgets.ButtonWidget;
 import de.schoolgame.render.gui.widgets.RectangleWidget;
@@ -12,8 +12,6 @@ import de.schoolgame.utils.Save;
 
 public class WorldSelectScreen extends Screen {
     public WorldSelectScreen() {
-        super();
-
         final int buttonSpacing = 10;
 
         final Vec2i buttonSize = new Vec2i(64, 64);
@@ -41,8 +39,8 @@ public class WorldSelectScreen extends Screen {
                 state.world.summonEntities();
                 state.setState(GameState.GameStateType.GAME);
 
-                Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/tap", Sound.class);
-                sound.play(1.0f);
+                Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/tap/tap", Sound.class);
+                sound.play();
             }));
             x += spacing;
         }
@@ -53,5 +51,7 @@ public class WorldSelectScreen extends Screen {
 
         y -= font_height + buttonSpacing;
         widgets.add(new TextWidget(new Vec2i(x, y), "Welten von anderen Spielern:", font_size));
+
+        addBackButton();
     }
 }

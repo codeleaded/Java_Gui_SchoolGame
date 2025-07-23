@@ -1,11 +1,12 @@
 package de.schoolgame.utils;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import de.schoolgame.primitives.Recti;
+import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
+import de.schoolgame.render.Sound;
 import de.schoolgame.render.texture.Animation;
 import de.schoolgame.render.texture.Font;
 import de.schoolgame.render.texture.SpriteSheet;
@@ -83,16 +84,22 @@ public class AssetUtils {
     }
 
     public static int getUdpPort(TomlParseResult asset) {
-        long port = asset.getLong("udp");
+        long port = asset.getLong("udp", () -> 5501);
         return Math.toIntExact(port);
     }
 
     public static int getTcpPort(TomlParseResult asset) {
-        long port = asset.getLong("tcp");
+        long port = asset.getLong("tcp", () -> 5500);
         return Math.toIntExact(port);
     }
 
     public static String getServerIP(TomlParseResult asset) {
         return asset.getString("ip");
+    }
+
+    public static Vec2f getSoundPitch(TomlParseResult asset) {
+        float min = (float) asset.getDouble("audio.minPitch", () -> 1f);
+        float max = (float) asset.getDouble("audio.maxPitch", () -> 1f);
+        return new Vec2f(min, max);
     }
 }

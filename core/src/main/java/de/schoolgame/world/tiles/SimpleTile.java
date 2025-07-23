@@ -7,12 +7,18 @@ import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Tile;
 
-public class Test extends Tile {
+public class SimpleTile extends Tile {
+    private final String asset;
+
+    public SimpleTile(String asset) {
+        this.asset = asset;
+    }
+
     @Override
     public void render(Batch batch, Vec2f drawPosition, Vec2i worldPosition) {
         var state = GameState.INSTANCE;
         int tileSize = state.world.getTileSize();
-        Texture texture = state.assetManager.get("tiles/test/test", Texture.class);
+        Texture texture = state.assetManager.get(asset, Texture.class);
         batch.draw(texture, drawPosition.x, drawPosition.y, tileSize, tileSize);
     }
 }

@@ -1,10 +1,10 @@
 package de.schoolgame.render;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import de.schoolgame.primitives.Recti;
+import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.texture.Animation;
 import de.schoolgame.render.texture.Font;
@@ -22,8 +22,11 @@ public class AssetManager {
     public <T> T get(String path, Class<T> type) {
         path = path + "." + AssetUtils.getType(type);
         if (!path.startsWith("assets/")) path = "assets/" + path;
-        if (!assets.containsKey(path)) throw new IllegalArgumentException("Asset not loaded: " + path);
-        return type.cast(assets.get(path));
+        T asset = type.cast(assets.get(path));
+        if (asset == null) {
+            throw new IllegalArgumentException("Asset not loaded: " + path);
+        }
+        return asset;
     }
 
     public void load(String path) throws IllegalStateException, NullPointerException {
@@ -52,18 +55,19 @@ public class AssetManager {
             load(path, "texture");
             Texture texture = get(pathWithoutExtension, Texture.class);
 
+            int count = AssetUtils.getInt(asset, "spritesheet.count", -1);
+            Optional<Recti[]> opt = AssetUtils.getSpriteSizes(asset);
+
             SpriteSheet spriteSheet;
-
-            Optional<Recti[]> sizes = AssetUtils.getSpriteSizes(asset);
-            if (sizes.isPresent()) {
-                spriteSheet = new SpriteSheet(texture, sizes.get());
+            if (opt.isPresent()) {
+                Recti[] sizes = opt.get();
+                if (sizes.length != count && count != -1) throw new IllegalStateException("SpriteSheet sizes don't match");
+                spriteSheet = new SpriteSheet(texture, sizes);
             } else {
-                int count = AssetUtils.getInt(asset, "spritesheet.count", 1);
+                if (count == -1) throw new IllegalStateException("SpriteSheet size not found");
                 Vec2i size = AssetUtils.getSpriteSize(asset, new Vec2i(32, 32));
-
                 spriteSheet = new SpriteSheet(texture, size, count);
             }
-
 
             assets.put(name, spriteSheet);
             return;
@@ -87,15 +91,17 @@ public class AssetManager {
             assets.put(name, tileSet);
             return;
         } else if (typeClass == Font.class) {
-            load(path, "spritesheet");
-            SpriteSheet spriteSheet = get(pathWithoutExtension, SpriteSheet.class);
+            load(path, "texture");
+            Texture texture = get(pathWithoutExtension, Texture.class);
 
-            Font font = new Font(spriteSheet.getRegions());
+            Font font = new Font(texture);
             assets.put(name, font);
             return;
         } else if (typeClass == Sound.class) {
             FileHandle handle = Gdx.files.internal(pathWithoutExtension + ".wav");
-            Sound sound = Gdx.audio.newSound(handle);
+
+            Vec2f pitch = AssetUtils.getSoundPitch(asset);
+            Sound sound = new Sound(Gdx.audio.newSound(handle), pitch);
             assets.put(name, sound);
             return;
         }

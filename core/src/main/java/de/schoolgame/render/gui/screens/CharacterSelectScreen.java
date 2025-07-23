@@ -17,7 +17,7 @@ public class CharacterSelectScreen extends Screen {
     public CharacterSelectScreen() {
         int spacing = 10;
 
-        TextWidget text = new TextWidget(new Vec2i(spacing, spacing), "Wähle deinen Character und Benutzernamen", 3);
+        TextWidget text = new TextWidget(new Vec2i(spacing, spacing), "Wähle deinen Skin und Namen", 3);
         text.setPos(new Vec2i(spacing, camera.viewSize.y - text.getSize().y - spacing));
         widgets.add(text);
 
@@ -46,7 +46,7 @@ public class CharacterSelectScreen extends Screen {
 
         Vec2i pos = new Vec2i(spacing, spacing);
         size = new Vec2i(camera.viewSize.x - (spacing * 3) - 64, 64);
-        widgets.add(new ButtonWidget(pos, size, () -> GameState.INSTANCE.username, () -> {}));
+        widgets.add(new ButtonWidget(pos, size, () -> GameState.INSTANCE.username, null));
 
         widgets.add(new TextureButtonWidget(pos.add(size.x + spacing, 0), new Vec2i(64, 64), 4, () -> {
             var state = GameState.INSTANCE;

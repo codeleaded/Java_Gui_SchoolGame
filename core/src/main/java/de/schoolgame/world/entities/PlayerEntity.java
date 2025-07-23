@@ -1,7 +1,8 @@
 package de.schoolgame.world.entities;
 
+import java.util.Random;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Affine2;
 
@@ -14,6 +15,7 @@ import static de.schoolgame.primitives.Direction.RIGHT;
 import static de.schoolgame.primitives.Direction.UP;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
+import de.schoolgame.render.Sound;
 import de.schoolgame.render.texture.SpriteSheet;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
@@ -77,6 +79,15 @@ public class PlayerEntity extends MovingEntity {
     }
     public void setGodmode(boolean godmode) {
         this.godmode = godmode;
+        if(godmode){
+            velocity.x = 0.0f;
+            velocity.y = 0.0f;
+            acceleration.x = 0.0f;
+            acceleration.y = 0.0f;
+        }
+    }
+    public void setDead(boolean dead) {
+        this.dead = dead;
     }
 
     public boolean getDead() { return dead; }
@@ -85,6 +96,15 @@ public class PlayerEntity extends MovingEntity {
     public boolean getStamp() { return this.stamp; }
     public int getPower() { return this.power; }
     public boolean getGodmode() { return this.godmode; }
+    public boolean getGround() { return this.onGround; }
+    public boolean getWall() { return this.onWall; }
+
+    public void setVelocityX(float vx){
+        velocity.x = vx;
+    }
+    public void setAccelerationX(float ax){
+        acceleration.x = ax;
+    }
 
     public void addCoins(int coins) {
         if(GameState.INSTANCE.getState() == GameState.GameStateType.GAME){
@@ -96,12 +116,13 @@ public class PlayerEntity extends MovingEntity {
             GameState.INSTANCE.score += value;
 
             var world = GameState.INSTANCE.world;
-            var e = (PointsEntity)WorldObject.POINTS.createEntity(pos);
+            var e = (PointsEntity) WorldObject.POINTS.createEntity(pos);
+            assert e != null;
             e.value = value;
             world.spawnEntity(pos,e);
 
             var s = GameState.INSTANCE.server;
-            s.sendPacket(new ScorePacket(s.getUUID(),value),true);
+            s.sendPacket(new ScorePacket(s.getUUID(), getScore()),true);
         }
     }
     public void addScore(int value) {
@@ -115,7 +136,7 @@ public class PlayerEntity extends MovingEntity {
             position = GameState.INSTANCE.world.getSpawn().toVec2f().add(new Vec2f(0.0f,0.001f));
             velocity = new Vec2f(0.0f,0.0f);
             MovingEntity.GRAVITY *= (MovingEntity.GRAVITY < 0.0f ? 1.0f : -1.0f);
-            
+
             dead = false;
             setPower(0);
         }
@@ -132,8 +153,13 @@ public class PlayerEntity extends MovingEntity {
         this.dead = true;
         velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
 
-        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/explosion", Sound.class);
-        sound.play(2.0f);
+        Sound[] sounds = {
+            GameState.INSTANCE.assetManager.get("audio/dead1/dead1", Sound.class),
+            GameState.INSTANCE.assetManager.get("audio/dead3/dead3", Sound.class),
+            GameState.INSTANCE.assetManager.get("audio/dead4/dead4", Sound.class)
+        };
+
+        sounds[new Random().nextInt(0,sounds.length)].play(2.0f);
     }
 
     public void cancelMovement(Direction direction) {
@@ -161,8 +187,8 @@ public class PlayerEntity extends MovingEntity {
         }
     }
 
-    public boolean move(Direction direction) {
-        if (direction == NONE) return false;
+    public void move(Direction direction) {
+        if (direction == NONE) return;
         if (godmode) {
             switch (direction) {
                 case UP -> velocity.y = 10f;
@@ -176,23 +202,31 @@ public class PlayerEntity extends MovingEntity {
                     lookDir = true;
                 }
             }
-            return true;
+            return;
         }
         switch (direction) {
             case UP -> {
                 if(!dead){
                     setJump(true);
-                    if (onWall) {
-                        velocity.x = 4.0f * (slideDir ? 1.0f : -1.0f);
-                        velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
-                        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump", Sound.class);
-                        sound.play(1.0f);
-                    }
-                    if (onGround || stateTime - coyote < COYOTE_TIME) {
+                    if (onGround) {
                         velocity.y = 14.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
                         this.coyote = 0.0f;
-                        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump", Sound.class);
-                        sound.play(1.0f);
+                        
+                        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump/jump", Sound.class);
+                        sound.play();
+                    }else if (onWall) {
+                        velocity.x = 4.0f * (slideDir ? 1.0f : -1.0f);
+                        velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
+                        this.coyote = 0.0f;
+                        
+                        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump/jump", Sound.class);
+                        sound.play();
+                    }else if (stateTime - coyote < COYOTE_TIME) {
+                        velocity.y = 14.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
+                        this.coyote = 0.0f;
+                        
+                        Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump/jump", Sound.class);
+                        sound.play();
                     }
                 }
             }
@@ -216,7 +250,6 @@ public class PlayerEntity extends MovingEntity {
                 }
             }
         }
-        return true;
     }
 
     public static final int[] WALK_LUT = new int[]{6, 8, 5, 8, 6, 7, 4, 7};
@@ -225,7 +258,7 @@ public class PlayerEntity extends MovingEntity {
         reverse = (velocity.x<0.0f && acceleration.x>0.0f) || (velocity.x>0.0f && acceleration.x<0.0f);
 
         if(getDead())				return 2;
-        else if(!onGround){
+        else if(!onGround && !onWall){
             if(!stamp)		        return 3;
             else 				    return 1;
         }else if(stamp){
@@ -292,52 +325,48 @@ public class PlayerEntity extends MovingEntity {
     }
 
     @Override
-    public void onCollision(Direction type,Vec2i pos,WorldObject object) {
+    public void onCollision(Direction type, Vec2i pos, WorldObject object) {
         if (getDead()) return;
 
-        if (object == WorldObject.SPIKE) {
-            kill();
-        }
-        if (object == WorldObject.REDSPIKE) {
-            kill();
+        switch (object) {
+            case SPIKE, REDSPIKE, CABLE, CHEMIKALIEN, BUNSENBRENNER, KLO, TESLA -> kill();
+            case BRICK -> {
+                if (type == DOWN && (GRAVITY < 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
+                    var world = GameState.INSTANCE.world;
+                    addScore(pos.toVec2f().add(0.0f,1.0f),Score.MP_BRICK);
+                    world.addAt(pos,WorldObject.NONE);
+                }
+                if (type == UP && (GRAVITY > 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
+                    var world = GameState.INSTANCE.world;
+                    addScore(pos.toVec2f().add(0.0f,1.0f),Score.MP_BRICK);
+                    world.addAt(pos,WorldObject.NONE);
+                }
+            }
+            case QUESTMARK -> {
+                if (type == DOWN && (GRAVITY < 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
+                    var world = GameState.INSTANCE.world;
+                    addScore(pos.toVec2f().add(0.0f,1.0f),Score.MP_QUESTMARK);
+                    world.addAt(pos,WorldObject.OPENQUESTMARK);
+                    world.addAt(pos.add(0,1),WorldObject.FIREFLOWER);
+                }
+                if (type == UP && (GRAVITY > 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
+                    var world = GameState.INSTANCE.world;
+                    addScore(pos.toVec2f().add(0.0f,1.0f),Score.MP_QUESTMARK);
+                    world.addAt(pos,WorldObject.OPENQUESTMARK);
+                    world.addAt(pos.add(0,-1),WorldObject.FIREFLOWER);
+                }
+            }
+
         }
 
-        if (object == WorldObject.BRICK) {
-            if (type == DOWN && (GRAVITY < 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
-                var world = GameState.INSTANCE.world;
-                addScore(pos.toVec2f().add(0.0f,1.0f),Score.MP_BRICK);
-                world.addAt(pos,WorldObject.NONE);
-            }
-            if (type == UP && (GRAVITY > 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
-                var world = GameState.INSTANCE.world;
-                addScore(pos.toVec2f().add(0.0f,1.0f),Score.MP_BRICK);
-                world.addAt(pos,WorldObject.NONE);
-            }
-        }
-        if (object == WorldObject.QUESTMARK) {
-            if (type == DOWN && (GRAVITY < 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
-                var world = GameState.INSTANCE.world;
-                addScore(pos.toVec2f().add(0.0f,1.0f),Score.MP_QUESTMARK);
-                world.addAt(pos,WorldObject.OPENQUESTMARK);
-                world.addAt(pos.add(0,1),WorldObject.FIREFLOWER);
-            }
-            if (type == UP && (GRAVITY > 0.0f || (stamp && Math.abs(velocity.y)>0.5f))){
-                var world = GameState.INSTANCE.world;
-                addScore(pos.toVec2f().add(0.0f,1.0f),Score.MP_QUESTMARK);
-                world.addAt(pos,WorldObject.OPENQUESTMARK);
-                world.addAt(pos.add(0,-1),WorldObject.FIREFLOWER);
-            }
-        }
-
-        if (type == UP && velocity.y < 0.0f) velocity.y = 0.0f;
-        if (type == DOWN && velocity.y > 0.0f) velocity.y = 0.0f;
+        if (type == UP && velocity.y < 0.0f)    velocity.y = 0.0f;
+        if (type == DOWN && velocity.y > 0.0f)  velocity.y = 0.0f;
 
         if (type == LEFT || type == RIGHT){
             if(object==WorldObject.WORLD_BORDER)
                 velocity.x = 0.0f;
             else {
                 onWall = true;
-                onGround = true;
                 velocity.x = 0.0f;
                 slideDir = type == RIGHT;
                 coyote = stateTime;
@@ -352,94 +381,88 @@ public class PlayerEntity extends MovingEntity {
     public boolean onEntityCollision(Entity entity, Direction direction) {
         if (getDead()) return false;
 
-        if (entity instanceof CoinEntity) {
-            addCoins(1);
-            addScore(Score.MP_COIN);
+        switch (entity) {
+            case CoinEntity ignored -> {
+                addCoins(1);
+                addScore(Score.MP_COIN);
 
-            Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/coin", Sound.class);
-            sound.play(1.0f);
-            return true;
-        }
-        if (entity instanceof Fireflower) {
-            setPower(2);
-
-            addScore(Score.MP_FIREFLOWER);
-
-            Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/power_up", Sound.class);
-            sound.play(1.0f);
-            return true;
-        }
-        if (entity instanceof PotionEntity) {
-            addScore(Score.MP_POTION);
-
-            Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/power_up", Sound.class);
-            sound.play(1.0f);
-            return true;
-        }
-
-        if (entity instanceof TeslaEntity) {
-            //Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/coin", Sound.class);
-            //sound.play(1.0f);
-            kill();
-        }
-        if (entity instanceof KloEntity) {
-            //Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/coin", Sound.class);
-            //sound.play(1.0f);
-            kill();
-        }
-        if (entity instanceof ChemikalienEntity) {
-            this.kill();
-        }
-        if (entity instanceof BunsenbrennerEntity) {
-            this.kill();
-        }
-        if (entity instanceof CableEntity) {
-            this.kill();
-        }
-
-        if (entity instanceof RoamerEntity) {
-            if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
-                onGround = true;
-                move(Direction.UP);
-                addScore(Score.MP_KILL_ROAMER);
+                Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/coin/coin", Sound.class);
+                sound.play();
                 return true;
             }
-            kill();
-        }
-        if (entity instanceof FlashEntity) {
-            MovingEntity.GRAVITY *= -1;
-            return true;
-        }
+            case Fireflower ignored -> {
+                setPower(2);
 
-        if (entity instanceof FriedrichEntity fe && !fe.getDead()) {
-            if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
-                onGround = true;
-                move(Direction.UP);
-                addScore(Score.MP_KILL_FRIEDRICH);
-                fe.kill();
-                return false;
+                addScore(Score.MP_FIREFLOWER);
+
+                Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/powerup/powerup", Sound.class);
+                sound.play();
+                return true;
             }
-            kill();
-        }
-        if (entity instanceof KoenigEntity fe && !fe.getDead()) {
-            if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
-                onGround = true;
-                move(Direction.UP);
-                addScore(Score.MP_KILL_KOENIG);
-                fe.kill();
-                return false;
+            case PotionEntity ignored -> {
+                addScore(Score.MP_POTION);
+
+                Sound sound = GameState.INSTANCE.assetManager.get("audio/upgrade/upgrade", Sound.class);
+                sound.play();
+                return true;
             }
-            kill();
-        }
-        if (entity instanceof EichelsbacherEntity fe && !fe.getDead()) {
-            if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
-                onGround = true;
-                move(Direction.UP);
-                addScore(Score.MP_KILL_EICHELSBACHER);
-                fe.kill();
-                return false;
+            case RoamerEntity ignored -> {
+                if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
+                    onGround = true;
+                    move(UP);
+                    addScore(Score.MP_KILL_ROAMER);
+                    return true;
+                } else {
+                    kill();
+                }
             }
-            kill();
+            case FlashEntity ignored -> {
+                MovingEntity.GRAVITY *= -1;
+                return true;
+            }
+            case FriedrichEntity fe when !fe.getDead() -> {
+                if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
+                    onGround = true;
+                    move(UP);
+                    addScore(Score.MP_KILL_FRIEDRICH);
+                    fe.kill();
+
+                    Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/explosion/explosion", Sound.class);
+                    sound.play();
+                } else {
+                    kill();
+                }
+            }
+            case KoenigEntity koenigEntity -> {
+                if (koenigEntity.getDead()) return false;
+                if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
+                    onGround = true;
+                    move(UP);
+                    addScore(Score.MP_KILL_KOENIG);
+
+                    Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/explosion/explosion", Sound.class);
+                    sound.play();
+
+                    koenigEntity.kill();
+                } else {
+                    kill();
+                }
+            }
+            case EichelsbacherEntity eichelsbacherEntity -> {
+                if ((direction == UP && GRAVITY < 0.0f) || (direction == DOWN && GRAVITY > 0.0f)) {
+                    onGround = true;
+                    move(UP);
+                    addScore(Score.MP_KILL_EICHELSBACHER);
+
+                    Sound sound = GameState.INSTANCE.assetManager.get("audio/endleveldone/endleveldone", Sound.class);
+                    sound.play();
+
+                    eichelsbacherEntity.kill();
+                } else {
+                    kill();
+                }
+            }
+            default -> {}
         }
 
         return false;

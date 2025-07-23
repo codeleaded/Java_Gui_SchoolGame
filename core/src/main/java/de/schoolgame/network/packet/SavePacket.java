@@ -26,5 +26,9 @@ public class SavePacket implements Packet {
         state.worldManager.load(this.name, this.save);
         Save s = state.worldManager.get(this.name);
         state.loadSave(s);
+
+        if (state.getState() == GameState.GameStateType.DEBUG) {
+            state.world.summonEntities();
+        }
     }
 }

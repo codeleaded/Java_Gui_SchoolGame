@@ -19,7 +19,7 @@ type = "texture"
 ## sprite section
 controlls the dimensions of the sprites
 <br/>
-not needed for texture
+not needed for texture and font
 
 Example for a single size:
 ```
@@ -40,7 +40,7 @@ sprites = [
 ## spritesheet section
 amount of sprites in the spritesheet
 <br/>
-only needed for animation, spritesheet or font
+only needed for animation and spritesheet
 
 Example:
 ```
@@ -58,4 +58,14 @@ Example:
 [animation]
 frameDuration = 0.03
 mode = "Loop"
+```
+
+## audio section
+Randomize pitches of a sound
+
+Example:
+```
+[audio]
+minPitch = 0.5
+maxPitch = 2.0
 ```

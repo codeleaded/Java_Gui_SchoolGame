@@ -1,0 +1,5 @@
+type = "sound"
+
+[audio]
+minPitch = 0.9
+maxPitch = 1.0
