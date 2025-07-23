@@ -13,7 +13,7 @@ public abstract class Widget {
     }
 
     public abstract void render(SpriteBatch sb, ShapeRenderer sr);
-    public abstract void onClick();
+    public abstract boolean onClick();
     public abstract void dispose();
 
     public Recti getRect() {

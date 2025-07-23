@@ -133,6 +133,7 @@ public class GameInputProcessor implements InputProcessor {
             case WORLD_SELECT:
             case SCOREBOARD:
             case CHARACTER_SELECT:
+            case CREDITS:
                 yield screen(screenX, screenY);
             case DEBUG:
                 if (!state.debug.showWorldedit.get()) yield false;

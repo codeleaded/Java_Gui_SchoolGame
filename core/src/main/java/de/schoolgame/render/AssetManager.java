@@ -55,15 +55,17 @@ public class AssetManager {
             load(path, "texture");
             Texture texture = get(pathWithoutExtension, Texture.class);
 
+            int count = AssetUtils.getInt(asset, "spritesheet.count", -1);
+            Optional<Recti[]> opt = AssetUtils.getSpriteSizes(asset);
+
             SpriteSheet spriteSheet;
-
-            Optional<Recti[]> sizes = AssetUtils.getSpriteSizes(asset);
-            if (sizes.isPresent()) {
-                spriteSheet = new SpriteSheet(texture, sizes.get());
+            if (opt.isPresent()) {
+                Recti[] sizes = opt.get();
+                if (sizes.length != count && count != -1) throw new IllegalStateException("SpriteSheet sizes don't match");
+                spriteSheet = new SpriteSheet(texture, sizes);
             } else {
-                int count = AssetUtils.getInt(asset, "spritesheet.count", 1);
+                if (count == -1) throw new IllegalStateException("SpriteSheet size not found");
                 Vec2i size = AssetUtils.getSpriteSize(asset, new Vec2i(32, 32));
-
                 spriteSheet = new SpriteSheet(texture, size, count);
             }
 

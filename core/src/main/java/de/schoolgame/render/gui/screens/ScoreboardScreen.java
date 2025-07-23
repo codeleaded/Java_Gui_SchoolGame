@@ -22,6 +22,8 @@ public class ScoreboardScreen extends Screen {
         } else {
             widgets.add(new TextWidget(new Vec2i(10, 10), "No Server connection!", 2));
         }
+
+        addBackButton();
     }
 
     private void refresh() {
@@ -57,6 +59,8 @@ public class ScoreboardScreen extends Screen {
             widgets.add(new TextWidget(pos, score, 3));
             y -= (spacing + size.y);
         }
+
+        addBackButton();
     }
 
     public void setData(String[] names, int[] scores) {

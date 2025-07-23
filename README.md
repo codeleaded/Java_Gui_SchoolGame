@@ -3,6 +3,12 @@ Computerspiel fürs Sommerfest
 
 ## Running
 
-Linux: `.\gradlew run`
+### Client
+Linux: `.\gradlew lwjgl3:run`
 
-Windows: `.\gradlew.bat run`
+Windows: `.\gradlew.bat lwjgl3:run`
+
+### Server (not mandatory)
+Linux: `.\gradlew server:run`
+
+Windows: `.\gradlew.bat server:run`

@@ -36,7 +36,7 @@ public class ServerConnection {
         int udp = AssetUtils.getUdpPort(toml);
 
         try {
-            client.connect(5000, ip, tcp, udp);
+            client.connect(initiallyConnected ? 500 : 2000, ip, tcp, udp);
         } catch (IOException | NullPointerException e) {
             Gdx.app.error("ServerConnection", "Could not connect to server!", e);
             return;

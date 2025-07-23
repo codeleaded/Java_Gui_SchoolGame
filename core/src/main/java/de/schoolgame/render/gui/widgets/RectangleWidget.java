@@ -28,8 +28,8 @@ public class RectangleWidget extends Widget {
     }
 
     @Override
-    public void onClick() {
-
+    public boolean onClick() {
+        return false;
     }
 
     @Override

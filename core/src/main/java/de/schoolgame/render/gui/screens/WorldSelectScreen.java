@@ -12,8 +12,6 @@ import de.schoolgame.utils.Save;
 
 public class WorldSelectScreen extends Screen {
     public WorldSelectScreen() {
-        super();
-
         final int buttonSpacing = 10;
 
         final Vec2i buttonSize = new Vec2i(64, 64);
@@ -53,5 +51,7 @@ public class WorldSelectScreen extends Screen {
 
         y -= font_height + buttonSpacing;
         widgets.add(new TextWidget(new Vec2i(x, y), "Welten von anderen Spielern:", font_size));
+
+        addBackButton();
     }
 }

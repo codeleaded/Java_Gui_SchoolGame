@@ -64,6 +64,9 @@ public class GameState {
             case GAME:
                 this.screen = new HudScreen();
                 break;
+            case CREDITS:
+                this.screen = new CreditScreen();
+                break;
         }
     }
 
@@ -79,5 +82,6 @@ public class GameState {
         WORLD_EDITOR,
         GAME,
         DEBUG,
+        CREDITS,
     }
 }

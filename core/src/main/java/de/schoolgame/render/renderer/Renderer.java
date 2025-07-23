@@ -25,6 +25,9 @@ public class Renderer implements IRenderer {
             case SCOREBOARD:
                 ScreenUtils.clear(0.3f, 0.3f, 0.4f, 1f);
                 break;
+            case CREDITS:
+                ScreenUtils.clear(0.6f, 0.6f, 0.8f, 1f);
+                break;
             case GAME:
                 ScreenUtils.clear(0f, 0.5f, 1f, 1f);
                 worldRenderer.render();

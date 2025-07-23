@@ -55,8 +55,10 @@ public class ButtonWidget extends Widget {
     }
 
     @Override
-    public void onClick() {
+    public boolean onClick() {
+        if (onClick == null) return false;
         onClick.run();
+        return true;
     }
 
     @Override

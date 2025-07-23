@@ -46,7 +46,7 @@ public class CharacterSelectScreen extends Screen {
 
         Vec2i pos = new Vec2i(spacing, spacing);
         size = new Vec2i(camera.viewSize.x - (spacing * 3) - 64, 64);
-        widgets.add(new ButtonWidget(pos, size, () -> GameState.INSTANCE.username, () -> {}));
+        widgets.add(new ButtonWidget(pos, size, () -> GameState.INSTANCE.username, null));
 
         widgets.add(new TextureButtonWidget(pos.add(size.x + spacing, 0), new Vec2i(64, 64), 4, () -> {
             var state = GameState.INSTANCE;
