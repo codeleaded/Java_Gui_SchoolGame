@@ -477,7 +477,7 @@ public class PlayerEntity extends MovingEntity {
         SpriteSheet texture = state.assetManager.get("entities/player/player_" + style, SpriteSheet.class);
         int index = getTexIndex() + ((lookDir && MovingEntity.GRAVITY < 0.0f) || (!lookDir && MovingEntity.GRAVITY > 0.0f) ? 0 : 9);
 
-        Vec2f rendersize = size;//.mul(1.1f,1.1f);
+        Vec2f rendersize = size.mul(1.1f,1.1f);
 
         Affine2 tf = new Affine2();
         tf.translate(position.x * tileSize, position.y * tileSize);
