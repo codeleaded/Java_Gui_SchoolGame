@@ -28,11 +28,6 @@ public class RectangleWidget extends Widget {
     }
 
     @Override
-    public boolean onClick() {
-        return false;
-    }
-
-    @Override
     public void dispose() {
 
     }

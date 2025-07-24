@@ -37,11 +37,6 @@ public class TextWidget extends Widget {
     }
 
     @Override
-    public boolean onClick() {
-        return false;
-    }
-
-    @Override
     public void dispose() {
 
     }

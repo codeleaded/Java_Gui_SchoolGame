@@ -77,8 +77,6 @@ public class ScoreboardScreen extends Screen {
     }
 
     public void setData(String[] names, int[] scores) {
-        System.out.println("refresh");
-
         this.names = names;
         this.scores = scores;
 
