@@ -5,6 +5,7 @@ import de.schoolgame.primitives.*;
 import de.schoolgame.render.Sound;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
+import de.schoolgame.world.Score;
 import de.schoolgame.world.WorldObject;
 
 import java.util.ArrayList;
@@ -100,10 +101,11 @@ public abstract class MovingEntity extends Entity {
             position.x = worldSize.x - size.x;
             onCollision(Direction.LEFT,new Vec2i((int)(worldSize.x - size.x),0),WorldObject.WORLD_BORDER);
 
-            if(this instanceof PlayerEntity && GameState.INSTANCE.getState() == GameState.GameStateType.GAME){
+            if(this instanceof PlayerEntity pe){
                 Sound sound = GameState.INSTANCE.assetManager.get("audio/complete/complete", Sound.class);
                 sound.play();
 
+                pe.addScore(Score.MP_LEVELFINISHED);
                 GameState.INSTANCE.setState(GameState.GameStateType.WORLD_SELECT);
                 return;
             }
@@ -174,7 +176,7 @@ public abstract class MovingEntity extends Entity {
 
             assert co.type.getTile() != null;
             if (cw != null && cw.d != Direction.NONE &&
-                (co.type.getTile().collisiontype != Direction.UP || cw.d == Direction.UP && doesntStamp) &&
+                (co.type.getTile().collisiontype != Direction.UP || (cw.d == Direction.UP && doesntStamp)) &&
                 (co.type.getTile().collisiontype == Direction.ALL || co.type.getTile().collisiontype == cw.d)){
                 onCollision(cw.d,co.rectf.pos.toVec2i(),co.type);
                 cp = cw.cp.cpy();
@@ -196,7 +198,7 @@ public abstract class MovingEntity extends Entity {
 
                 assert co.type.getTile() != null;
                 if(d != Direction.NONE &&
-                  (co.type.getTile().collisiontype != Direction.UP || d == Direction.UP && doesntStamp && velocity.y<0.0f) &&
+                  (co.type.getTile().collisiontype != Direction.UP || (d == Direction.UP && doesntStamp && velocity.y<0.0f && co.rectf.pos.sub(myRect.pos).len() > 0.2f)) &&
                   (co.type.getTile().collisiontype == Direction.ALL || co.type.getTile().collisiontype == d)){
                     onCollision(d,co.rectf.pos.toVec2i(),co.type);
                     cp = r.pos.cpy();

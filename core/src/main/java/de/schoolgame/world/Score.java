@@ -10,7 +10,9 @@ public class Score {
     public static final int MP_QUESTMARK = 20;
 
     public static final int MP_KILL_ROAMER = 200;
-    public static final int MP_KILL_FRIEDRICH = 500;
-    public static final int MP_KILL_KOENIG = 2000;
+    public static final int MP_KILL_KOENIG = 500;
+    public static final int MP_KILL_FRIEDRICH = 2000;
     public static final int MP_KILL_EICHELSBACHER = 5000;
+
+    public static final int MP_LEVELFINISHED = 500;
 }

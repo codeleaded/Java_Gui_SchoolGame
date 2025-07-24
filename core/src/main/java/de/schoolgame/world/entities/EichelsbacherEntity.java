@@ -12,6 +12,7 @@ import static de.schoolgame.primitives.Direction.RIGHT;
 import static de.schoolgame.primitives.Direction.UP;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
+import de.schoolgame.render.texture.Font;
 import de.schoolgame.render.texture.SpriteSheet;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
@@ -20,6 +21,8 @@ import de.schoolgame.world.WorldObject;
 public class EichelsbacherEntity extends MovingEntity {
     private float stateTime;
     public float lifes;
+
+    public final float MAX_LIFES = 60.0f;
 
 	private boolean lookDir;
     private boolean slideDir;
@@ -41,7 +44,7 @@ public class EichelsbacherEntity extends MovingEntity {
         this.onJump = false;
         this.slideDir = false;
 
-        this.lifes = 100.0f;
+        this.lifes = MAX_LIFES;
 
         move(Direction.LEFT);
     }
@@ -221,6 +224,41 @@ public class EichelsbacherEntity extends MovingEntity {
 
         SpriteSheet texture = state.assetManager.get("entities/eichelsbacher/eichelsbacher",SpriteSheet.class);
         int index = getTexIndex() + ((lookDir && MovingEntity.GRAVITY < 0.0f) || (!lookDir && MovingEntity.GRAVITY > 0.0f) ? 0 : 9);
+
+        if(!dead){
+            Font font = GameState.INSTANCE.assetManager.get("gui/font/aseprite_font", Font.class);
+            
+            float height = 0.4f;
+            float width1 = font.getWidth("Der",1);
+            float width2 = font.getWidth("Direktor",1);
+
+            float tyf = (size.y + height) * tileSize;
+            float ty = (size.y) * tileSize;
+            
+            if(MovingEntity.GRAVITY>0.0f){
+                ty = -height * tileSize;
+                tyf = ty - 2.0f * font.getHeight(1);
+            }
+
+            font.draw(batch,"Der",getPixelPosition().add((getPixelSize().x - width1) * 0.5f,tyf + font.getHeight(1)).toVec2i(),1);
+            font.draw(batch,"Direktor",getPixelPosition().add((getPixelSize().x - width2) * 0.5f,tyf).toVec2i(),1);
+
+            SpriteSheet health = state.assetManager.get("entities/healthbar/healthbar",SpriteSheet.class);
+
+            Affine2 tf_hb = new Affine2();
+            tf_hb.translate(position.x * tileSize,position.y * tileSize + ty);
+
+            batch.draw(
+                health.getRegions()[0],
+                size.x * tileSize, (height) * tileSize,// * (1.0f / (1.0f - (6.0f / 32.0f)))
+                tf_hb
+            );
+            batch.draw(
+                health.getRegions()[1],
+                (size.x * (lifes / MAX_LIFES)) * tileSize, (height) * tileSize,// * (1.0f / (1.0f - (6.0f / 32.0f)))
+                tf_hb
+            );
+        }
 
         Affine2 tf = new Affine2();
         tf.translate(position.x * tileSize, position.y * tileSize);
