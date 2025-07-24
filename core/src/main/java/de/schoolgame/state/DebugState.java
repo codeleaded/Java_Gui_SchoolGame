@@ -16,7 +16,7 @@ public class DebugState {
     public final ImString inputPower = new ImString("0");
     public final ImString inputStyle = new ImString("1");
     public final ImBoolean inputGodmode = new ImBoolean(false);
-    public final ImString inputWorldName = new ImString();
+    public final ImString inputWorldName = new ImString(25);
 
     public WorldObject selectedWorldObject = WorldObject.GRASS;
 

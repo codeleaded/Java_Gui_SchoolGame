@@ -80,7 +80,7 @@ public class WorldSelectScreen extends Screen {
         for (WorldListPacket.WorldListEntry entry : list) {
             y -= (spacing / 2) + entrySize.y;
             widgets.add(new ButtonWidget(new Vec2i(spacing, y), entrySize, () -> entry.name,
-                () -> GameState.INSTANCE.worldManager.download(entry.name), 3));
+                () -> GameState.INSTANCE.worldManager.download(entry.name), 3, new Vec2i(3, 3)));
         }
     }
 }

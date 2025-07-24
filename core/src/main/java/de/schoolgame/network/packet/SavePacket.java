@@ -31,9 +31,5 @@ public class SavePacket implements Packet {
         if (state.screen instanceof WorldSelectScreen) {
             state.worldReady = true;
         }
-
-        if (state.getState() == GameState.GameStateType.DEBUG || state.getState() == GameState.GameStateType.GAME) {
-            state.world.summonEntities();
-        }
     }
 }

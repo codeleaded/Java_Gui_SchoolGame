@@ -2,6 +2,7 @@ package de.schoolgame;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import de.schoolgame.render.gui.screens.WorldSelectScreen;
 import de.schoolgame.render.renderer.Renderer;
 import de.schoolgame.state.GameInputProcessor;
 import de.schoolgame.state.GameState;
@@ -21,7 +22,10 @@ public class Main extends ApplicationAdapter {
     public void render() {
         var state = GameState.INSTANCE;
         if (state.worldReady) {
-            state.setState(GameState.GameStateType.GAME);
+            if (state.screen instanceof WorldSelectScreen) {
+                state.setState(GameState.GameStateType.GAME);
+                state.world.summonEntities();
+            }
             state.worldReady = false;
         }
 
