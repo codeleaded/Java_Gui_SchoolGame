@@ -1,18 +1,10 @@
 package de.schoolgame.world.entities;
 
-import java.util.Random;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Affine2;
-
 import de.schoolgame.network.packet.ScorePacket;
 import de.schoolgame.primitives.Direction;
-import static de.schoolgame.primitives.Direction.DOWN;
-import static de.schoolgame.primitives.Direction.LEFT;
-import static de.schoolgame.primitives.Direction.NONE;
-import static de.schoolgame.primitives.Direction.RIGHT;
-import static de.schoolgame.primitives.Direction.UP;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.Sound;
@@ -21,6 +13,10 @@ import de.schoolgame.state.GameState;
 import de.schoolgame.world.Entity;
 import de.schoolgame.world.Score;
 import de.schoolgame.world.WorldObject;
+
+import java.util.Random;
+
+import static de.schoolgame.primitives.Direction.*;
 
 public class PlayerEntity extends MovingEntity {
     public static float COYOTE_TIME = 0.2f;
@@ -80,7 +76,7 @@ public class PlayerEntity extends MovingEntity {
     public void setGodmode(boolean godmode) {
         this.godmode = godmode;
         GameState.INSTANCE.debug.inputGodmode.set(godmode);
-        
+
         if(godmode){
             velocity.x = 0.0f;
             velocity.y = 0.0f;
@@ -214,20 +210,20 @@ public class PlayerEntity extends MovingEntity {
                     if (onGround) {
                         velocity.y = 14.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
                         this.coyote = 0.0f;
-                        
+
                         Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump/jump", Sound.class);
                         sound.play();
                     }else if (onWall) {
                         velocity.x = 4.0f * (slideDir ? 1.0f : -1.0f);
                         velocity.y = 8.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
                         this.coyote = 0.0f;
-                        
+
                         Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump/jump", Sound.class);
                         sound.play();
                     }else if (stateTime - coyote < COYOTE_TIME) {
                         velocity.y = 14.0f * (GRAVITY < 0.0f ? 1.0f : -1.0f);
                         this.coyote = 0.0f;
-                        
+
                         Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/jump/jump", Sound.class);
                         sound.play();
                     }
@@ -439,8 +435,8 @@ public class PlayerEntity extends MovingEntity {
                     slideDir = false;
                     move(UP);
 
-                    fe.lifes -= Math.sqrt(Math.abs(velocity.y));
-                    
+                    fe.lifes -= (float) Math.sqrt(Math.abs(velocity.y));
+
                     if(fe.lifes<=0.0f){
                         addScore(Score.MP_KILL_FRIEDRICH);
                         fe.kill();
@@ -459,8 +455,8 @@ public class PlayerEntity extends MovingEntity {
                     slideDir = false;
                     move(UP);
 
-                    ke.lifes -= Math.sqrt(Math.abs(velocity.y));
-                    
+                    ke.lifes -= (float) Math.sqrt(Math.abs(velocity.y));
+
                     if(ke.lifes<=0.0f){
                         addScore(Score.MP_KILL_FRIEDRICH);
                         ke.kill();
@@ -478,8 +474,8 @@ public class PlayerEntity extends MovingEntity {
                     slideDir = false;
                     move(UP);
 
-                    ee.lifes -= Math.sqrt(Math.abs(velocity.y));
-                    
+                    ee.lifes -= (float) Math.sqrt(Math.abs(velocity.y));
+
                     if(ee.lifes<=0.0f){
                         addScore(Score.MP_KILL_FRIEDRICH);
                         ee.kill();

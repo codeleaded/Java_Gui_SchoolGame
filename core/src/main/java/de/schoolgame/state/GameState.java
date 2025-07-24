@@ -5,12 +5,7 @@ import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.render.AssetManager;
 import de.schoolgame.render.Camera;
 import de.schoolgame.render.gui.Screen;
-import de.schoolgame.render.gui.screens.CharacterSelectScreen;
-import de.schoolgame.render.gui.screens.CreditScreen;
-import de.schoolgame.render.gui.screens.HudScreen;
-import de.schoolgame.render.gui.screens.MainMenuScreen;
-import de.schoolgame.render.gui.screens.ScoreboardScreen;
-import de.schoolgame.render.gui.screens.WorldSelectScreen;
+import de.schoolgame.render.gui.screens.*;
 import de.schoolgame.utils.Save;
 import de.schoolgame.world.World;
 import de.schoolgame.world.WorldManager;
@@ -33,6 +28,7 @@ public class GameState {
     public ServerConnection server;
 
     public World world;
+    public String worldName;
     public Camera camera;
     public PlayerEntity player;
 
@@ -66,7 +62,7 @@ public class GameState {
 
     public void setState(GameStateType state) {
         this.state = state;
-            
+
         if(GameState.INSTANCE.player!=null)
             GameState.INSTANCE.player.setDead(false);
 

@@ -6,11 +6,9 @@ import com.badlogic.gdx.graphics.Texture;
 import de.schoolgame.primitives.Recti;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
-import de.schoolgame.render.texture.Animation;
-import de.schoolgame.render.texture.Font;
-import de.schoolgame.render.texture.SpriteSheet;
-import de.schoolgame.render.texture.TileSet;
+import de.schoolgame.render.texture.*;
 import de.schoolgame.utils.AssetUtils;
+import org.tomlj.TomlArray;
 import org.tomlj.TomlParseResult;
 
 import java.util.HashMap;
@@ -103,6 +101,21 @@ public class AssetManager {
             Vec2f pitch = AssetUtils.getSoundPitch(asset);
             Sound sound = new Sound(Gdx.audio.newSound(handle), pitch);
             assets.put(name, sound);
+            return;
+        } else if (typeClass == Background.class) {
+            load(path, "spritesheet");
+            SpriteSheet spriteSheet = get(pathWithoutExtension, SpriteSheet.class);
+
+            float[] speeds = new float[spriteSheet.getRegions().length];
+            TomlArray array = asset.getArray("background.speeds");
+            assert array != null;
+            for (int i = 0; i < spriteSheet.getRegions().length; i++) {
+                speeds[i] = (float) array.getDouble(i);
+            }
+
+            Background background = new Background(spriteSheet, speeds);
+
+            assets.put(name, background);
             return;
         }
         throw new IllegalStateException("No Asset loader for: " + type);

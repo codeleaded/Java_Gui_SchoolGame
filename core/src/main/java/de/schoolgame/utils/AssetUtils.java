@@ -7,10 +7,7 @@ import de.schoolgame.primitives.Recti;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.Sound;
-import de.schoolgame.render.texture.Animation;
-import de.schoolgame.render.texture.Font;
-import de.schoolgame.render.texture.SpriteSheet;
-import de.schoolgame.render.texture.TileSet;
+import de.schoolgame.render.texture.*;
 import org.tomlj.Toml;
 import org.tomlj.TomlArray;
 import org.tomlj.TomlParseResult;
@@ -47,6 +44,7 @@ public class AssetUtils {
             case "tileset" -> TileSet.class;
             case "font" -> Font.class;
             case "sound" -> Sound.class;
+            case "background" -> Background.class;
             default -> throw new GdxRuntimeException("Unknown asset type: " + type);
         };
     }
@@ -58,6 +56,7 @@ public class AssetUtils {
         if (type == TileSet.class) return "tileset";
         if (type == Font.class) return "font";
         if (type == Sound.class) return "sound";
+        if (type == Background.class) return "background";
         throw new GdxRuntimeException("Unknown asset type: " + type.getName());
     }
 

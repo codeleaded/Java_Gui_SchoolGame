@@ -52,6 +52,7 @@ public class WorldManager {
     }
 
     public Save get(String worldName) {
+        GameState.INSTANCE.worldName = worldName;
         return worlds.get(worldName);
     }
 

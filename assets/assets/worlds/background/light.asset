@@ -1,0 +1,11 @@
+type = "background"
+
+[spritesheet]
+count = 4
+
+[sprite]
+width = 640
+height = 360
+
+[background]
+speeds = [ 0.0, 0.1, 0.25, 0.5 ]

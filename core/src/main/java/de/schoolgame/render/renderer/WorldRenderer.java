@@ -8,6 +8,7 @@ import de.schoolgame.primitives.Rectf;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.Camera;
+import de.schoolgame.render.texture.Background;
 import de.schoolgame.state.GameState;
 import de.schoolgame.world.World;
 
@@ -46,9 +47,14 @@ public class WorldRenderer implements IRenderer {
             .div(tileSize).add(new Vec2i(1, 1))
             .min(world.getSize());
 
+        batch.begin();
+
+        String bgName = "world_6".equals(GameState.INSTANCE.worldName) ? "dark" : "light";
+        Background bg = GameState.INSTANCE.assetManager.get("worlds/background/" + bgName, Background.class);
+        bg.render(batch);
+
         Texture egg = GameState.INSTANCE.assetManager.get("tiles/egg/egg", Texture.class);
 
-        batch.begin();
         float y = start.y * tileSize;
         for (int row = start.y; row < end.y; row++) {
             float x = start.x * tileSize;
