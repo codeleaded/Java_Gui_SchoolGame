@@ -21,10 +21,14 @@ public class FlashEntity extends MovingEntity {
     public FlashEntity(Vec2f pos) {
         super(pos, new Vec2f(0.5f,0.5f));
         this.stateTime = 0.0f;
-
 	    this.lookDir = false;
-
         this.velocity = new Vec2f(-1.0f,new Random().nextFloat(-1.0f,1.0f));
+    }
+    public FlashEntity(Vec2f pos,Vec2f target) {
+        super(pos, new Vec2f(0.5f,0.5f));
+        this.stateTime = 0.0f;
+	    this.lookDir = false;
+        this.velocity = target.sub(pos).add(0.0f,new Random().nextFloat(-3.0f,3.0f));
     }
 
     public static final int[] WALK_LUT = new int[]{0,1,2,3,4};

@@ -137,7 +137,7 @@ public class PlayerEntity extends MovingEntity {
         if(getDead() && (position.y < -1.0f || position.y > worldSize.y || position.x < -1.0f || position.x > worldSize.x)) {
             position = GameState.INSTANCE.world.getSpawn().toVec2f().add(new Vec2f(0.0f,0.001f));
             velocity = new Vec2f(0.0f,0.0f);
-            MovingEntity.GRAVITY *= (MovingEntity.GRAVITY < 0.0f ? 1.0f : -1.0f);
+            MovingEntity.GRAVITY = -Math.abs(MovingEntity.GRAVITY);
 
             lookDir = true;
             dead = false;
@@ -439,6 +439,8 @@ public class PlayerEntity extends MovingEntity {
                     slideDir = false;
                     move(UP);
 
+                    fe.velocity.x = Math.abs(fe.velocity.x);
+                    fe.acceleration.x = Math.abs(fe.acceleration.x);
                     fe.lifes -= Math.sqrt(Math.abs(velocity.y));
                     
                     if(fe.lifes<=0.0f){
@@ -459,6 +461,8 @@ public class PlayerEntity extends MovingEntity {
                     slideDir = false;
                     move(UP);
 
+                    ke.velocity.x = Math.abs(ke.velocity.x);
+                    ke.acceleration.x = Math.abs(ke.acceleration.x);
                     ke.lifes -= Math.sqrt(Math.abs(velocity.y));
                     
                     if(ke.lifes<=0.0f){
@@ -467,6 +471,12 @@ public class PlayerEntity extends MovingEntity {
 
                         Sound sound = GameState.INSTANCE.assetManager.get("audio/brackeys/explosion/explosion", Sound.class);
                         sound.play();
+                    }else{
+                        var world = GameState.INSTANCE.world;
+                        
+                        Vec2f pos = ke.getPosition().add(ke.getSize().mul(0.5f));
+                        var e = new FlashEntity(pos,position);
+                        world.spawnEntity(pos,e);
                     }
                 } else {
                     kill();
@@ -478,6 +488,8 @@ public class PlayerEntity extends MovingEntity {
                     slideDir = false;
                     move(UP);
 
+                    ee.velocity.x = Math.abs(ee.velocity.x);
+                    ee.acceleration.x = Math.abs(ee.acceleration.x);
                     ee.lifes -= Math.sqrt(Math.abs(velocity.y));
                     
                     if(ee.lifes<=0.0f){

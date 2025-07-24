@@ -14,6 +14,7 @@ import de.schoolgame.render.gui.screens.WorldSelectScreen;
 import de.schoolgame.utils.Save;
 import de.schoolgame.world.World;
 import de.schoolgame.world.WorldManager;
+import de.schoolgame.world.entities.MovingEntity;
 import de.schoolgame.world.entities.PlayerEntity;
 
 public class GameState {
@@ -86,10 +87,12 @@ public class GameState {
             case WORLD_EDITOR:
             case DEBUG:
                 this.screen = new HudScreen();
+                MovingEntity.GRAVITY = -Math.abs(MovingEntity.GRAVITY);
                 GameState.INSTANCE.player.setGodmode(true);
                 break;
             case GAME:
                 this.screen = new HudScreen();
+                MovingEntity.GRAVITY = -Math.abs(MovingEntity.GRAVITY);
                 GameState.INSTANCE.player.setGodmode(false);
                 break;
             case CREDITS:
