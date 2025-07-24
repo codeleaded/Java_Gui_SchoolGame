@@ -8,6 +8,7 @@ import de.schoolgame.render.gui.Screen;
 import de.schoolgame.render.gui.widgets.ButtonWidget;
 import de.schoolgame.render.gui.widgets.RectangleWidget;
 import de.schoolgame.render.gui.widgets.TextWidget;
+import de.schoolgame.render.gui.widgets.TextureButtonWidget;
 import de.schoolgame.render.renderer.Renderer;
 import de.schoolgame.state.GameState;
 import de.schoolgame.utils.Save;
@@ -32,8 +33,9 @@ public class WorldSelectScreen extends Screen {
         if (list == null) {
             this.scroll = -((float) campaignHeight / 2);
         } else {
-            int listHeight = list.length * (entrySize.y + (spacing / 2));
-            int maxOffset = -camera.viewSize.y + campaignHeight + listHeight - (camera.viewSize.y / 2) + spacing;
+            int listHeight = font_height + spacing*2 + list.length * (entrySize.y + (spacing / 2));
+            int maxOffset = camera.viewSize.y - campaignHeight - listHeight - spacing;
+            maxOffset = -maxOffset;
             if (maxOffset < 0) maxOffset = 0;
             this.scroll = Math.clamp(this.scroll, 0f, maxOffset);
         }
@@ -41,7 +43,7 @@ public class WorldSelectScreen extends Screen {
 
 
         int x = spacing;
-        int y = camera.viewSize.y + ((int) scroll);
+        int y = camera.viewSize.y + ((int) scroll/2);
 
         y -= font_height + spacing;
 
@@ -49,9 +51,8 @@ public class WorldSelectScreen extends Screen {
 
         y -= spacing + buttonSize.y;
         for (int i = 0; i < 7; i++) {
-            String text = i == 0 ? "T" : "" + i;
             int finalI = i;
-            widgets.add(new ButtonWidget(new Vec2i(x, y), buttonSize, text, () -> {
+            widgets.add(new TextureButtonWidget(new Vec2i(x, y), buttonSize, 9 + i, () -> {
                 var state = GameState.INSTANCE;
                 Gdx.app.log("WorldSelect", "Selected world: " + finalI);
                 Save save = state.worldManager.get("world_" + finalI);
@@ -68,7 +69,7 @@ public class WorldSelectScreen extends Screen {
         addBackButton();
         if (list == null) return;
 
-        y = y + ((int) scroll) - 3 - (spacing * 2) ;
+        y = y + ((int) scroll/2) - 3 - (spacing * 2) ;
         x = spacing;
 
         widgets.add(new RectangleWidget(new Vec2i(0, 0), new Vec2i(camera.viewSize.x, y), Renderer.GUI_BG));

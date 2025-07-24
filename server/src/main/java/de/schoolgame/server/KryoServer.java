@@ -2,6 +2,7 @@ package de.schoolgame.server;
 
 import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import de.schoolgame.network.PacketList;
@@ -37,24 +38,35 @@ public class KryoServer {
         Listener.TypeListener typeListener = new Listener.TypeListener();
 
         typeListener.addTypeHandler(EchoPacket.class, (connection, packet) -> {
-            Gdx.app.log("Server", "Received EchoPacket: " + packet.message);
+            Gdx.app.log("EchoPacket", getLogHeader(connection) + ": " + packet.message);
             connection.sendTCP(new EchoPacket("Echo: " + packet.message));
         });
         typeListener.addTypeHandler(LoginPacket.class, (connection, packet) -> {
             packet.uuid = UUID.randomUUID().toString();
-            SQLUtils.addClient(packet, connection.getRemoteAddressTCP().getAddress().getHostAddress());
+            Gdx.app.log("LoginPacket",  getLogHeader(connection) + ": " + packet.name + " (" + packet.style + ") " + packet.uuid);
+            SQLUtils.addClient(packet, getIP(connection));
             connection.sendTCP(packet);
         });
         typeListener.addTypeHandler(SavePacket.class, (connection, packet) -> {
             if (packet.save == null) {
                 packet.save = SQLUtils.getWorld(packet.name);
-                connection.sendTCP(packet.save == null ? new MessagePacket(packet.name + " existiert nicht!") : packet);
+                if (packet.save == null) {
+                    Gdx.app.log("SavePacket", getLogHeader(connection) + ": " + packet.name + " existiert nicht!");
+                    connection.sendTCP(new MessagePacket(packet.name + " existiert nicht!"));
+                } else {
+                    Gdx.app.log("SavePacket", getLogHeader(connection) + " hat Welt " + packet.name + " angefordert");
+                    connection.sendTCP(packet);
+                }
             } else {
                 if (!SQLUtils.addWorld(packet)) {
                     connection.sendTCP(new MessagePacket("Welt mit dem Namen \"" + packet.name + "\" existiert schon!"));
+                    Gdx.app.log("SavePacket", getLogHeader(connection) + ": " + packet.name + " existiert schon!");
+                } else {
+                    Gdx.app.log("SavePacket", getLogHeader(connection) + " hat " + packet.name + " hochgeladen");
                 }
             }
         });
+
         typeListener.addTypeHandler(ScorePacket.class, (connection, packet) -> SQLUtils.addScore(packet));
         typeListener.addTypeHandler(ScoreboardPacket.class,
             (connection, packet) -> connection.sendTCP(SQLUtils.getTopScores()));
@@ -64,6 +76,14 @@ public class KryoServer {
         server.addListener(typeListener);
 
         server.start();
+    }
+
+    private String getLogHeader(Connection connection) {
+        return "[(" + connection.getID() + ") " + getIP(connection) + "]";
+    }
+
+    private String getIP(Connection connection) {
+        return connection.getRemoteAddressTCP().getAddress().getHostAddress();
     }
 
     public void dispose() {

@@ -46,6 +46,19 @@ public abstract class Screen {
         return false;
     }
 
+    public boolean onMove(Vec2i movePos) {
+        //DONT TOUCH - Concurrent Modification Exceptions Ahead!
+        for (int i = 0; i < widgets.size(); i++) {
+            Widget widget = widgets.get(widgets.size() - 1 - i);
+            if (widget.getRect().contains(movePos)) {
+                return widget.onHover(true);
+            } else  {
+                widget.onHover(false);
+            }
+        }
+        return false;
+    }
+
     protected void addBackButton() {
         Vec2i size = new Vec2i(32, 32);
         Vec2i pos = camera.viewSize.sub(size);

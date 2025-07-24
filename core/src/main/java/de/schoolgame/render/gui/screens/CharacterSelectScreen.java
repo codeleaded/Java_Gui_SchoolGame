@@ -65,4 +65,9 @@ public class CharacterSelectScreen extends Screen {
             state.setState(GameState.GameStateType.MAIN_MENU);
         }));
     }
+
+    @Override
+    public void render() {
+        super.render();
+    }
 }

@@ -182,14 +182,25 @@ public class GameInputProcessor implements InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        return false;
+        var state = GameState.INSTANCE;
+
+        return switch (state.getState()) {
+            case MAIN_MENU:
+            case WORLD_SELECT:
+            case SCOREBOARD:
+            case CHARACTER_SELECT:
+            case CREDITS:
+                Vec2i pos = CoordinateUtils.getCameraPosFromScreenPos(new Vec2i(screenX, screenY));
+                yield state.screen.onMove(pos);
+            default: yield false;
+        };
     }
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
         var state = GameState.INSTANCE;
         if (state.screen instanceof WorldSelectScreen s) {
-            s.scroll += amountY;
+            s.scroll += amountY * 10;
             s.refresh();
         }
         if (state.getState() == GameState.GameStateType.DEBUG && amountY != 0) {

@@ -13,8 +13,15 @@ public abstract class Widget {
     }
 
     public abstract void render(SpriteBatch sb, ShapeRenderer sr);
-    public abstract boolean onClick();
     public abstract void dispose();
+
+    public boolean onClick() {
+        return false;
+    }
+
+    public boolean onHover(boolean hovered) {
+        return false;
+    }
 
     public Recti getRect() {
         return rect;
