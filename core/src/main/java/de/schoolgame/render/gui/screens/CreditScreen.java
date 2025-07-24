@@ -9,16 +9,16 @@ import de.schoolgame.state.GameState;
 public class CreditScreen extends Screen {
     private static final String[] titles = {
         "Programmierer",
-        "David", "Alex", "Michael",
+        "David", "Alex",
         "Grafik",
-        "Michael", "Lara", "Yanis", "David"
+        "Yanis", "David", "Lara", "Michael"
     };
 
     private static final String[] subtitles = {
         null,
-        "Grafik-Engine", "Physik-Engine", "Git-Terror (bug-fix)",
+        "Grafik-Engine, Server", "Physik-Engine, Map Design",
         null,
-        "Allgemein", "Charaktere", "Tilesets", "UI"
+        "Map Design, Tilesets", "UI", "Charaktere", "Git-Terror (bug fix)"
     };
 
     public  CreditScreen() {
