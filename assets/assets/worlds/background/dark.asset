@@ -1,11 +1,11 @@
 type = "background"
 
 [spritesheet]
-count = 4
+count = 6
 
 [sprite]
-width = 640
+width = 680
 height = 360
 
 [background]
-speeds = [ 0.0, 0.1, 0.25, 0.5 ]
+speeds = [ 0.0, 0.1, 0.2, 0.3, 0.0, 0.5 ]
