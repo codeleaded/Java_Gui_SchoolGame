@@ -2,6 +2,7 @@ package de.schoolgame.render.gui.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import de.schoolgame.network.packet.LoginPacket;
 import de.schoolgame.primitives.Vec2f;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.gui.Screen;
@@ -32,6 +33,7 @@ public class MainMenuScreen extends Screen {
                 var state = GameState.INSTANCE;
                 state.server.connect();
                 state.server.initiallyConnected = state.server.isConnected();
+                state.server.sendPacket(new LoginPacket(state.username, null, state.playerStyle), true);
                 state.setState(GameState.GameStateType.MAIN_MENU);
             }));
         }

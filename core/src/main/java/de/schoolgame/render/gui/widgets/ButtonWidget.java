@@ -3,6 +3,7 @@ package de.schoolgame.render.gui.widgets;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import de.schoolgame.primitives.Recti;
 import de.schoolgame.primitives.Vec2i;
 import de.schoolgame.render.gui.Widget;
 import de.schoolgame.render.texture.Font;
@@ -15,14 +16,11 @@ public class ButtonWidget extends Widget {
     private final Runnable onClick;
     private final int fontSize;
     private final Vec2i fontOffset;
+    private boolean hovered = false;
 
     private final Color highlight = new Color(0xffffffff);
     private final Color light = new Color(0xb4b4b4ff);
     private final Color dark = new Color(0x4d4d4dff);
-
-    public ButtonWidget(Vec2i pos, Vec2i size, String text, Runnable onClick) {
-        this(pos, size, () -> text, onClick);
-    }
 
     public ButtonWidget(Vec2i pos, Vec2i size, Supplier<String> text, Runnable onClick) {
         this(pos, size, text, onClick, 8);
@@ -42,6 +40,12 @@ public class ButtonWidget extends Widget {
 
     @Override
     public void render(SpriteBatch batch, ShapeRenderer shapeRenderer) {
+        Recti rect = this.rect.cpy();
+        if (hovered && onClick != null) {
+            rect.size = rect.size.sub(6, 6);
+            rect.pos = rect.pos.add(3, 3);
+        }
+
         String text = this.text.get();
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -74,6 +78,12 @@ public class ButtonWidget extends Widget {
     public boolean onClick() {
         if (onClick == null) return false;
         onClick.run();
+        return true;
+    }
+
+    @Override
+    public boolean onHover(boolean hovered) {
+        this.hovered = hovered;
         return true;
     }
 
