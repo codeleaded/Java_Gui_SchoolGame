@@ -9,7 +9,7 @@ import de.schoolgame.state.GameState;
 public class Renderer implements IRenderer {
     public static final Color GUI_BG = new Color(0.3f, 0.3f, 0.4f, 1f);
     public static final Color CREDITS_BG = new Color(0.6f, 0.6f, 0.8f, 1f);
-    public static final Color WORLD_BG = new Color(0f, 0.5f, 1f, 1f);
+    public static final Color WORLD_BG = new Color(0x19b7ffff);
     public static final Color WORLD_BG_DARK = new Color(0x252760ff);
 
     private final WorldRenderer worldRenderer;
