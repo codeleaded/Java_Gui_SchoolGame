@@ -229,8 +229,8 @@ public class EichelsbacherEntity extends MovingEntity {
             Font font = GameState.INSTANCE.assetManager.get("gui/font/aseprite_font", Font.class);
             
             float height = 0.4f;
-            float width1 = font.getWidth("Der",1);
-            float width2 = font.getWidth("Direktor",1);
+            float width1 = font.getWidth("The",1);
+            float width2 = font.getWidth("Principal",1);
 
             float tyf = (size.y + height) * tileSize;
             float ty = (size.y) * tileSize;
@@ -240,8 +240,8 @@ public class EichelsbacherEntity extends MovingEntity {
                 tyf = ty - 2.0f * font.getHeight(1);
             }
 
-            font.draw(batch,"Der",getPixelPosition().add((getPixelSize().x - width1) * 0.5f,tyf + font.getHeight(1)).toVec2i(),1);
-            font.draw(batch,"Direktor",getPixelPosition().add((getPixelSize().x - width2) * 0.5f,tyf).toVec2i(),1);
+            font.draw(batch,"The",getPixelPosition().add((getPixelSize().x - width1) * 0.5f,tyf + font.getHeight(1)).toVec2i(),1);
+            font.draw(batch,"Principal",getPixelPosition().add((getPixelSize().x - width2) * 0.5f,tyf).toVec2i(),1);
 
             SpriteSheet health = state.assetManager.get("entities/healthbar/healthbar",SpriteSheet.class);
 
